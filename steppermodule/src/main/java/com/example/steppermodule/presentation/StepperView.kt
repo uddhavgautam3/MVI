@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,29 +18,34 @@ import com.example.steppermodule.R
 interface StepperView {
 
     sealed class State {
-        data class Loading(val loadingPercentage: Int): State()
-        object AfterLoading: State()
-        data class Error(val error: String): State()
-        data class Loaded(val newCount: Int): State()
+        data class Loading(val loadingPercentage: Int) : State()
+        object AfterLoading : State()
+        data class Error(val error: String) : State()
+        data class Loaded(val newCount: Int) : State()
     }
 
 }
 
 @Composable
-fun StepperScreen(state: StepperView.State) {
+fun StepperScreen(stepperViewModel: StepperViewModel) {
+
+    val state by stepperViewModel.state().observeAsState(stepperViewModel.defaultViewState)
+
     Column(
-       modifier = Modifier.fillMaxHeight()
-           .fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally)
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
     {
-            StepperRender(state)
+        StepperRender(state)
     }
 }
 
 @Composable
 fun StepperRender(state: StepperView.State) {
-    when(state) {
+    when (state) {
         is StepperView.State.Loading -> {
             LoadingState()
         }

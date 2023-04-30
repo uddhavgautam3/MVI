@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 
-class MVIApplication: Application() {
+class MVIApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob())
 
     override fun onCreate() {
