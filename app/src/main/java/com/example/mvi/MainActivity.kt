@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    StepperScreen(state = StepperView.State.Error("Loading Error!"))
+                    StepperScreen(state = StepperView.State.Loading(25))
                 }
             }
         }
