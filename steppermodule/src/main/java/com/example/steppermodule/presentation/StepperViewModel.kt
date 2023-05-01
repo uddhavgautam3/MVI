@@ -1,17 +1,26 @@
 package com.example.steppermodule.presentation
 
+import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.toLiveData
 import com.example.steppermodule.presentation.StepperView.State
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
 
-class StepperViewModel : ViewModel() {
+@HiltViewModel
+class StepperViewModel @Inject constructor(
+    @ApplicationContext application: Context,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     //below two lines should be in order
     val defaultViewState: State = State.Loading

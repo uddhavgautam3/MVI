@@ -3,11 +3,12 @@ package com.example.app
 import android.app.Application
 import android.os.StrictMode
 import com.example.mvi.BuildConfig
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 
-
+@HiltAndroidApp
 class MVIApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob())
 
