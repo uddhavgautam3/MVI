@@ -18,7 +18,7 @@ import com.example.steppermodule.R
 interface StepperView {
 
     sealed class State {
-        data class Loading(val loadingPercentage: Int) : State()
+        object Loading : State()
         object AfterLoading : State()
         data class Error(val error: String) : State()
         data class Loaded(val newCount: Int) : State()

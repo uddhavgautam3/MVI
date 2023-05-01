@@ -1,7 +1,8 @@
-package com.example.mvi
+package com.example.app
 
 import android.app.Application
 import android.os.StrictMode
+import com.example.mvi.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber

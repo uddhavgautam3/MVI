@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".MVIApplication"
+        android:name="com.example.app.MVIApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,14 +14,14 @@
         android:theme="@style/Theme.MVI"
         tools:targetApi="33">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.app.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MVI">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+                <!--                <category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
 
             <meta-data
@@ -29,7 +29,8 @@
                 android:value="" />
         </activity>
 
-        <activity android:name="com.example.steppermodule.presentation.StepperActivity"
+        <activity
+            android:name="com.example.steppermodule.presentation.StepperActivity"
 
             android:exported="true"
             android:label="@string/app_name"
@@ -43,7 +44,6 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
 
 
         </activity>

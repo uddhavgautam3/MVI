@@ -13,21 +13,22 @@ import io.reactivex.subjects.PublishSubject
 
 class StepperViewModel : ViewModel() {
 
+    //below two lines should be in order
+    val defaultViewState: State = State.Loading
     private val statesObservable: Observable<State> by lazy { composeFlow() }
 
     //LiveDataReactiveStreams.fromPublisher(publisher) changed to publisher.toLiveData() in androidx.lifecycle:lifecycle-runtime-ktx:2.6.1
     private val stateFlowable: Flowable<State> = statesObservable.toFlowable(
-        BackpressureStrategy.BUFFER)
+        BackpressureStrategy.BUFFER
+    )
 
     fun state(): LiveData<State> = stateFlowable.toLiveData()
 
-    val defaultViewState: State = State.Loading(25)
-
     private val reducer: BiFunction<State, State, State>
-        get() = BiFunction { previousState: State, result: State ->
+        get() = BiFunction { _: State, result: State ->
             val transition = when (result) {
                 is State.Loading -> {
-                    State.Loading(25)
+                    State.Loading
                 }
                 is State.AfterLoading -> {
                     State.AfterLoading
