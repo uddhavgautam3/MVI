@@ -11,15 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.steppermodule.R
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 
 interface StepperView {
 
+    //view observes state
     sealed class State {
         object Loading : State()
         object AfterLoading : State()
         data class Error(val error: String) : State()
-        data class Loaded(val newCount: Int) : State()
+        data class Loaded(val newCount: String) : State()
+    }
+
+    //view emits actions
+    sealed class Action {
+        data class IncreaseCount(val currentCount: String) : Action()
+        data class DecreaseCount(val currentCount: String) : Action()
     }
 
 }
@@ -27,7 +36,19 @@ interface StepperView {
 @Composable
 fun StepperScreen(stepperViewModel: StepperViewModel) {
 
+    //observing state
     val state by stepperViewModel.state().observeAsState(stepperViewModel.defaultViewState)
+
+    //create a publishSubject that can emit actions
+    val publishSubject = PublishSubject.create<StepperView.Action>()
+
+
+    //tell viewmodel to start listening whatever gets emitted from publishSubject
+    stepperViewModel.registerActions(
+        Observable.merge(
+            listOf(publishSubject)
+        )
+    )
 
     Column(
         modifier = Modifier
@@ -37,12 +58,12 @@ fun StepperScreen(stepperViewModel: StepperViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        StepperRender(state)
+        StepperRender(state, publishSubject)
     }
 }
 
 @Composable
-fun StepperRender(state: StepperView.State) {
+fun StepperRender(state: StepperView.State, publishSubject: PublishSubject<StepperView.Action>) {
     when (state) {
         is StepperView.State.Loading -> {
             LoadingState()
@@ -54,7 +75,7 @@ fun StepperRender(state: StepperView.State) {
             ErrorState(state.error)
         }
         is StepperView.State.Loaded -> {
-            LoadedState(state.newCount)
+            LoadedState(state.newCount, publishSubject)
         }
     }
 }
@@ -70,17 +91,21 @@ fun ErrorState(error: String) {
 }
 
 @Composable
-fun LoadedState(newCount: Int) {
+fun LoadedState(newCount: String, publishSubject: PublishSubject<StepperView.Action>) {
     Text("Stepper Value")
-    Text(text = newCount.toString())
+    Text(text = newCount)
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            publishSubject.onNext(StepperView.Action.DecreaseCount(newCount))
+        }) {
             Text(text = "-")
         }
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            publishSubject.onNext(StepperView.Action.IncreaseCount(newCount))
+        }) {
             Text(text = "+")
         }
     }

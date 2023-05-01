@@ -25,12 +25,38 @@ class StepperViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val service = StepperServiceImpl()
-    val serviceState: ObservableTransformer<StepperService.Action, StepperService.Result>
+    private val intentsSubject: PublishSubject<StepperView.Action> = PublishSubject.create()
+
+    private val service = StepperServiceImpl()
+
+    private val serviceState: ObservableTransformer<StepperService.Action, StepperService.Result>
         get() = service.state()
 
+    //things start to change here in our compose flow
+    fun registerActions(actions: Observable<StepperView.Action>) {
+        actions.subscribe(intentsSubject)
+    }
+
+    //mapping of Services and Actions
+    private fun mapServiceAction(action: StepperView.Action): StepperService.Action {
+        return when (action) {
+            is StepperView.Action.IncreaseCount -> {
+                StepperService.Action.ChangeCount(
+                    currentCount = action.currentCount.toInt(),
+                    changeCount = 1
+                )
+            }
+            is StepperView.Action.DecreaseCount -> {
+                StepperService.Action.ChangeCount(
+                    currentCount = action.currentCount.toInt(),
+                    changeCount = -1
+                )
+            }
+        }
+    }
+
     //below two lines should be in order
-    val defaultViewState: State = State.Loaded(25)
+    val defaultViewState: State = State.Loaded("25")
     private val statesObservable: Observable<State> by lazy { composeFlow() }
 
     //LiveDataReactiveStreams.fromPublisher(publisher) changed to publisher.toLiveData() in androidx.lifecycle:lifecycle-runtime-ktx:2.6.1
@@ -40,29 +66,29 @@ class StepperViewModel @Inject constructor(
 
     fun state(): LiveData<State> = stateFlowable.toLiveData()
 
-    private val reducer: BiFunction<State, State, State>
-        get() = BiFunction { _: State, result: State ->
+    //BiFunction<Default, get Result, and mapped to State (i.e., respond with a State)
+    private val reducer: BiFunction<State, StepperService.Result, State>
+        get() = BiFunction { previousState: State, result: StepperService.Result ->
             val transition = when (result) {
-                is State.Loading -> {
-                    State.Loading
-                }
-                is State.AfterLoading -> {
-                    State.AfterLoading
-                }
-                is State.Error -> {
-                    State.Error("Error Occurred!")
-                }
-                is State.Loaded -> {
-                    State.Loaded(5)
+                is StepperService.Result.NewCount -> {
+                    State.Loaded(result.newCount.toString())
                 }
             }
             transition
         }
 
     private fun composeFlow(): Observable<State> {
-        val intentsSubject: PublishSubject<State> = PublishSubject.create()
 
         return intentsSubject
+            .flatMap { viewAction ->
+                val serviceAction = mapServiceAction(viewAction)
+                return@flatMap return@flatMap if (serviceAction == null) {
+                    Observable.empty()
+                } else {
+                    Observable.just(serviceAction)
+                }
+            }
+            .compose(serviceState)
             .scan(defaultViewState, reducer)
             .distinctUntilChanged()
             .replay(1)
