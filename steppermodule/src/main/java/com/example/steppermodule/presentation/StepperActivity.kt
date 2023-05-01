@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import com.example.steppermodule.presentation.theme.MVITheme
+import com.example.steppermodule.ui.theme.MVITheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

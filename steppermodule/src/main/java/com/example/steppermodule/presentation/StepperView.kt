@@ -1,9 +1,7 @@
 package com.example.steppermodule.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -56,7 +54,7 @@ fun StepperRender(state: StepperView.State) {
             ErrorState(state.error)
         }
         is StepperView.State.Loaded -> {
-            LoadedState()
+            LoadedState(state.newCount)
         }
     }
 }
@@ -72,8 +70,21 @@ fun ErrorState(error: String) {
 }
 
 @Composable
-fun LoadedState() {
-    Text("Loaded")
+fun LoadedState(newCount: Int) {
+    Text("Stepper Value")
+    Text(text = newCount.toString())
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "-")
+        }
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "+")
+        }
+    }
+
 }
 
 @Composable

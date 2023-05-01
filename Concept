@@ -1,0 +1,3 @@
+Action -> Service -> Reducer -> Renderer -> Action
+
+The Action at first and last are same. This is called Redux pattern.

@@ -1,4 +1,4 @@
-package com.example.steppermodule.presentation.theme
+package com.example.steppermodule.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
