@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name="com.example.steppermodule.presentation.StepperActivity"
+            android:name="com.example.agemodule.presentation.AgeActivity"
 
             android:exported="true"
             android:label="@string/app_name">
