@@ -17,12 +17,38 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        aarMetadata {
+            minCompileSdk = 33
+        }
     }
 
     buildTypes {
+        debug {
+            //can't set in library module applicationIdSuffix ".agemoduledebug"
+            debuggable true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        flavorDimensions "version"
+        productFlavors {
+            demo {
+                // Assigns this product flavor to the "version" flavor dimension.
+                // If you are using only one dimension, this property is optional,
+                // and the plugin automatically assigns all the module's flavors to
+                // that dimension.
+                dimension "version"
+                //can't set in library module applicationIdSuffix ".agemoduledemo"
+                versionNameSuffix "-agemoduledemo"
+            }
+            full {
+                dimension "version"
+                //can't set in library module  applicationIdSuffix ".agemoduledemofull"
+                versionNameSuffix "-agemoduledemofull"
+            }
         }
     }
     compileOptions {
@@ -48,7 +74,6 @@ android {
 dependencies {
     implementation "androidx.core:core-ktx:$kotlin_version"
 
-    implementation "androidx.core:core-ktx:$kotlin_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.activity:activity-compose:1.7.1'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
