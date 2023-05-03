@@ -3,17 +3,12 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
-    //applies to publishing all
-    id 'maven-publish' //adds publishing tasks for gradle
+    id 'maven-publish'
 }
 
 android {
     namespace 'com.example.agemodule'
     compileSdk 33
-
-    /*configurations.all {
-        resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
-    }*/
 
     defaultConfig {
         minSdk 21
@@ -29,44 +24,6 @@ android {
         }
     }
 
-    buildTypes {
-        debug {
-            //can't set in library module applicationIdSuffix ".agemoduledebug"
-            debuggable true
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        flavorDimensions "version"
-        productFlavors {
-            demo {
-                // Assigns this product flavor to the "version" flavor dimension.
-                // If you are using only one dimension, this property is optional,
-                // and the plugin automatically assigns all the module's flavors to
-                // that dimension.
-                dimension "version"
-                //can't set in library module applicationIdSuffix ".agemoduledemo"
-                versionNameSuffix "-agemoduledemo"
-
-                //applies to publishing all
-                aarMetadata {
-                    minCompileSdk = 30
-                }
-            }
-            full {
-                dimension "version"
-                //can't set in library module  applicationIdSuffix ".agemodulefull"
-                versionNameSuffix "-agemodulefull"
-
-                //applies to publishing all
-                aarMetadata {
-                    minCompileSdk = 29
-                }
-            }
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -86,81 +43,103 @@ android {
         }
     }
 
-    //applies to publishing all
     testFixtures {
         enable = true
     }
 
-    //1
-    /*publishing {
-        singleVariant('fullRelease') {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }*/
 
-    //2
-    /*publishing {
-        multipleVariants {
-            allVariants()
+    buildTypes {
+        debug {
+            debuggable true
         }
-    }*/
 
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        staging {
+            initWith debug
+            manifestPlaceholders = [hostName: "internal.agemodule.app.example.com"]
+        }
+
+    }
+
+    flavorDimensions "api", "mode"
+    productFlavors {
+        demo {
+            dimension "mode"
+            versionNameSuffix "-demo"
+        }
+        full {
+            dimension "mode"
+            versionNameSuffix "-full"
+        }
+
+        minApi24 {
+            dimension "api"
+            minSdkVersion 24
+            versionNameSuffix "-minApi24"
+        }
+
+        minApi23 {
+            dimension "api"
+            minSdkVersion 23
+            versionNameSuffix "-minApi23"
+        }
+
+        minApi21 {
+            dimension "api"
+            minSdkVersion 21
+            versionNameSuffix "-minApi21"
+        }
+    }
 
     publishing {
-        // Publish "demoRelease" build variant with "demoRelease" component
-        singleVariant("demoRelease")
+        // single variant of minApi21FullRelease
+        /*singleVariant("minApi21FullRelease") {
+            withSourcesJar()
+            withJavadocJar()
+        }*/
 
-        // Publish "fullDebug" and "fullRelease" build variants with "full" component
-        multipleVariants("full") {
-            includeBuildTypeValues("debug", "release")
-            includeFlavorDimensionAndValues("demo", "full")
+        //multivariate
+        multipleVariants() {
+            allVariants()
+            withSourcesJar()
+            withJavadocJar()
         }
     }
 
 }
 
-//applies to publishing all
-/*task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier "sources"
-}*/
-
 afterEvaluate {
     publishing {
         publications {
-            //1
-            /*fullRelease(MavenPublication) {
-                from components.fullRelease
-            }*/
-
-            //2
-            /*allVariants(MavenPublication) {
-                from components.default
-            }*/
-
-            // Creates two publications with different artifactIds
-            fullDebug(MavenPublication) {
-                from components.fullDebug
+            //single variants
+            /*minApi21FullRelease(MavenPublication) {
+                from components.minApi21FullRelease
                 groupId = 'android.MVI'
-                artifactId = 'full-MVI.agemodule'
+                artifactId = 'minApi21FullRelease.ageModule'
+                version = '1.0.0'
+
+            }*/
+
+            //coming from multi variants software component
+            minApi23DemoDebug(MavenPublication) {
+                from components.minApi23DemoDebug
+                groupId = 'android.MVI'
+                artifactId = 'minApi23DemoDebug.ageModule'
                 version = '1.0.0'
 
             }
-            demoRelease(MavenPublication) {
-                from components.demoRelease
-                groupId = 'android.MVI'
-                artifactId = 'demo-MVI.agemodule'
-                version = '1.0.0'
 
-            }
         }
 
         //applies to publishing all
         repositories {
             maven {
-                name = 'ageModuleRepo'
-                url = "${project.buildDir}/ageModuleRepo"
+                name = 'ageModule'
+                url = "${project.buildDir}/ageModule"
             }
         }
     }

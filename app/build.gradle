@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'maven-publish'
 }
 
 android {
@@ -22,34 +23,6 @@ android {
         }
     }
 
-    buildTypes {
-        debug {
-            applicationIdSuffix ".debug"
-            debuggable true
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        flavorDimensions "version"
-        productFlavors {
-            demo {
-                // Assigns this product flavor to the "version" flavor dimension.
-                // If you are using only one dimension, this property is optional,
-                // and the plugin automatically assigns all the module's flavors to
-                // that dimension.
-                dimension "version"
-                applicationIdSuffix ".demo"
-                versionNameSuffix "-demo"
-            }
-            full {
-                dimension "version"
-                applicationIdSuffix ".full"
-                versionNameSuffix "-full"
-            }
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -68,11 +41,91 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        staging {
+            initWith debug
+            manifestPlaceholders = [hostName: "internal.agemodule.app.example.com"]
+        }
+
+
+    }
+
+    flavorDimensions "api", "mode"
+    productFlavors {
+        demo {
+            dimension "mode"
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+        }
+        full {
+            dimension "mode"
+            applicationIdSuffix ".full"
+            versionNameSuffix "-full"
+        }
+
+        minApi24 {
+            dimension "api"
+            minSdkVersion 24
+            versionCode 30000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi24"
+        }
+
+        minApi23 {
+            dimension "api"
+            minSdkVersion 23
+            versionCode 20000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi23"
+        }
+
+        minApi21 {
+            dimension "api"
+            minSdkVersion 21
+            versionCode 10000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi21"
+        }
+    }
+
+    publishing {
+        // Publish "demoRelease" build variant with "demoRelease" component
+        singleVariant("minApi21FullRelease")
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+
+            minApi21FullRelease(MavenPublication) {
+                from components.minApi21FullRelease
+                groupId = 'android.MVI'
+                artifactId = 'MinApi21FullRelease.app'
+                version = '1.0.0'
+
+            }
+        }
+
+        repositories {
+            maven {
+                name = 'appModule'
+                url = "${project.buildDir}/appModule"
+            }
+        }
+    }
 }
 
 dependencies {
     implementation(name:'agemodule-release', ext:'aar')
-//    implementation project(path: ":my-agemodule") //renamed in settings.gradle
+    //implementation project(path: ":my-agemodule") //renamed in settings.gradle
     implementation project(path: ":agemodule")
 
     implementation "androidx.core:core-ktx:$kotlin_version"
