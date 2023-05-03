@@ -3,11 +3,17 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    //applies to publishing all
+    id 'maven-publish' //adds publishing tasks for gradle
 }
 
 android {
     namespace 'com.example.agemodule'
     compileSdk 33
+
+    /*configurations.all {
+        resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
+    }*/
 
     defaultConfig {
         minSdk 21
@@ -43,11 +49,21 @@ android {
                 dimension "version"
                 //can't set in library module applicationIdSuffix ".agemoduledemo"
                 versionNameSuffix "-agemoduledemo"
+
+                //applies to publishing all
+                aarMetadata {
+                    minCompileSdk = 30
+                }
             }
             full {
                 dimension "version"
-                //can't set in library module  applicationIdSuffix ".agemoduledemofull"
-                versionNameSuffix "-agemoduledemofull"
+                //can't set in library module  applicationIdSuffix ".agemodulefull"
+                versionNameSuffix "-agemodulefull"
+
+                //applies to publishing all
+                aarMetadata {
+                    minCompileSdk = 29
+                }
             }
         }
     }
@@ -69,7 +85,87 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    //applies to publishing all
+    testFixtures {
+        enable = true
+    }
+
+    //1
+    /*publishing {
+        singleVariant('fullRelease') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }*/
+
+    //2
+    /*publishing {
+        multipleVariants {
+            allVariants()
+        }
+    }*/
+
+
+    publishing {
+        // Publish "demoRelease" build variant with "demoRelease" component
+        singleVariant("demoRelease")
+
+        // Publish "fullDebug" and "fullRelease" build variants with "full" component
+        multipleVariants("full") {
+            includeBuildTypeValues("debug", "release")
+            includeFlavorDimensionAndValues("demo", "full")
+        }
+    }
+
 }
+
+//applies to publishing all
+/*task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}*/
+
+afterEvaluate {
+    publishing {
+        publications {
+            //1
+            /*fullRelease(MavenPublication) {
+                from components.fullRelease
+            }*/
+
+            //2
+            /*allVariants(MavenPublication) {
+                from components.default
+            }*/
+
+            // Creates two publications with different artifactIds
+            fullDebug(MavenPublication) {
+                from components.fullDebug
+                groupId = 'android.MVI'
+                artifactId = 'full-MVI.agemodule'
+                version = '1.0.0'
+
+            }
+            demoRelease(MavenPublication) {
+                from components.demoRelease
+                groupId = 'android.MVI'
+                artifactId = 'demo-MVI.agemodule'
+                version = '1.0.0'
+
+            }
+        }
+
+        //applies to publishing all
+        repositories {
+            maven {
+                name = 'ageModuleRepo'
+                url = "${project.buildDir}/ageModuleRepo"
+            }
+        }
+    }
+}
+
 
 dependencies {
     implementation "androidx.core:core-ktx:$kotlin_version"

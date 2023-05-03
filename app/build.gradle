@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mvi'
+    namespace 'com.example.mvi' //for unique R class, this is like a groupId for artifact
     compileSdk 33
 
     defaultConfig {
@@ -71,7 +71,9 @@ android {
 }
 
 dependencies {
-    implementation project(path: ":agemodule") //uniquely generate R file, this is like an antifact group id
+    implementation(name:'agemodule-release', ext:'aar')
+//    implementation project(path: ":my-agemodule") //renamed in settings.gradle
+    implementation project(path: ":agemodule")
 
     implementation "androidx.core:core-ktx:$kotlin_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
