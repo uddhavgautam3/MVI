@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mvi' //for unique R class, this is like a groupId for artifact
+    namespace 'com.mvi.app' //for unique R class, this is like a groupId for artifact
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.mvi"
+        applicationId "com.mvi.app"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -26,9 +26,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose true
     }
@@ -41,6 +43,22 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file("../keystore.keystore")
+            storePassword "Nepal@123!!"
+            keyAlias "app"
+            keyPassword "Nepal@123!!"
+
+        }
+        debug {
+            storeFile file("../keystore.keystore")
+            storePassword "Nepal@123!!"
+            keyAlias "app"
+            keyPassword "Nepal@123!!"
+        }
+    }
+
     buildTypes {
         debug {
             debuggable true
@@ -50,15 +68,58 @@ android {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        releaseDebug {
+            initWith debug
+            applicationIdSuffix '.releasedebug'
+            signingConfig signingConfigs.release
+        }
+
+        enterpriseQa {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            initWith release
+            applicationIdSuffix '.config'
+            versionNameSuffix ".${getBuildNumber()}"
+        }
+    }
+
+    flavorDimensions "prod"
+    productFlavors {
+        retail {
+            applicationId "com.mvi.app"
+            dimension "prod"
+            versionCode 151010000
+            versionName "1.0.0"
+            signingConfig signingConfigs.release
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+        retail {
+            java.srcDirs = ['src/retail/java']
+            assets.srcDirs = ['src/retail/assets']
+        }
+        retailDebug {
+            assets.srcDirs = ['src/retailDebug/assets']
+        }
+        retailReleaseDebug {
+            assets.srcDirs = ['src/retailReleaseDebug/assets']
+        }
     }
 
 }
 
 
 dependencies {
-    implementation(name:'agemodule-release', ext:'aar')
-    //implementation project(path: ":my-agemodule") //renamed in settings.gradle
-    implementation project(path: ":agemodule")
+    //implementation(name:'agemodule-release', ext:'aar')
+    implementation project(path: ":agemodule") //renamed in settings.gradle
 
     implementation "androidx.core:core-ktx:$kotlin_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'

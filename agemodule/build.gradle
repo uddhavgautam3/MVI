@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.agemodule'
+    namespace 'com.mvi.agemodule'
     compileSdk 33
 
     defaultConfig {
@@ -28,9 +28,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose true
     }
@@ -60,39 +62,8 @@ android {
 
         staging {
             initWith debug
-            manifestPlaceholders = [hostName: "internal.agemodule.app.example.com"]
         }
 
-    }
-
-    flavorDimensions "api", "mode"
-    productFlavors {
-        demo {
-            dimension "mode"
-            versionNameSuffix "-demo"
-        }
-        full {
-            dimension "mode"
-            versionNameSuffix "-full"
-        }
-
-        minApi24 {
-            dimension "api"
-            minSdkVersion 24
-            versionNameSuffix "-minApi24"
-        }
-
-        minApi23 {
-            dimension "api"
-            minSdkVersion 23
-            versionNameSuffix "-minApi23"
-        }
-
-        minApi21 {
-            dimension "api"
-            minSdkVersion 21
-            versionNameSuffix "-minApi21"
-        }
     }
 
     publishing {
@@ -125,10 +96,10 @@ afterEvaluate {
             }*/
 
             //coming from multi variants software component
-            minApi23DemoDebug(MavenPublication) {
-                from components.minApi23DemoDebug
+            staging(MavenPublication) {
+                from components.staging
                 groupId = 'android.MVI'
-                artifactId = 'minApi23DemoDebug.ageModule'
+                artifactId = 'staging.ageModule'
                 version = '1.0.0'
 
             }
