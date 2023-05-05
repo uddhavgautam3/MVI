@@ -36,9 +36,11 @@ android {
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion "1.4.6"
     }
+
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -62,6 +64,19 @@ android {
 
         staging {
             initWith debug
+        }
+        enterpriseQa {
+            jniDebuggable true
+            debuggable true
+            renderscriptDebuggable true
+            signingConfig signingConfigs.debug
+            renderscriptOptimLevel 3
+        }
+        releaseDebug {
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            signingConfig signingConfigs.debug
         }
 
     }
