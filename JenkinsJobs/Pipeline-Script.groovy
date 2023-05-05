@@ -36,8 +36,11 @@ node {
 
         }
 
-        VARIANT = "Release"
-        echo "Building variant: ${env.VARIANT} (${FLAVOR} ${BUILD_TYPE})"
+        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
+        VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
+
+        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
+        println("Building variant: ${FLAVOR}${CAMELCASE_BUILT_TYPE}")
 
         stage('Build Android') {
             dir('MVI') {

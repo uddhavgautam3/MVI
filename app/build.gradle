@@ -103,17 +103,29 @@ android {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
             java.srcDirs = ['src/main/java']
+            kotlin.srcDirs += 'src/main/myKotlin'
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
         }
         retail {
+            manifest.srcFile 'src/retail/AndroidManifest.xml'
             java.srcDirs = ['src/retail/java']
+            kotlin.srcDirs += 'src/retail/myKotlin'
+            res.srcDirs = ['src/retail/res']
             assets.srcDirs = ['src/retail/assets']
         }
         retailDebug {
+            manifest.srcFile 'src/retailDebug/AndroidManifest.xml'
+            java.srcDirs = ['src/retailDebug/java']
+            kotlin.srcDirs += 'src/retailDebug/myKotlin'
+            res.srcDirs = ['src/retailDebug/res']
             assets.srcDirs = ['src/retailDebug/assets']
         }
         retailReleaseDebug {
+            manifest.srcFile 'src/retailReleaseDebug/AndroidManifest.xml'
+            java.srcDirs = ['src/retailReleaseDebug/java']
+            kotlin.srcDirs += 'src/retailReleaseDebug/myKotlin'
+            res.srcDirs = ['src/retailReleaseDebug/res']
             assets.srcDirs = ['src/retailReleaseDebug/assets']
         }
     }
