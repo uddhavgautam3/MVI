@@ -1,0 +1,201 @@
+import groovy.json.JsonSlurper
+
+import java.text.SimpleDateFormat
+
+ext.common = [
+
+        padField             : { str, length, with = ' ' ->
+            while (str.length() < length) str += with
+        },
+
+        getTask              : { Project project, String name ->
+            project.getTasksByName(name, false)?.getAt(0) ?: null
+        },
+
+        isBuildType          : { variant, name -> variant.buildType.name == name },
+
+        isDebuggable         : { variant -> variant.buildType.debuggable },
+
+        setDepends           : {
+            provider, task ->
+                if (task) provider.get().dependsOn task
+        },
+
+        getVariantPackageName: {
+            variant ->
+                [variant.mergeFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
+        },
+
+        fbt                  : { variant, sep = '/' ->
+            if (variant.flavorName?.trim()) {
+                "${variant.flavorName}${sep}${variant.buildType.name}"
+            } else {
+                "${variant.buildType.name}"
+            }
+
+        },
+
+        getInputFile         : { key, defaultFile ->
+            def file = System.properties['src'] ?: defaultFile
+            if (file instanceof String) {
+                file = file(file)
+            }
+            file()
+        },
+
+        checkFileExists      : { file, name = 'File' ->
+            if (!file.exists()) throw new GradleException("${name} '${file}' not foun!")
+
+        },
+
+        getApkDir            : { variant ->
+            file(variant.packageApplicationProvider.get().outputDirectory)
+        },
+
+        getBundleDir         : { variant ->
+            file("${bundleDir}/outputs/bundle/${common.fbt(variant)}/")
+        },
+
+        getApkFile           : { variant ->
+            def appName = project.property('archivesBaseName') ?: project.name
+            def apk = "${appName}-${common.fbt(variant, '-')}.apk"
+            file("${common.getApkDir(variant)}/${apk}")
+        },
+
+        getBundleFile        : { variant ->
+            def appName = project.property('archivesBaseName') ?: project.name
+            def aab = "${appName}-${common.fbt(variant, '-')}.aab"
+            file("${common.getBundleDir(variant)}/${aab}")
+        },
+
+        getMappingFile       : { variant ->
+            def mappingDir = file("${buildDir}/outputs/mapping/")
+            file("${mappingDir}/${common.fbt(variant)}/mapping.txt")
+        },
+
+        execCmdForResult     : {
+            args, parseAsJson = true, silent = true ->
+                def stdOut = new ByteArrayOutputStream()
+                def errOut = new ByteArrayOutputStream()
+
+                logger.debug("")
+                logger.debug("calling cmd: " + args)
+
+                exec {
+                    ignoreExitValue = true
+                    standardOutput = stdOut
+                    errorOutput = errOut
+                    commandLine args
+                }
+                def err = errOut.toString()
+                if (err) {
+                    println("Error: " + err)
+                    println("From exec: " + args)
+                }
+
+                def res = stdOut.toString()
+                logger.debug("res: " + res)
+                if (!silent) {
+                    println("res: " + res)
+                    println("")
+                }
+
+                if (parseAsJson) {
+                    return common.parseJson(res)
+                }
+                return res
+        },
+
+        parseJson            : {
+            text ->
+                try {
+                    return new JsonSlurper().parseText(text)
+                } catch (Exception e) {
+                    println(e.message)
+                }
+                return text
+        },
+
+        getReleaseNotes      : { version = '', v = '##', d = '###' ->
+            def since = System.properties['notesFrom'] ?: System.properties['from']
+            if (since == null) {
+                def cal = Calendar.getInstance()
+                cal.add(Calendar.DATE, -7)
+                since = new SimpleDateFormat("MM/dd/yyyy").format(cal.getTime())
+            }
+            println("Get notes since: ${since}")
+            def res = common.execCmdForResult(['git', 'log', '--format=%h, %ad,%s', '--date=short', "--after=${since}"], false)
+            def notes = common.parseNotes(res, d) ?: 'The latest and greates! Ask a developer for details.'
+            "${v} Version: ${version}\n\n${notes}"
+        },
+
+        parseNotes           : { log, prefix ->
+            def dateMap = new TreeMap<String, ArrayList<String>>()
+            if (log) {
+                def lines = log.split('\n')
+                for (def line in lines) {
+                    def parts = line.split(',', 3) //hash,date, "message"
+                    def date = parts[1]
+                    def msg = parts[2]
+                    if (!dateMap.containsKey(date)) {
+                        dateMap.put(date, new ArrayList<String>())
+                    }
+                    dateMap.get(date).add(msg)
+                }
+            }
+            common.formatNotes(dateMap, prefix)
+        },
+
+        formatNotes          : { dateMap, prefix ->
+            def notes = ''
+            for (def date in dateMap.descendingKeySet()) {
+                notes += "${prefix} ${date}\n"
+                notes += "\n"
+                for (def line in dateMap[date]) {
+                    notes += " * ${line}\n"
+                }
+                notes += "\n"
+            }
+            notes
+        },
+
+
+        networkCall          : { method, path, json = null, data = null, length = 0 ->
+            if (method == 'PATCH') throw new GradleException("Cannot use PATCH here.")
+            def url = path.startsWith("http") ? path : "https://api.appcenter.ms${path}"
+            def conn = (HttpURLConnection) new URL(url).openConnection()
+            conn.setRequestMethod(method)
+            conn.setRequestProperty("Accept", "application/json")
+            conn.setRequestProperty("X-API-Token", AppCenter.apiKey)
+            conn.setUseCaches(false)
+
+
+            if (method == 'POST' || method == 'PUT') {
+                conn.setAllowUserInteraction(true)
+                conn.setDoOutput(true)
+                if (data != null) {
+                    conn.setRequestProperty("Content-Type", "application/octet-stream")
+                    def out = conn.getOutputStream()
+                    out.write(data, 0, length)
+                    out.close()
+                } else {
+                    if (json == null) json = ""
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    def writer = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(), "utf-8"))
+                    writer.print(json)
+                    writer.close()
+                }
+            }
+
+            def input = new InputStreamReader(conn.getInputStream(), "utf-8")
+            def sb = new StringBuffer()
+            def buffer = new char[1024]
+            def r
+            if ((r = input.read(buffer)) != -1) {
+                sb.append(buffer, 0, r)
+            }
+            return sb.toString()
+
+        }
+
+]

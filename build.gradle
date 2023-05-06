@@ -19,10 +19,10 @@ static String getBuildNumber() {
 
 static String getPropertyOrEnv(name, defaultValue = '') {
     def prop = System.properties[name]
-    if(prop == null) {
+    if (prop == null) {
         prop = System.getenv(name)
     }
-    if(prop == null) {
+    if (prop == null) {
         return defaultValue
     }
     return prop

@@ -1,0 +1,575 @@
+import java.text.SimpleDateFormat
+import java.util.stream.Collectors
+
+/**
+ * Configure AppCenter upload tasks for build.gradle
+ */
+
+apply from: "$project.rootDir/scripts/common.gradle"
+
+ext.AppCenter = [
+        apiKey : "cdf824da88961c57eb2f2bee857b2ecf96e6a542", //userApiToken full access
+        org    : "MVI-Organization",
+        owner  : "uddhavgautam3",
+        groups : ["Mobile", "EQA", "Internal"],
+        dateIn : new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+        dateOut: new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z")
+]
+
+AppCenter.dateIn.setTimeZone(TimeZone.getTimeZone("GMT"))
+AppCenter.dateOut.setTimeZone(TimeZone.getTimeZone("America/New_York"))
+
+//create tasks
+
+project.tasks.register("appCenterListAppApps") {
+    group = "appcenter"
+    description = "Lists all the apps in MS AppCenter."
+    doLast {
+        appCenterPrintApps(appCenterGetAllApps())
+    }
+}
+
+project.tasks.register("appCenterListAppGroups") {
+    group = "appcenter"
+    description = "Lists all the apps groups in MS AppCenter."
+    doLast {
+        appCenterPrintGroups(appCenterGetAllGroups())
+    }
+}
+
+project.tasks.register("appCenterCreateGroup") {
+    group = "appcenter"
+    description = "Creates a distribution group in MS AppCenter. (Requires group name)"
+    doLast {
+        def group = appCenterGetArgGroup()
+        if (appCenterGetGroup(group)) {
+            println("AppCenter: Group '${group}' already exists... My work here is done! ")
+        } else {
+            if (appCenterCreateGroup(group)) {
+                println("AppCenter: Group '${group}' created! ")
+            }
+        }
+    }
+}
+
+project.tasks.register("appCenterListApGroups") {
+    group = "appcenter"
+    description = "Lists the groups for an app in MS AppCenter. (Requires app name)"
+    doLast {
+        def appName = appCenterGetArgAppName()
+        def groups = appCenterGetAppGroups(appName)
+        println("${appName} is in ${groups.size()} groups:")
+        groups.forEach { g -> println(" ${g.display_name}") }
+
+    }
+}
+
+project.tasks.register("appCenterListAppMappings") {
+    group = "appcenter"
+    description = "Lists the mapping files for an app in MS AppCenter. (Requires app name)"
+    doLast {
+        def appName = appCenterGetArgAppName()
+        def mappings = appCenterGetAppMappings(appName)
+        if (mapings.isEmpty()) {
+            println("No mapping files found for ${appName}")
+        } else {
+            def latest = Collections.max(mappings, Comparator.comparing { m -> AppCenter.dateIn.parse(m.timestamp) })
+            println("The most recent mapping file:")
+            println(" ${latest.symbol_upload_id} ${formatAppCenterDate(latest.timestamp, AppCenter.dateIn, AppCenter.dateOut)}" +
+                    " ${latest.version} (${latest.build})")
+            println("\n${appName} has ${mappings.size()} mapping files:")
+            mappings.forEach(m -> println(" ${m.symbol_upload_id} " +
+                    "${formatAppCenterDate(m.timestamp, AppCenter.dateIn, AppCenter.dateOut)} ${m.version} (${m.build})"))
+        }
+    }
+}
+
+project.tasks.register("appCenterHasApp") {
+    group = "appcenter"
+    description = "Checks if the app exists in MS AppCenter. (Requires app name)"
+    doLast {
+        def appName = appCenterGetArgAppName()
+        println("${appName} ${appCenterHasApp(appName) ? "exists!" : "not found!"}")
+    }
+}
+
+
+project.tasks.register("appCenterGetRelease") {
+    group = "appcenter"
+    description = "Prints out the details of the latest version of an app in MS AppCenter. (Requires app name)"
+    doLast {
+        def version = System.properties['version'] ?: System.properties['v'] ?: 'latest'
+        def release = appCenterGetRelease(appCenterGetArgAppName(), version)
+        def pad = 15
+        def destinations = (release.destinations ?: []).stream().map { d -> d.name }.collect(Collectors.joining(', '))
+        println("${common.padField("App name:", pad)} ${release.app_display_name}")
+        println("${common.padField("Version:", pad)} ${release.short_version}")
+        println("${common.padField("Version code:", pad)} ${release.version}")
+        println("${common.padField("Release #:", pad)} ${release.id}")
+
+        println("${common.padField("Uploaded:", pad)} ${formatAppCenterDate(release.uploaded_at, AppCenter.dateIn, AppCenter.dateOut)}")
+        println("${common.padField("Min OS (API):", pad)} ${release.min_os ?: 'n/a'} (${release.android_min_api_level ?: 'n/a'})")
+        println("${common.padField("Destinations:", pad)} ${destinations ?: 'n/a'}")
+        println("${common.padField("Download URL:", pad)} ${release.download_url}")
+
+        println("Release notes: \n-------\n${release.release_notes}\n----------")
+    }
+}
+
+project.tasks.register("appCenterCreateApp") {
+    group = "appcenter"
+    description = "Creates an app in MS AppCenter. (Requires app name)"
+    doLast {
+        def appName = appCenterGetArgAppName()
+        def res = appCenterCreateApp(appName)
+        if (res == "created") {
+            println("AppCenter: ${appName} created!")
+        } else if (res == "exists") {
+            println("AppCenter: App '${appName}' already exists... My work here is done!")
+        } //error printed by function
+    }
+}
+
+
+android.applicationVariants.all { variant ->
+    createAppCenterUploadTask(variant)
+}
+
+def createAppCenterUploadTask(variant, taskSuffix = "", apkFile = null, mapFile = null) {
+    project.tasks.register("appCenterUpload${taskSuffix}${variant.name.capitalize()}") {
+        logger.debug("AppCenter: create task for ${variant.name}")
+        group = "appcenter"
+        description = "Upload ${taskSuffix ? taskSuffix + ' ' : ''}${variant.name} APK to MS AppCenter. (Requires app name)"
+
+        apkFile = apkFile ?: common.getApkFile(variant)
+        mapFile = mapFile ?: common.getMappingFile(variant)
+
+        doLast {
+            if (!apkFile.exists()) throw new GradleException("APK file '${apkFile}' not found")
+            def appName = appCenterGetArgAppName()
+            def releaseNotes = common.getReleaseNotes(variant.versionName)
+            appCenterUpload(variant.buildType.name, appName,
+                    variant.versionCode, variant.versionName, apkFile, mapFile, releaseNotes)
+        }
+    }
+}
+
+// expose some methods for external use
+
+ext {
+    createAppCenterUploadTask = this.&createAppCenterUploadTask
+}
+
+
+// AppCenter helper methods
+
+def appCenterGetAllApps() {
+    println("AppCenter: Getting all apps in org: ${AppCenter.org}")
+    appCenterCommand('GET', "/v0.1/orgs/${appCenterEncode(AppCenter.org)}/apps")
+}
+
+def appCenterGetAllGroups() {
+    println("AppCenter: Getting all groups in org: ${AppCenter.org}")
+    appCenterCommand('GET', "/v0.1/orgs/${appCenterEncode(AppCenter.org)}/distribution_groups_details")
+}
+
+def appCenterGetAppGroups(appName) {
+    println("AppCenter: Getting all groups for '${appName}' in org: ${AppCenter.org}")
+    appCenterCommand('GET', "/v0.1/orgs/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/distribution_groups")
+}
+
+def appCenterGetAppMappings(appName) {
+    println("AppCenter: Getting mapping files for '${appName}' in org: ${AppCenter.org}")
+    appCenterCommand('GET', "/v0.1/orgs/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/symbol_uploads")
+}
+
+def appCenterHasApp(appName) {
+    println("AppCenter: Checking for '${appName}' in ${AppCenter.owner}.")
+    def encName = appCenterEncode(appName)
+    def res = appCenterCommand('GET', "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${encName}")
+    return (res.name ?: '') == encName
+}
+
+def appCenterGetRelease(appName, releaseId = 'latest') {
+    println("AppCenter: Getting ${releaseId} release for '${appName}' in ${AppCenter.owner}.")
+    if (releaseId == 'latest') {
+        releaseId = appCenterGetLatestReleaseId(appName)
+    }
+    if (releaseId <= 0) return null
+    def release = appCenterCommand('GET', "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/release/${releaseId}")
+    if ((release.statusCode ?: 200) == 404) {
+        throw new GradleException("App '${appName}' does not exist in AppCenter.")
+    }
+    release
+}
+
+def appCenterGetLatestReleaseId(appName) {
+    def releases = appCenterCommand('GET', "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/releases")
+    if (releases && reelases.size() > 0) {
+        return releases[0].id
+    } else {
+        println("AppCenter: '${appName}' has no releases.")
+        return -1
+    }
+}
+
+
+@SuppressWarnings(["GroovyUnusedAssignment", "unused"])
+def appCenterUpload(label, appName, versionCode, versionName, apkFile, mapFile, releaseNotes) {
+    // not sure what do do with mapFile yet
+    try {
+        println("AppCenter: Uploadig ${label} ${versionName} (${versionCode}) APK to ${AppCenter.owner}/${appName}")
+        def create = appCenterCreateApp(appName)
+        if (create != "error") {
+            def groupList = appCenterGetAllGroups()
+            if (!(groupList instanceof List)) {
+                throw new GradleException("Get groups error: " + groupList)
+            }
+            def groupIds = appCenterGetGroupIds(groupList)
+            appCenterAddAppToGroups(appName, groupIds)
+
+            def upload = appCenterInitReleaseUpload(appName, versionCode, versionName)
+            if (!upload.id) {
+                println("  Initialization error: ${upload}")
+                println("  Note: AppCenter deletes apps asynchronolusy, so if you get a 'not_found' " +
+                        "error code after recently deleting an app, go get some coffee and try again later.")
+                throw new GradleException("Int release upload error: " + upload)
+            }
+            def metadata = appCenterSetMetadata(apkFile, upload)
+            if (metadata == null || metadata.error) {
+                throw new GradleException("Set metadata error: " + metadata)
+            }
+            def chunksUploaded = appCenterUploadBuild(apkFile, upload, metadata)
+            def finish = appCenterFinishUpload(upload)
+            if (finish == null || finish.error) {
+                throw new GradleException("Finish upload error: " + finish)
+            }
+            appCenterFinishUpdate(appName, upload)
+            def status = appCenterPollForStatus(appName, upload)
+            if (status == null || !status.release_distinct_id) {
+                throw new GradleException("Status update error: " + status)
+            }
+            def notes = appCenterUpdateReleaseNotes(appName, status.release_distinct_id, releaseNotes)
+            def groups = appCenterUpdateDistributionGroups(appName, status.release_distinct_id, groupIds)
+
+
+            if (mapFile && mapFile.exists()) {
+                def mu = appCenterInitMappingUpload(appName, versionCode, versionName)
+                appCenterUploadMapping(mapFile, mu.upload_url)
+                def ms = appCenterUpdateMappingStatus(appName, mu.symbol_upload_id)
+            }
+
+            println("AppCenter: Release #${status.release_distinct_id} uploaded successfully! ($chunksUploaded)")
+        }
+    } catch (Exception e) {
+        e.printStackTrace()
+        throw e
+    }
+}
+
+def appCenterCreateApp(appName, releaseType = "Beta") {
+    println("AppCenter: Creating '${appName}' in org: ${AppCenter.org}.")
+    if (!appCenterHasApp(appName)) {
+        def body = """{
+"display_name": "${appName}",
+"name": "${appCenterEncode(appName)}",
+"os": "Android",
+"platform": "Java",
+"release_type": "$releaseType"
+}"""
+        def res = appCenterCommand('POST', "/v0.1/orgs/${appCenterEncode(AppCenter.org)}/apps", body)
+        if (res.error ?: null) { //if (x) { return x} else {return y}
+            println("AppCenter: Error creating app ${appName}: ${res.error.message}")
+            return "error"
+        }
+        return "created"
+    }
+    return "exists"
+}
+
+def appCenterGetGroup(group) {
+    if (!group) {
+        println("AppCenter: What group?")
+        return null
+    }
+    println("AppCenter: Getting '${group}' in org: ${AppCenter.org}.")
+    def url = "/v0.1/orgs/${appCenterEncode(AppCenter.org)}/distribution_groups/${appCenterURLEncode(group)}"
+    def res = appCenterCommand('GET', url)
+    return res.error ? null : res
+}
+
+def appCenterCreateGroup(group) {
+    println("AppCenter: Creating group '${group}'.")
+    def url = "/v0.1/orgs/${appCenterEncode(AppCenter.org)}/distribution_groups"
+    def body = """ { "name": "${group}" } """
+    def res = appCenterCommand('POST', url, body)
+    if (res.error ?: null) {
+        println("AppCenter: Error creating group ${group}: ${res.error.message}")
+        return false
+    }
+    return true
+}
+
+def appCenterInitReleaseUpload(appName, versionCode, versionName) {
+    println("AppCenter: Initializing release upload.")
+    def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/uploads/releases"
+    def body = """{ "build_number": "${versionCode}", "build_version": "${versionName}" }"""
+    println("body: ${body}")
+    appCenterCommand('POST', url, body, true)
+}
+
+def appCenterSetMetadata(apkFile, upload) {
+    println("AppCenter: Set metadata.")
+    def url = "${upload.upload_domain}/upload/set_metadata/${upload.package_asset_id}" +
+            "?file_name=${apkFile.name}&file_size=${apkFile.size()}&token=${upload.url_encoded_token}&content_type=application/vnd.android.package-archive"
+    common.parseJson(common.networkCall('POST', url))
+}
+
+def appCenterUploadBuild(apkFile, upload, metadata) {
+    def url = "${upload.upload_domain}/upload/upload_chunk/${upload.package_asset_id}?token=${upload.url_encoded_token}"
+    def input = new FileInputStream(apkFile)
+    def buffer = new byte[metadata.chunk_size]
+    def blockNumber = 0
+    def response
+    def r
+    while ((r = input.read(buffer)) != -1) {
+        blockNumber++
+        response = common.parseJson(common.networkCall('POST', "${url}&block_number=$blockNumber", null, buffer, r))
+        if (response.error) {
+            throw new GradleException("Chunk $blockNumber upload error: " + response)
+        }
+    }
+    input.close()
+    blockNumber
+}
+
+def appCenterFinishUpload(upload) {
+    def url = "${upload.upload_domain}/upload/finished/${upload.package_asset_id}?token=${upload.url_encoded_token}"
+    common.parseJson(common.networkCall('POST', url))
+}
+
+def appCenterFinishUpdate(appName, upload) {
+    def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/uploads/releases/${upload.id}"
+    def body = """ { "upload_status": "uploadFinished" } """
+    appCenterCommand('PATCH', url, body)
+}
+
+def appCenterPollForStatus(appName, upload) {
+    def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/uploads/releases/${upload.id}"
+    def checks = 1
+    // only do this for up to 2 minutes, it seems to take at least 20-30 seconds anyway
+    while (checks <= 60) {
+        def result = appCenterCommand('GET', url)
+        println("Poll $checks result: $result")
+        if (result.upload_status == "readyToBePublished" || result.upload_status == "error") {
+            return result
+        }
+        sleep(2000)
+        checks++
+    }
+}
+
+def appCenterInitMappingUpload(appName, versionCode, versionName) {
+    println("AppCenter: Initializing mapping upload.")
+    def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/symbol_uploads"
+    def body = """  { "symbol_type": "AndroidProguard", "file_name": "mapping.txt", "build": "${versionCode}", "version": "${versionName}" } """
+    appCenterCommand('POST', url, body)
+}
+
+def appCenterUploadMapping(mapFile, url) {
+    println("AppCenter: Uploading mapping file ${mapFile}")
+    common.execCmdForResult(['curl', '-X', 'PUT', '-s', '-H', 'x-ms-blob-type: BlockBlob', '-T', "${mapFile}", url], false)
+}
+
+
+def appCenterUpdateMappingStatus(appName, uploadId) {
+    println("AppCenter: Updating mapping status.")
+    def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/symbol_uploads/${uploadId}"
+    def body = '{ "status": "committed" }'
+    appCenterCommand('PATCH', url, body)
+}
+
+def appCenterUpdateReleaseNotes(appName, releaseId, releaseNotes) {
+    println("AppCenter: Uploading release notes: \n------\n${releaseNotes}\n-----------")
+    def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/releases/${releaseId}"
+    def body = """  {  "release_notes": "${appCenterCleanReleaseNotes(releaseNotes)}"  } """
+    appCenterCommand('PATCH', url, body)
+}
+
+def appCenterUpdateDistributionGroups(appName, releaseId, groupIds) {
+    if ((groupIds ?: [:]).isEmpty()) {
+        println("AppCenter: Assigning to groups: No groups!")
+    } else {
+        println("AppCenter: Assigning release to groups: ${groupIds.keySet().stream().map { name -> "'${name}'" }.collect(Collectors.joining(', '))}")
+        def destinations = groupIds.keySet().stream()
+                .map { name -> """ { "name": "${name}"  """ }
+                .collect(Collectors.joining(', ', '[ ', ' ]'))
+        def url = "/v0.1/apps/${appCenterEncode(AppCenter.owner)}/${appCenterEncode(appName)}/releases/${releaseId}"
+        def body = """  { "destinations": ${destinations}  } """
+        appCenterCommand('PATCH', url, body)
+    }
+
+}
+
+def appCenterAddAppToGroups(appName, groupIds) {
+    if ((groupIds ?: [:].isEmpty())) {
+        println("AppCenter: Adding app to groups: No groups!")
+    } else {
+        //if app was not previously added to one of the groups, we need to add it....
+        def currentGroups = appCenterGetAppGroups(appName).stream()
+                .map { group -> group.name }.collect(Collectors.toList())
+        groupIds.keySet().stream()
+                .filter { group -> !currentGroups.contains(group) }
+                .forEach { group -> appCenterAddAppToGroup(appName, group) }
+    }
+}
+
+def appCenterAddAppToGroup(appName, group) {
+    println("AppCenter: Adding '${appName}' to '${group}'.")
+    def url = "/v0.1/orgs/${appCenterEncode(AppCenter.org)}/distribution_groups/${appCenterURLEncode(group)}/apps"
+    def body = """ { "apps": [ { "name": "${appCenterEncode(appName)}" } ] } """
+    appCenterCommand('POST', url, body, false)
+}
+
+
+def appCenterPrintApps(List allApps) {
+    println(allApps)
+    def printApps = { List apps, String type ->
+        def pad1 = 50, pad2 = 25, count = 0
+        println("\n### ${type} apps\n")
+        println("${common.padField("App Name", pad1)}${common.padField("Last Updated", pad2)} Owner")
+        println(common.padField("", pad1 + pad2 + pad2, '-'))
+        apps.stream().filter { app -> app.os == type }.forEach { app ->
+            count++
+            println("${common.padField(app.display_name, pad1)}" +
+                    "${formatAppCenterDate(app.updated_at, AppCenter.dateIn, AppCenter.dateOut)}  " +
+                    "${app.owner.display_name}")
+        }
+        println("\n Total: ${count} apps")
+    }
+    printApps(allApps, 'Android')
+    printApps(allApps, 'iOS')
+}
+
+def appCenterPrintGroups(List groups) {
+    def padN = 50, padI = 36, padU = 8, count = 0
+    println("${common.padField("Group Name", padN)} ${common.padField("Group ID", padI)} ${common.padField("Users", padU)} App Count")
+    println(common.padField("", padN + padI + padU + 20, '-'))
+    groups.stream().forEach { group ->
+        count++
+        println("${common.padField(group.display_name, padN)} ${group.id} " +
+                "${common.padField(group.total_users_count as String, padU)} " +
+                "${group.apps.size() as String}")
+        println(group.name)
+    }
+    println("\n Total: ${count} groups")
+}
+
+def appCenterCommand(method, path, body = null, parseAsJson = true, silent = true) {
+    def url = path.startsWith("http") ? path : "https://api.appcenter.ms${path}"
+    def cmd = [
+            'curl', '-s', '-X', method, url,
+            '-H', 'Content-Type: application/json',
+            '-H', 'Accept: application/json',
+            '-H', "X-API-Token: ${AppCenter.apiKey}"
+    ]
+    if (body) {
+        cmd.addAll(['-d', body])
+    } else if(method == 'POST') {
+        cmd.addAll(['-H', 'Content-Length: 0'])
+    }
+    //println("AppCenter method: ${method}")
+    //println("AppCenter url: ${url}")
+    //println("AppCenter apiKey: ${AppCenter.apiKey}")
+    //println("AppCenter body: ${body}")
+
+    common.execCmdForResult(cmd, parseAsJson, false)
+}
+
+def appCenterGetGroupIds(List allGroupsInOrg) {
+    def groupList = appCenterGetArgGroups(AppCenter.groups)
+    def map = groupList.stream().distinct().collect(Collectors.toMap({name -> name}, {name -> appCenterFindGroupId(allGroupsInOrg, name) }))
+    println("AppCenter: Using groups ${groupList.stream().distinct().map { name -> "'${name}'" }.collect(Collectors.joining(', '))}.")
+    map
+}
+
+static def appCenterFindGroupId(List groups, String groupName) {
+    println("groupName uddhav: ${groupName}")
+
+    for (def group in groups) {
+        println("group uddhav: ${group}")
+        println("groupName uddhav: ${groupName}")
+        if (group.display_name == groupName) return group.id
+    }
+    throw new GradleException("Group: '${groupName}' does not exist in AppCenter. Groups must be created first.")
+}
+
+static def formatAppCenterDate(date, inFormat, outFormat) {
+    try {
+        outFormat.format(inFormat.parse(date))
+    } catch (Exception ignored) {
+        date
+    }
+}
+
+static def appCenterGetArgAppName() {
+    def appName = System.properties['appname'] ?: System.properties['an']
+    if (!appName) throw new GradleException("App name was not defined. Pass it in with -Dappname=\"<app_name>\" (spaces allowed).")
+    appName
+}
+
+static def appCenterGetArgGroups(defaultGroups) {
+    def groupList = defaultGroups
+    def replaceGroups = System.properties['usegroups'] ?: System.properties['ug']
+    if (replaceGroups) {
+        groupList = replaceGroups.split(',').stream().distinct()
+                .map { name -> name.trim() }
+                .collect(Collectors.toList())
+    }
+    def addGroups = System.properties['addgroups'] ?: System.properties['ag']
+    if (addGroups) {
+        groupList.addAll(addGroups.split(',').stream().distinct()
+                .map { name -> name.trim() }
+                .collect(Collectors.toList()))
+    }
+    if (groupList.isEmpty()) {
+        println("AppCenter: No groups passed in, using default list. Pass groups in with -dusegroups=\"<g1>, <g2>,...\" or -Daddgroups=\"<g1>,<g2>,...\".")
+        groupList = defaultGroups
+    }
+    groupList
+}
+
+static def appCenterGetArgGroup() {
+    def group = System.properties['group'] ?: System.properties['g']
+    if (!group) throw new GradleException("Group name was not defined. Pass it in with -Dgroup=\"<group_name>\" (spaces allowed).")
+    group
+}
+
+static def appCenterEncode(str) {
+    str.replace(' ', '-')
+}
+
+static def appCenterURLEncode(str) {
+    str.replace(' ', '%20')
+}
+
+static def appCenterCleanReleaseNotes(notes) {
+    notes = notes.substring(0, Math.min(notes.length(), 5000)) //AppCenter limits length
+    notes = notes.replace('\n', "\\n")
+    notes = notes.replace('\"', "\\\"")
+    notes
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

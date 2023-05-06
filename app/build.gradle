@@ -5,6 +5,8 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+apply from: "$project.rootDir/scripts/appcenter.gradle"
+
 android {
     namespace 'com.mvi.app' //for unique R class, this is like a groupId for artifact
     compileSdk 33
@@ -62,11 +64,19 @@ android {
     buildTypes {
         debug {
             debuggable true
+            matchingFallbacks = ['debug']
+            signingConfig signingConfigs.debug
+            debuggable true
+            jniDebuggable true
+            applicationIdSuffix '.test'
+            versionNameSuffix ".${getBuildNumber()}"
         }
 
         release {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            matchingFallbacks = ['release']
+            signingConfig signingConfigs.release
         }
 
         releaseDebug {
@@ -134,6 +144,9 @@ android {
 
 
 dependencies {
+    implementation fileTree(include: '*.jar', dir: 'libs')
+    implementation fileTree(include: '*.jar', dir: 'ext_lib')
+
     //implementation(name:'agemodule-release', ext:'aar')
     implementation project(path: ":agemodule") //renamed in settings.gradle
 
@@ -167,5 +180,10 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.46'
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
     kapt 'com.google.dagger:hilt-android-compiler:2.37'
+
+    //AppCenter
+    def appCenterSdkVersion = '4.4.5'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
 }
