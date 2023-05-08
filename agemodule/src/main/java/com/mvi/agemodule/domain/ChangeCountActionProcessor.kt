@@ -7,7 +7,8 @@ import io.reactivex.ObservableTransformer
 class ChangeCountActionProcessor :
     ObservableTransformer<AgeService.Action.ChangeCount, AgeService.Result> {
 
-    override fun apply(upstream: Observable<AgeService.Action.ChangeCount>): ObservableSource<AgeService.Result> {
+    override fun apply(upstream: Observable<AgeService.Action.ChangeCount>):
+            ObservableSource<AgeService.Result> {
         return upstream.flatMap { action ->
 
             val newCount = action.currentCount + action.changeCount
