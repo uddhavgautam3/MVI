@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AgeActivity : ComponentActivity() {
 
-    private val AgeViewModel by viewModels<AgeViewModel>()
+    private val ageViewModel by viewModels<AgeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class AgeActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    AgeScreen(AgeViewModel)
+                    AgeScreen(ageViewModel)
                 }
             }
         }

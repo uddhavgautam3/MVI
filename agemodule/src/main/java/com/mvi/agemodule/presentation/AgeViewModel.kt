@@ -22,15 +22,15 @@ import javax.inject.Inject
 @HiltViewModel
 class AgeViewModel @Inject constructor(
     @ApplicationContext application: Context,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val ageService: AgeService
 ) : ViewModel() {
 
     private val intentsSubject: PublishSubject<AgeView.Action> = PublishSubject.create()
 
-    private val service = AgeServiceImpl()
 
     private val serviceState: ObservableTransformer<AgeService.Action, AgeService.Result>
-        get() = service.state()
+        get() = (ageService as AgeServiceImpl).state()
 
     //things start to change here in our compose flow
     fun registerActions(actions: Observable<AgeView.Action>) {
