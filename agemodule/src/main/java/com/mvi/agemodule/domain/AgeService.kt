@@ -2,7 +2,11 @@ package com.mvi.agemodule.domain
 
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
+import javax.inject.Inject
 
+/**
+ * We have AgeServiceModule to provide ageServiceImpl dependency as AgeService type
+ */
 interface AgeService {
     sealed class Action {
         data class ChangeCount(val currentCount: Int, val changeCount: Int) : Action()
@@ -14,10 +18,10 @@ interface AgeService {
     }
 }
 
-class AgeServiceImpl : AgeService {
-    //todo(): inject
-    //these are like use-cases
-    private val changeCountAction: ChangeCountActionProcessor = ChangeCountActionProcessor()
+class AgeServiceImpl @Inject constructor(
+    private val changeCountAction: ChangeCountActionProcessor
+) : AgeService {
+    //val changeCountAction: ChangeCountActionProcessor = ChangeCountActionProcessor()
 
     fun state() = ObservableTransformer<AgeService.Action, AgeService.Result> { actions ->
         actions.publish { shared ->
