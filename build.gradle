@@ -3,6 +3,9 @@ buildscript {
         compose_ui_version = '1.4.2'
         kotlin_version = '1.8.20'
     }
+    dependencies {
+        classpath 'org.jacoco:org.jacoco.core:0.8.7'
+    }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 //IDE plugins
 plugins {

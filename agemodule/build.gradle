@@ -6,6 +6,8 @@ plugins {
     id 'maven-publish'
 }
 
+apply from: "$project.rootDir/scripts/jacoco.gradle"
+
 android {
     namespace 'com.mvi.agemodule'
     compileSdk 33

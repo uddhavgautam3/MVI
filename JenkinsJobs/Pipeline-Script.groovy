@@ -1,5 +1,3 @@
-import java.lang.invoke.VarHandle
-
 node {
 
     try {
@@ -10,6 +8,10 @@ node {
         def APP_NAME = env.APP_NAME ?: ''
         def SET_GROUPS = env.SET_GROUPS ?: ''
         def ADD_GROUPS = env.ADD_GROUPS ?: ''
+
+
+        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
+        VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
 
         if (APP_NAME == "") {
             echo "Error: APP_NAME not defined!"
@@ -40,8 +42,19 @@ node {
 
         }
 
-        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
-        VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
+        stage('Test Android') {
+            dir('MVI') {
+                echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
+
+                if(env.CODE_COVERAGE_ENABLED == "true") {
+                    sh "./gradlew create${VARIANT}CoverageReport"
+                } else {
+                    sh "./gradlew agemodule:testDebugUnitTest"
+                    sh "./gradlew app:test${FLAVOR}DebugUnitTest"
+                }
+
+            }
+        }
 
         stage('Lint Report') {
             sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
@@ -54,9 +67,6 @@ node {
             }
             recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
         }
-
-        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
-        println("Building variant: ${FLAVOR}${CAMELCASE_BUILT_TYPE}")
 
         stage('Build Android') {
             dir('MVI') {
