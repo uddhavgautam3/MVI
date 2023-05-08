@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.agemodule'
+    namespace 'com.mvi.agemodule'
     compileSdk 33
 
     defaultConfig {
@@ -28,15 +28,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion "1.4.6"
     }
+
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -60,39 +64,21 @@ android {
 
         staging {
             initWith debug
-            manifestPlaceholders = [hostName: "internal.agemodule.app.example.com"]
+        }
+        enterpriseQa {
+            jniDebuggable true
+            debuggable true
+            renderscriptDebuggable true
+            signingConfig signingConfigs.debug
+            renderscriptOptimLevel 3
+        }
+        releaseDebug {
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            signingConfig signingConfigs.debug
         }
 
-    }
-
-    flavorDimensions "api", "mode"
-    productFlavors {
-        demo {
-            dimension "mode"
-            versionNameSuffix "-demo"
-        }
-        full {
-            dimension "mode"
-            versionNameSuffix "-full"
-        }
-
-        minApi24 {
-            dimension "api"
-            minSdkVersion 24
-            versionNameSuffix "-minApi24"
-        }
-
-        minApi23 {
-            dimension "api"
-            minSdkVersion 23
-            versionNameSuffix "-minApi23"
-        }
-
-        minApi21 {
-            dimension "api"
-            minSdkVersion 21
-            versionNameSuffix "-minApi21"
-        }
     }
 
     publishing {
@@ -125,10 +111,10 @@ afterEvaluate {
             }*/
 
             //coming from multi variants software component
-            minApi23DemoDebug(MavenPublication) {
-                from components.minApi23DemoDebug
+            staging(MavenPublication) {
+                from components.staging
                 groupId = 'android.MVI'
-                artifactId = 'minApi23DemoDebug.ageModule'
+                artifactId = 'staging.ageModule'
                 version = '1.0.0'
 
             }
@@ -153,7 +139,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.7.1'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.4.2'
+    implementation "androidx.compose.material:material:$compose_ui_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -178,5 +164,10 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.46'
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
     kapt 'com.google.dagger:hilt-android-compiler:2.37'
+
+    //AppCenter
+    def appCenterSdkVersion = '4.4.5'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
 }

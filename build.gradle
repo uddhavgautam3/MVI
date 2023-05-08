@@ -12,3 +12,18 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
     id 'maven-publish'
 }
+
+static String getBuildNumber() {
+    return getPropertyOrEnv('BUILD_NUMBER', 'LocalDebug')
+}
+
+static String getPropertyOrEnv(name, defaultValue = '') {
+    def prop = System.properties[name]
+    if (prop == null) {
+        prop = System.getenv(name)
+    }
+    if (prop == null) {
+        return defaultValue
+    }
+    return prop
+}
