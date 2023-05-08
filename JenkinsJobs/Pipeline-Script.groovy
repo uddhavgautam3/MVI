@@ -1,3 +1,5 @@
+import java.lang.invoke.VarHandle
+
 node {
 
     try {
@@ -41,6 +43,18 @@ node {
         CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
         VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
 
+        stage('Lint Report') {
+            sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
+            dir('MVI') {
+                sh "./gradlew app:lint${VARIANT}"
+                sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
+                reportDir: 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
+                reportName: 'Android Lint Report', reportTitles: 'Android Lint Report'])
+            }
+            recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
+        }
+
         CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
         println("Building variant: ${FLAVOR}${CAMELCASE_BUILT_TYPE}")
 
@@ -60,7 +74,6 @@ node {
                 echo "Skipping upload to App Center"
             }
         }
-
 
     } catch (e) {
         currentBuild.result = "FAILED"
