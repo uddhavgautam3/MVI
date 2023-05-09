@@ -1,0 +1,16 @@
+apply plugin: 'checkstyle'
+
+def checkstyleSuppressionConfigDir = file("${rootDir}/config/checkstyle")
+
+//you can run task from here just to check
+task checkstyle(type: Checkstyle, group: 'Verification') {
+    ignoreFailures = false
+    showViolations = true
+    source 'src'
+    include '**/*.java', '**/*.kt'
+    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
+    classpath = files()
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties.lineWidth = 120
+    configProperties.checkstyleSuppressionConfigDir = checkstyleSuppressionConfigDir
+}

@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+
+    <suppress checks="[a-zA-Z0-9]*" files="R.java" />
+    <suppress checks="[a-zA-Z0-9]*" files="BuildConfig.java" />
+    <suppress checks="[a-zA-Z0-9]*" files="Test" />
+    <suppress checks="[a-zA-Z0-9]*" files="Dagger" />
+    <suppress checks="[a-zA-Z0-9]*" files=".*_.*Factory.java" />
+    <suppress checks="[a-zA-Z0-9]*" files=".*ViewInjector.java" />
+    <suppress checks="[a-zA-Z0-9]*" files=".*_MembersInjector.java" />
+    <suppress checks="[a-zA-Z0-9]*" files=".*/model/.*.java" />
+
+    <suppress files="google_checks\.xml" id="lineLengthXml" lines="58,127" />
+    <suppress files="releasenotes_old_8\-0_8\-34\.xml" id="lineLengthXml" />
+    <suppress files="releasenotes_old_6\-0_7\-8\.xml" id="lineLengthXml" />
+    <suppress files="releasenotes_old_1\-0_5\-9\.xml" id="lineLengthXml" />
+    <suppress files="[\\/]meta[\\/]" id="lineLengthXml" />
+
+    <suppress checks="FileLength" files="TokenTypes.java|IndentationCheckTest.java" lines="1" />
+
+    <suppress checks="TodoComment" files=".*TodoCommentCheck\.java" />
+
+    <suppress checks="AbstractClassNameCheck" files="AbstractClassNameCheck.java" />
+    <suppress checks="AbstractClassNameCheck" files="AbstractCheckTest.java|AbstractClassNameCheckTest.java|
+                    |AbstractJavadocCheckTest.java|
+                    |AbstractViolationReporterTest.java|AbstractFileSetCheckTest.java" />
+
+    <suppress checks="ExecutableStatementCount|JavaNCSS" files="[\\/]XdocsPagesTest\.java" />
+
+    <suppress checks="MagicNumber" files="(ParseTreeTablePresentation|MainFrame)\.java" />
+
+    <suppress checks="MethodLength" files=".*(Generated)?Java(doc)?TokenTypesTest\.java" />
+    <suppress checks="ExecutableStatementCount"
+        files=".*(Generated)?Java(doc)?TokenTypesTest\.java" />
+    <suppress checks="JavaNCSS" files=".*(Generated)?Java(doc)?TokenTypesTest\.java" />
+
+    <suppress checks="TrailingComment" files="(InnerAssignmentCheck\.java|OperatorWrapCheck\.java|
+              |AbbreviationAsWordInNameCheckTest\.java)" />
+
+    <suppress checks="MultipleStringLiterals" files="JavadocStyleCheck\.java|XMLLogger\.java" />
+
+    <suppress checks="MethodCount" files="[\\/]JavadocMethodCheck.java$" />
+    <suppress checks="MethodCount" files="[\\/]CommentsIndentationCheck.java$" />
+    <suppress checks="MethodCount" files="[\\/]VisibilityModifierCheck.java$" />
+    <suppress checks="MethodCount" files="[\\/]RequireThisCheck.java$" />
+    <suppress checks="MethodCount" files="[\\/]UnusedLocalVariableCheck.java" />
+    <suppress checks="IllegalCatch" files="[\\/]src[\\/]test[\\/].*[\\/]InlineConfigParser\.java" />
+
+    <suppress checks="ClassDataAbstractionCoupling" files="AutomaticBean\.java" />
+    <suppress checks="ClassDataAbstractionCoupling"
+        files="(Checker|Main|CheckstyleAntTask|JavadocDetailNodeParser|ElementNode)\.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="(CheckerTest|AbstractModuleTestSupport|AbstractItModuleTestSupport|
+                    |CheckstyleAntTaskTest|
+                    |TranslationCheckTest|LocalizedMessageTest|AbstractFileSetCheckTest|
+                    |AbstractCheckTest)\.java" />
+    <suppress checks="ClassDataAbstractionCoupling"
+        files="XpathFileGeneratorAuditListenerTest\.java" />
+    <suppress checks="ClassFanOutComplexity" files="[\\/]Main\.java" />
+    <suppress checks="ClassFanOutComplexity" files="CheckerTest\.java" />
+    <suppress checks="ClassFanOutComplexity" files="Checker\.java" />
+    <suppress checks="ClassFanOutComplexity" files="XdocsPagesTest\.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="(TreeTable|MainFrame)\.java" />
+
+    <suppress checks="ReturnCount" files="(ConfigurationLoader|LambdaHandler)\.java" />
+
+    <suppress checks="ExecutableStatementCount" files="HandlerFactory\.java" />
+
+    <suppress files="[\\/]releasenotes.xml" id="noSourceforgeNetLinks" />
+    <suppress files="[\\/]releasenotes_old_8\-0_8\-34\.xml" id="noSourceforgeNetLinks" />
+    <suppress files="[\\/]index.xml.vm" id="noSourceforgeIoLinks" />
+
+    <suppress files="[\\/]src[\\/]xdocs[\\/]writingchecks.xml" id="noIndentationConfigExamples" />
+    <suppress files="[\\/]src[\\/]xdocs[\\/]beginning_development.xml"
+        id="noIndentationConfigExamples" />
+
+    <suppress files="FallThroughCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="ImportControlCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="UnusedImportsCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="JavadocMethodCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="JavadocStyleCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="JavadocTypeCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="JavadocVariableCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="MissingJavadocMethodCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="MissingJavadocTypeCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="WriteTagCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="RegexpCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="RegexpSinglelineJavaCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="EmptyLineSeparatorCheck.java" id="noUsageOfGetFileContentsMethod" />
+    <suppress files="AvoidEscapedUnicodeCharactersCheck.java" id="noUsageOfGetFileContentsMethod" />
+
+    <suppress files="[\\/]DetailAstImplTest.java" id="MatchXPathBranchContains" />
+
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]api[\\/]JavadocTokenTypesTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]coding[\\/]RequireThisCheckTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]grammar[\\/]GeneratedJavaTokenTypesTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]grammar[\\/]javadoc[\\/]GeneratedJavadocTokenTypesTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]imports[\\/]CustomImportOrderCheckTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]imports[\\/]ImportControlLoaderTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]javadoc[\\/]JavadocMethodCheckTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]javadoc[\\/]JavadocTagInfoTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]SuppressWarningsHolderTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]TranslationCheckTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]checks[\\/]UniquePropertiesCheckTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]internal[\\/]AllChecksTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]internal[\\/]XdocsPagesTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]utils[\\/]CommonUtilTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]CheckerTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]ConfigurationLoaderTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]DefaultLoggerTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]DetailAstImplTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]MainTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]PackageObjectFactoryTest.java"
+        id="ImportControlTest" />
+    <suppress
+        files="[\\/]src[\\/]test[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]utils[\\/]TokenUtilTest.java"
+        id="ImportControlTest" />
+
+    <suppress checks="MethodCount"
+        files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]JavaAstVisitor.java" />
+    <suppress checks="FileLength"
+        files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]JavaAstVisitor.java" />
+    <suppress checks="ClassFanOutComplexity"
+        files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]JavaAstVisitor.java" />
+
+    <suppress checks="MethodCount"
+        files="[\\/]src[\\/]main[\\/]java[\\/]com[\\/]puppycrawl[\\/]tools[\\/]checkstyle[\\/]DetailAstImpl.java" />
+</suppressions>

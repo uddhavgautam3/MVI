@@ -12,6 +12,8 @@ apply from: "$project.rootDir/scripts/jacoco.gradle"
 android {
     namespace 'com.mvi.app' //for unique R class, this is like a groupId for artifact
     compileSdk 33
+    buildToolsVersion '33.0.2'
+    ndkVersion '25.2.9519653'
 
     defaultConfig {
         applicationId "com.mvi.app"

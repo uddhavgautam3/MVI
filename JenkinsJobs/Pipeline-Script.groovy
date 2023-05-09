@@ -42,17 +42,10 @@ node {
 
         }
 
-        stage('Test Android') {
+        stage('Code Quality (Spotbugs, PMD, CheckQuality)') {
             dir('MVI') {
-                echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
-
-                if(env.CODE_COVERAGE_ENABLED == "true") {
-                    sh "./gradlew create${VARIANT}CoverageReport"
-                } else {
-                    sh "./gradlew agemodule:testDebugUnitTest"
-                    sh "./gradlew app:test${FLAVOR}DebugUnitTest"
-                }
-
+                echo "Code quality check: ${env.CODE_QUALITY_ENABLED}"
+                sh "./gradlew check"
             }
         }
 
@@ -62,10 +55,24 @@ node {
                 sh "./gradlew app:lint${VARIANT}"
                 sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                reportDir: 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
-                reportName: 'Android Lint Report', reportTitles: 'Android Lint Report'])
+                             reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
+                             reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
             }
             recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
+        }
+
+        stage('Test Android') {
+            dir('MVI') {
+                echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
+
+                if (env.CODE_COVERAGE_ENABLED == "true") {
+                    sh "./gradlew create${VARIANT}CoverageReport"
+                } else {
+                    sh "./gradlew agemodule:testDebugUnitTest"
+                    sh "./gradlew app:test${FLAVOR}DebugUnitTest"
+                }
+
+            }
         }
 
         stage('Build Android') {
