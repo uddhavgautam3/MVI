@@ -1,0 +1,315 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PMD ruleset for Checkstyle"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0" xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                            http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>Custom ruleset for Android Application</description>
+
+    <exclude-pattern>.*/R.java</exclude-pattern>
+    <exclude-pattern>.*/gen/.*</exclude-pattern>
+
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="JUnitTestContainsTooManyAsserts" />
+        <exclude name="AvoidReassigningParameters" />
+        <exclude name="JUnitAssertionsShouldIncludeMessage" />
+        <exclude name="ArrayIsStoredDirectly" />
+        <exclude name="MethodReturnsInternalArray" />
+        <exclude name="AvoidReassigningLoopVariables" />
+        <exclude name="GuardLogStatement" />
+        <exclude name="UnusedPrivateMethod" />
+    </rule>
+    <rule ref="category/java/bestpractices.xml/AvoidPrintStackTrace">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[
+        @SimpleName='Main']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/bestpractices.xml/JUnitAssertionsShouldIncludeMessage">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='JavadocCatchCheck']
+                           //MethodDeclaration[@Name='visitJavadocToken']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/bestpractices.xml/SystemPrintln">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration
+                       [@SimpleName='Main' or @SimpleName='Main$CliOptions'
+                       or @SimpleName='JavadocPropertiesGenerator']" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentSize" />
+    </rule>
+    <rule ref="category/java/documentation.xml/CommentRequired">
+        <properties>
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='RequireThisCheck']" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="TooManyStaticImports" />
+        <exclude name="AtLeastOneConstructor" />
+        <exclude name="AbstractNaming" />
+        <exclude name="ShortMethodName" />
+        <exclude name="VariableNamingConventions" />
+        <exclude name="CommentDefaultAccessModifier" />
+        <exclude name="AvoidFinalLocalVariable" />
+        <exclude name="AvoidPrefixingMethodParameters" />
+        <exclude name="CallSuperInConstructor" />
+        <exclude name="LocalVariableCouldBeFinal" />
+        <exclude name="MethodArgumentCouldBeFinal" />
+        <exclude name="OnlyOneReturn" />
+        <exclude name="ShortVariable" />
+        <exclude name="LongVariable" />
+        <exclude name="ClassNamingConventions" />
+        <exclude name="AvoidProtectedFieldInFinalClass" />
+        <exclude name="UnnecessaryAnnotationValueElement" />
+        <exclude name="UnnecessaryFullyQualifiedName" />
+    </rule>
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+        <properties>
+            <property name="classPattern" value="[A-Z][a-zA-Z0-9]*" />
+            <property name="abstractClassPattern" value="Abstract[A-Z][a-zA-Z0-9]*" />
+            <property name="interfacePattern" value="[A-Z][a-zA-Z0-9]*" />
+            <property name="enumPattern" value="[A-Z][a-zA-Z0-9]*" />
+            <property name="annotationPattern" value="[A-Z][a-zA-Z0-9]*" />
+            <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]*Util" />
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='Definitions'
+                           or @SimpleName='LoadExternalDtdFeatureProvider'
+                           or @SimpleName='JavadocTokenTypes'
+                           or @SimpleName='TokenTypes'
+                           or @SimpleName='AutomaticBean']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/ConfusingTernary">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='XMLLogger']
+                           //MethodDeclaration[@Name='isReference']
+      | //ClassOrInterfaceDeclaration[@SimpleName='DetailAstImpl']
+              //MethodDeclaration[@Name='addPreviousSibling']
+      | //ClassOrInterfaceDeclaration[@SimpleName='AnnotationLocationCheck']
+              //MethodDeclaration[@Name='checkAnnotations']
+      | //ClassOrInterfaceDeclaration[@SimpleName='AbstractImportControl']
+              //MethodDeclaration[@Name='checkAccess']
+      | //ClassOrInterfaceDeclaration[@SimpleName='HandlerFactory']
+              //MethodDeclaration[@Name='getHandler']
+      | //ClassOrInterfaceDeclaration[@SimpleName='JavaAstVisitor']
+              //MethodDeclaration[@Name='visitWildCardTypeArgument']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/EmptyMethodInAbstractClassShouldBeAbstract">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='AbstractFileSetCheck'
+        or @SimpleName='AbstractCheck' or @SimpleName='AbstractJavadocCheck'
+        or @SimpleName='AbstractNode'
+        or @SimpleName='AbstractViolationReporter']
+        | //ClassOrInterfaceDeclaration[@SimpleName='AbstractRootNode']
+          //MethodDeclaration[@Name='getParent' or @Name='getDepth']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/UseUnderscoresInNumericLiterals">
+        <properties>
+            <property name="acceptableDecimalLength" value="6" />
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/LongVariable">
+        <properties>
+            <property name="minimum" value="45" />
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/ShortClassName">
+        <properties>
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='Main' or @SimpleName='Tag']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/CommentDefaultAccessModifier">
+        <properties>
+            <property name="ignoredAnnotations" value="" />
+            <property name="regex" value="\/\*\s+(package)\s+\*\/" />
+            <property name="checkTopLevelTypes" value="false" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="AvoidLiteralsInIfCondition">
+            <properties>
+                <property name="ignoreMagicNumbers" value="-1,0,1" />
+            </properties>
+        </exclude>
+        <exclude name="BeanMembersShouldSerialize" />
+        <exclude name="CompareObjectsWithEquals" />
+        <exclude name="DataflowAnomalyAnalysis" />
+        <exclude name="ImplicitSwitchFallThrough" />
+        <exclude name="AvoidCatchingNPE" />
+        <exclude name="OverrideBothEqualsAndHashcode" />
+        <exclude name="AvoidFieldNameMatchingTypeName" />
+        <exclude name="ReturnEmptyArrayRatherThanNull" />
+        <exclude name="NullAssignment" />
+        <exclude name="UseProperClassLoader" />
+        <exclude name="ProperLogger" />
+    </rule>
+    <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+        <properties>
+            <property name="skipAnnotations" value="true" />
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='SarifLogger']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/errorprone.xml/EmptyCatchBlock">
+        <properties>
+            <property name="allowCommentedBlocks" value="true" />
+        </properties>
+    </rule>
+    <rule ref="category/java/errorprone.xml/DoNotTerminateVM">
+        <properties>
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='ExitHelper']" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <exclude name="CyclomaticComplexity" />
+        <exclude name="TooManyMethods" />
+        <exclude name="AvoidCatchingGenericException" />
+        <exclude name="AvoidDeeplyNestedIfStmts" />
+        <exclude name="NPathComplexity" />
+        <exclude name="ExcessiveImports" />
+        <exclude name="DataClass" />
+        <exclude name="TooManyFields" />
+        <exclude name="ExcessiveParameterList" />
+        <exclude name="ExcessiveMethodLength" />
+        <exclude name="AvoidThrowingRawExceptionTypes" />
+        <exclude name="NcssCount" />
+        <exclude name="ExcessiveClassLength" />
+        <exclude name="ExcessivePublicCount" />
+        <exclude name="CouplingBetweenObjects" />
+        <exclude name="DataClass" />
+        <exclude name="GodClass" />
+        <exclude name="LawOfDemeter" />
+        <exclude name="LoosePackageCoupling" />
+    </rule>
+    <rule ref="category/java/design.xml/AvoidCatchingGenericException">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='Checker']
+                             //MethodDeclaration[@Name='processFiles']
+                      |//ClassOrInterfaceDeclaration[@SimpleName='TranslationCheck']
+                             //MethodDeclaration[@Name='getTranslationKeys']
+                      |//ClassOrInterfaceDeclaration[@SimpleName='JavadocMethodCheck']
+                             //MethodDeclaration[@Name='resolveClass']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/AvoidDeeplyNestedIfStmts">
+        <properties>
+            <property name="problemDepth" value="4" />
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='ClassResolver']
+                             //MethodDeclaration[@Name='resolve']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/AvoidThrowingRawExceptionTypes">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='Checker']
+                             //MethodDeclaration[@Name='processFiles']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='HandlerFactory']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/NcssCount">
+        <properties>
+            <property name="methodReportLevel" value="32" />
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='Main'
+        or @SimpleName='PackageObjectFactory' or @SimpleName='RequireThisCheck'
+        or @SimpleName='VariableDeclarationUsageDistanceCheck'
+        or @SimpleName='HandlerFactory']
+      | //ClassOrInterfaceDeclaration[@SimpleName='XMLLogger']//MethodDeclaration[@Name='encode']
+      | //ClassOrInterfaceDeclaration[@SimpleName='SarifLogger']//MethodDeclaration[@Name='escape']
+      | //ClassOrInterfaceDeclaration[@SimpleName='LeftCurlyCheck'
+        or @SimpleName='FinalLocalVariableCheck'
+        or @SimpleName='NPathComplexityCheck']
+             //MethodDeclaration[@Name='visitToken']
+      | //ClassOrInterfaceDeclaration[@SimpleName='FallThroughCheck']
+             //MethodDeclaration[@Name='isTerminated']
+      | //ClassOrInterfaceDeclaration[@SimpleName='ModifiedControlVariableCheck'
+        or @SimpleName='NPathComplexityCheck']//MethodDeclaration[@Name='leaveToken']
+      | //ClassOrInterfaceDeclaration[@SimpleName='NoWhitespaceAfterCheck']
+             //MethodDeclaration[@Name='getArrayDeclaratorPreviousElement']
+      | //ClassOrInterfaceDeclaration[@SimpleName='AbstractElementNode'
+        or @SimpleName='AbstractRootNode']
+             //MethodDeclaration[@Name='iterateAxis']
+      | //ClassOrInterfaceDeclaration[@SimpleName='SuppressFilterElement']
+             //ConstructorDeclaration
+      " />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/TooManyFields">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='Checker']
+    | //ClassOrInterfaceDeclaration[@SimpleName='Main']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="34" />
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='JavaAstVisitor']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/ExcessiveClassLength">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='JavadocTokenTypes'
+        or @SimpleName='TokenTypes' or @SimpleName='RequireThisCheck'
+        or @SimpleName='JavadocMethodCheck' or @SimpleName='JavaAstVisitor']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/ExcessiveParameterList">
+        <properties>
+            <!-- The class Violation has a constructor with many parameters by design. -->
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='Violation']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/ExcessiveImports">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='Main'
+        or @SimpleName='Checker' or @SimpleName='CheckstyleAntTask'
+        or @SimpleName='TranslationCheck']" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/CognitiveComplexity">
+        <properties>
+            <property name="reportLevel" value="22" />
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='XdocsPagesTest']
+                    //MethodDeclaration[@Name='getModulePropertyExpectedValue']" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="UseConcurrentHashMap" />
+    </rule>
+    <rule ref="category/java/multithreading.xml/AvoidSynchronizedAtMethodLevel">
+        <properties>
+            <property name="violationSuppressXPath" value="//ClassOrInterfaceDeclaration[@SimpleName='UniqueProperties'
+          or @SimpleName='SequencedProperties']//MethodDeclaration[@Name='keys' or @Name='put']" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/performance.xml">
+        <exclude name="ConsecutiveAppendsShouldReuse" />
+        <exclude name="InsufficientStringBufferDeclaration" />
+        <exclude name="AvoidFileStream" />
+        <exclude name="AvoidInstantiatingObjectsInLoops" />
+        <exclude name="UseStringBufferForStringAppends" />
+    </rule>
+
+    <rule ref="category/java/design.xml/ExcessivePublicCount">
+        <properties>
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceDeclaration[@SimpleName='JavaAstVisitor']" />
+        </properties>
+    </rule>
+</ruleset>

@@ -475,7 +475,7 @@ def appCenterCommand(method, path, body = null, parseAsJson = true, silent = tru
     ]
     if (body) {
         cmd.addAll(['-d', body])
-    } else if(method == 'POST') {
+    } else if (method == 'POST') {
         cmd.addAll(['-H', 'Content-Length: 0'])
     }
     //println("AppCenter method: ${method}")
@@ -488,7 +488,7 @@ def appCenterCommand(method, path, body = null, parseAsJson = true, silent = tru
 
 def appCenterGetGroupIds(List allGroupsInOrg) {
     def groupList = appCenterGetArgGroups(AppCenter.groups)
-    def map = groupList.stream().distinct().collect(Collectors.toMap({name -> name}, {name -> appCenterFindGroupId(allGroupsInOrg, name) }))
+    def map = groupList.stream().distinct().collect(Collectors.toMap({ name -> name }, { name -> appCenterFindGroupId(allGroupsInOrg, name) }))
     println("AppCenter: Using groups ${groupList.stream().distinct().map { name -> "'${name}'" }.collect(Collectors.joining(', '))}.")
     map
 }

@@ -1,0 +1,49 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
+apply plugin: "com.github.spotbugs"
+
+project.tasks.withType(SpotBugsTask) {
+    group 'Verification'
+    description 'Run Spotbugs on this project.'
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+//define a closure called spotbugs
+spotbugs {
+    ignoreFailures = false
+    showStackTraces = true
+    showProgress = true
+    reportLevel = 'default'
+    visitors = [ 'FindSqlInjection', 'SwitchFallthrough' ]
+    omitVisitors = [ 'FindNonShortCircuit' ]
+    reportsDir = file("$buildDir/spotbugs")
+    includeFilter = file("include.xml")
+    excludeFilter = file("exclude.xml")
+    baselineFile = file("baseline.xml")
+    onlyAnalyze = [ 'com.foobar.MyClass', 'com.foobar.mypkg.*' ]
+    maxHeapSize = '1g'
+    extraArgs = [ '-nested:false' ]
+    jvmArgs = [ '-Duser.language=ja' ]
+    effort = 'max'
+    reportLevel = 'high'
+}
+
+project.plugins.whenPluginAdded { newPlugin ->
+    switch (newPlugin.class.name) {
+        case 'com.android.build.gradle.LibraryPlugin':
+            createFlavorTypeVariants { type, flavor ->
+                project.rootProject.tasks.findByName("spotbugs${flavor.capitalize()}${type.capitalize()}").dependsOn(":${project.path}:spotbugs${type.capitalize()}")
+            }
+            break
+        case 'com.android.build.gradle.AppPlugin':
+            createFlavorTypeVariants { type, flavor ->
+                def flavorType = "$flavor${type.capitalize()}"
+                project.rootProject.tasks.findByName("spotbugs${flavorType.capitalize()}").dependsOn(":${project.path}:spotbugs${flavorType.capitalize()}")
+            }
+            break
+    }
+}

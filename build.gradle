@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'org.jacoco:org.jacoco.core:0.8.7'
+        classpath 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.7.3'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 //IDE plugins
@@ -14,6 +15,21 @@ plugins {
     id 'com.google.dagger.hilt.android' version '2.44' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
     id 'maven-publish'
+}
+
+subprojects {
+    //includes checkstyle, spotbugs, pmd
+    apply from: "$project.rootDir/config/codequality.gradle"
+    afterEvaluate {
+        preBuild.dependsOn('checkstyle')
+        check.dependsOn 'checkstyle'
+        preBuild.dependsOn('pmd')
+        check.dependsOn 'pmd'
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
 
 static String getBuildNumber() {

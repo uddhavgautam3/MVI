@@ -1,0 +1,11 @@
+apply plugin: 'pmd'
+
+task pmd(type: Pmd, group: 'Verification') {
+    ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
+    ruleSets = []
+    ignoreFailures = false
+    source 'src'
+    include '**/*.java', '**/*.kt'
+    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
+    classpath = files()
+}
