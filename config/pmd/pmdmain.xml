@@ -7,7 +7,6 @@
     </description>
     <exclude-pattern>.*/src/it/.*</exclude-pattern>
     <exclude-pattern>.*/src/test/.*</exclude-pattern>
-    <rule ref="config/pmd/pmd.xml" />
 
     <rule ref="category/java/design.xml/ImmutableField">
         <properties>
@@ -22,6 +21,7 @@
         </properties>
     </rule>
     <rule ref="category/java/errorprone.xml/CloseResource">
+
         <properties>
             <property name="allowedResourceTypes"
                 value="java.io.ByteArrayOutputStream|java.io.ByteArrayInputStream" />

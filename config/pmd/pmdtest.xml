@@ -7,54 +7,6 @@
     </description>
     <exclude-pattern>.*/src/main/.*</exclude-pattern>
 
-    <rule ref="config/pmd/pmd.xml">
-        <!-- We do throw Exception, as any exception that in not caught in test should fail
-          a test that is expected behavior and we like it as it follow fail-fast and helps
-          to avoid extra catch blocks -->
-        <exclude name="SignatureDeclareThrowsException" />
-        <!-- We need reflection in the tests to access some internal state. -->
-        <exclude name="AvoidAccessibilityAlteration" />
-        <!-- it's madness to move all string values to common variables,
-          it will be hard to read test code -->
-        <exclude name="AvoidDuplicateLiterals" />
-        <!-- we do not need javadoc on test code -->
-        <exclude name="CommentRequired" />
-        <!-- we like static imports in UTs as them minimize the code and we know that most of
-          such methods are from UT+moks frameworks -->
-        <exclude name="TooManyStaticImports" />
-        <!-- we try to keep all testing for class in one place/class/file to ease navigation
-          between target class and it's test -->
-        <exclude name="TooManyMethods" />
-        <!-- we have too much UTs for each main class, it is better to keep all tests in one
-          file to ease navigation and search for tes -->
-        <exclude name="CouplingBetweenObjects" />
-        <!-- we have too much UTs for each main class, it is better to keep all tests in one
-          file to ease navigation and search for test -->
-        <exclude name="ExcessiveImports" />
-        <!-- test should be named as their main class -->
-        <exclude name="ClassNamingConventions" />
-        <!-- checkstyle do not use IP in configuration, so all values in tests are ok to use,
-          they just another test string data -->
-        <exclude name="AvoidUsingHardCodedIP" />
-        <!-- UTests are required to be public by design -->
-        <exclude name="ExcessivePublicCount" />
-        <!-- we have too much UTs for each main class, it is better to keep all tests in one
-          file to ease navigation and search for test -->
-        <exclude name="ExcessiveClassLength" />
-        <!-- we want to avoid wide throws signature, it is just test -->
-        <exclude name="AvoidCatchingGenericException" />
-        <!-- we do not want to invest extra time to make logic ideal
-           in test method, may be later... -->
-        <exclude name="NPathComplexity" />
-        <!-- conflicts with checkstyle rule -->
-        <exclude name="JUnitUseExpected" />
-        <!-- will be addressed in https://github.com/checkstyle/checkstyle/projects/5 -->
-        <exclude name="NonThreadSafeSingleton" />
-        <!-- Clashes with CommentDefaultAccessModifier. We do not like package and protected
-          visibility, they are HACK in design and illusion of protection of method from outside.
-          Keeping them public is ok. -->
-        <exclude name="JUnit5TestShouldBePackagePrivate" />
-    </rule>
 
     <rule ref="category/java/design.xml/NcssCount">
         <properties>

@@ -11,6 +11,8 @@ apply from: "$project.rootDir/scripts/jacoco.gradle"
 android {
     namespace 'com.mvi.agemodule'
     compileSdk 33
+    buildToolsVersion '33.0.2'
+    ndkVersion '25.2.9519653'
 
     defaultConfig {
         minSdk 21
@@ -55,12 +57,8 @@ android {
 
 
     buildTypes {
-        debug {
-            debuggable true
-        }
 
         release {
-            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
@@ -69,13 +67,11 @@ android {
         }
         enterpriseQa {
             jniDebuggable true
-            debuggable true
             renderscriptDebuggable true
             signingConfig signingConfigs.debug
             renderscriptOptimLevel 3
         }
         releaseDebug {
-            debuggable true
             jniDebuggable true
             renderscriptDebuggable true
             signingConfig signingConfigs.debug
