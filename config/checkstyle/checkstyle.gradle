@@ -1,16 +1,72 @@
 apply plugin: 'checkstyle'
 
-def checkstyleSuppressionConfigDir = file("${rootDir}/config/checkstyle")
+checkstyle {
+    toolVersion = '10.11.0'
+}
+
+//Configuration Container
+configurations {
+    checkstyle //creates a configuration name with checkstyle
+}
+
+tasks.withType(Checkstyle) {
+    minHeapSize = "1000m"
+    maxHeapSize = "4g"
+    reports {
+        xml.required = true
+        html.required = true
+        html.stylesheet resources.text.fromFile("${rootDir}/config/checkstyle/xsl/checkstyle-simple.xsl")
+        sarif.required = true
+    }
+}
 
 //you can run task from here just to check
-task checkstyle(type: Checkstyle, group: 'Verification') {
-    ignoreFailures = false
-    showViolations = true
-    source 'src'
-    include '**/*.java', '**/*.kt'
-    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
-    classpath = files()
-    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-    configProperties.lineWidth = 120
-    configProperties.checkstyleSuppressionConfigDir = checkstyleSuppressionConfigDir
-}
+//we will see taskCheckStyle in Gradle's Verification group
+//task taskCheckStyle(type: Checkstyle, group: 'Verification') {
+//    ignoreFailures = false
+//    showViolations = true
+//    source 'src'
+//    include '**/*.java', '**/*.kt'
+//    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
+//    classpath = files()
+//    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+//    configProperties.lineWidth = 120
+//    configProperties.checkstyleSuppressionConfigDir = file("${rootDir}/config/checkstyle")
+//}
+
+//when running above you will see something like this in console
+/*
+executing tasks: [taskCheckStyle] in project /home/upgautam/StudioProjects/MVI
+
+
+        > Configure project :agemodule
+Task -> DebugUnitTest
+Task -> EnterpriseQaUnitTest
+Task -> ReleaseUnitTest
+Task -> ReleaseDebugUnitTest
+Task -> StagingUnitTest
+
+        > Configure project :app
+Task -> RetailDebugUnitTest
+Task -> RetailEnterpriseQaUnitTest
+Task -> RetailReleaseUnitTest
+Task -> RetailReleaseDebugUnitTest
+Download https://repo.maven.apache.org/maven2/com/puppycrawl/tools/checkstyle/10.3.3/checkstyle-10.3.3.pom, took 248 ms (201.05 kB)
+Download https://repo.maven.apache.org/maven2/info/picocli/picocli/4.6.3/picocli-4.6.3.pom, took 39 ms (1.38 kB)
+Download https://repo.maven.apache.org/maven2/net/sf/saxon/Saxon-HE/11.4/Saxon-HE-11.4.pom, took 41 ms (4.21 kB)
+Download https://repo.maven.apache.org/maven2/org/antlr/antlr4-runtime/4.10.1/antlr4-runtime-4.10.1.pom, took 38 ms (3.47 kB)
+Download https://repo.maven.apache.org/maven2/org/antlr/antlr4-master/4.10.1/antlr4-master-4.10.1.pom, took 41 ms (4.38 kB)
+Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3.pom, took 41 ms (2.26 kB)
+Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3.module, took 40 ms (4.58 kB)
+Download https://repo.maven.apache.org/maven2/com/puppycrawl/tools/checkstyle/10.3.3/checkstyle-10.3.3.jar, took 241 ms (2.04 MB)
+Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3.jar, took 275 ms (152.67 kB)
+Download https://repo.maven.apache.org/maven2/org/antlr/antlr4-runtime/4.10.1/antlr4-runtime-4.10.1.jar, took 302 ms (322.14 kB)
+Download https://repo.maven.apache.org/maven2/info/picocli/picocli/4.6.3/picocli-4.6.3.jar, took 344 ms (405.95 kB)
+Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3-data.jar, took 433 ms (1.03 MB)
+Download https://repo.maven.apache.org/maven2/net/sf/saxon/Saxon-HE/11.4/Saxon-HE-11.4.jar, took 701 ms (5.11 MB)
+
+> Task :agemodule:taskCheckStyle
+        > Task :app:taskCheckStyle
+
+BUILD SUCCESSFUL in 9s
+2 actionable tasks: 2 executed*/

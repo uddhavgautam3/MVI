@@ -21,10 +21,13 @@ subprojects {
     //includes checkstyle, spotbugs, pmd
     apply from: "$project.rootDir/config/codequality.gradle"
     afterEvaluate {
-        preBuild.dependsOn('checkstyle')
-        check.dependsOn 'checkstyle'
-        preBuild.dependsOn('pmd')
-        check.dependsOn 'pmd'
+        //syntax: gradleTask.dependsOn(otherGradleTask)
+        //before build of any subproject taskCheckStyle should run
+        preBuild.dependsOn('taskCheckStyle')
+        //we test and check the same testCheckStyle task to see its integrity
+        check.dependsOn('taskCheckStyle')
+        preBuild.dependsOn('taskPmd')
+        check.dependsOn('taskPmd')
     }
 }
 
