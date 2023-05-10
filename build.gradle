@@ -1,30 +1,27 @@
 buildscript {
-    apply from: 'dependencies.gradle'
     dependencies {
-        classpath deps.jacoco.gradle_plugin
-        classpath deps.spotbugs.gradle_plugin
+        classpath 'org.jacoco:org.jacoco.core:0.8.7'
     }
-    addRepos(repositories)
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+    this.&addRepos
+}
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 //IDE plugins
 plugins {
-    id 'com.android.application' version '7.4.2' apply false
-    id 'com.android.library' version '7.4.2' apply false
+    id 'com.android.application' version '7.3.1' apply false
+    id 'com.android.library' version '7.3.1' apply false
     id 'com.google.dagger.hilt.android' version '2.44' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
     id 'maven-publish'
 }
 
-apply from: "${project.rootDir}/build_variants.gradle"
-//spotbugs for build and flavor variants
-createFlavorTypeVariants {
-    type, flavor -> {
-        def myType = "spotbugs${flavor.capitalize()}${type.capitalize()}"
-        task "${myType.capitalize()}"(type:DefaultTask) {
-            group 'Verification'
-            description 'Run Spotbugs on the whole project'
-        }
-    }
+ext {
+    addRepos = this.&addRepos
+    compose_ui_version = '1.4.2'
+    kotlin_version = '1.8.20'
+
+    deps = dependencies
+    room_version = '2.5.1'
 }
 
 subprojects {
@@ -58,4 +55,10 @@ static String getPropertyOrEnv(name, defaultValue = '') {
         return defaultValue
     }
     return prop
+}
+
+static def addRepos(RepositoryHandler repositoryHandler) {
+    repositoryHandler.mavenCentral()
+    repositoryHandler.google()
+    repositoryHandler.maven { url 'https://plugins.gradle.org/m2/'}
 }
