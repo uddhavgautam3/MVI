@@ -6,7 +6,7 @@ checkstyle {
 
 //Configuration Container
 configurations {
-    checkstyle //creates a configuration name with checkstyle
+    checkstyle //creates a configuration name with checkstyle that has its own lifecycle
 }
 
 tasks.withType(Checkstyle) {
@@ -22,17 +22,18 @@ tasks.withType(Checkstyle) {
 
 //you can run task from here just to check
 //we will see taskCheckStyle in Gradle's Verification group
-//task taskCheckStyle(type: Checkstyle, group: 'Verification') {
-//    ignoreFailures = false
-//    showViolations = true
-//    source 'src'
-//    include '**/*.java', '**/*.kt'
-//    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
-//    classpath = files()
-//    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-//    configProperties.lineWidth = 120
-//    configProperties.checkstyleSuppressionConfigDir = file("${rootDir}/config/checkstyle")
-//}
+//testCheckStyle will call above task.withType
+task taskCheckStyle(type: Checkstyle, group: 'Verification') {
+    ignoreFailures = false
+    showViolations = true
+    source 'src'
+    include '**/*.java', '**/*.kt'
+    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
+    classpath = files()
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties.lineWidth = 120
+    configProperties.checkstyleSuppressionConfigDir = file("${rootDir}/config/checkstyle")
+}
 
 //when running above you will see something like this in console
 /*
