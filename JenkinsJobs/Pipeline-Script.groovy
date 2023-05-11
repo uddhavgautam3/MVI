@@ -4,7 +4,7 @@ node {
         echo "Current Workspace is: ${WORKSPACE}"
 
         def FLAVOR = env.FLAVOR ?: 'retail'
-        def BUILD_TYPE = env.BUILD_TYPE ?: 'debug'
+        def BUILD_TYPE = env.BUILD_TYPE ?: 'release'
         def APP_NAME = env.APP_NAME ?: ''
         def SET_GROUPS = env.SET_GROUPS ?: ''
         def ADD_GROUPS = env.ADD_GROUPS ?: ''
