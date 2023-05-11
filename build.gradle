@@ -1,3 +1,5 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
 buildscript {
     dependencies {
         classpath 'org.jacoco:org.jacoco.core:0.8.7'
@@ -13,7 +15,7 @@ plugins {
     id 'com.google.dagger.hilt.android' version '2.44' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
     id 'maven-publish'
-    id("com.github.spotbugs") version "5.0.14"
+    id 'com.github.spotbugs' version '5.0.14' apply false
 }
 
 ext {
@@ -26,7 +28,22 @@ ext {
 }
 
 subprojects {
-    //includes checkstyle, spotbugs, pmd
+    //spot bugs reports generated only this way
+    apply plugin: 'com.github.spotbugs'
+    spotbugs {
+        toolVersion = '4.2.3'
+    }
+
+    tasks.withType(SpotBugsTask) {
+        reports {
+            xml.enabled = false
+            html.enabled = true
+        }
+    }
+
+
+    //checkstyle, pmd, and spotbugs all run during ./gradlew check
+    //includes checkstyle, pmd, and spotbugs
     apply from: "$project.rootDir/config/codequality.gradle"
     afterEvaluate {
         //syntax: gradleTask.dependsOn(otherGradleTask)
@@ -41,17 +58,6 @@ subprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-import com.github.spotbugs.snom.SpotBugsTask
-apply from: "${rootDir}/config/spotbugs/spotbugs.gradle"
-tasks.withType(SpotBugsTask) {
-    reports {
-        html {
-            enabled true
-            stylesheet = 'fancy-hist.xsl'
-        }
-    }
 }
 
 

@@ -4,7 +4,7 @@ node {
         echo "Current Workspace is: ${WORKSPACE}"
 
         def FLAVOR = env.FLAVOR ?: 'retail'
-        def BUILD_TYPE = env.BUILD_TYPE ?: 'debug'
+        def BUILD_TYPE = env.BUILD_TYPE ?: 'release'
         def APP_NAME = env.APP_NAME ?: ''
         def SET_GROUPS = env.SET_GROUPS ?: ''
         def ADD_GROUPS = env.ADD_GROUPS ?: ''
@@ -42,11 +42,12 @@ node {
 
         }
 
-        stage('Code Quality (Checkstyle, PMD)') {
+        stage('Code Quality (Checkstyle, PMD, Spotbugs)') {
             dir('MVI') {
                 echo "Code quality check: ${env.CODE_QUALITY_ENABLED}"
-                sh "./gradlew taskCheckStyle"
-                sh "./gradlew taskPMD"
+                //sh "./gradlew taskCheckStyle"
+                //sh "./gradlew taskPMD"
+                sh "./gradlew check" //includes spotbugs, checkstyle, and pmd
             }
         }
 
