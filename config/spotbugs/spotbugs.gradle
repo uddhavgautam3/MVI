@@ -1,0 +1,11 @@
+apply plugin: "com.github.spotbugs"
+
+/*
+ * Configure SpotBugs (FindBugs successor).
+ *
+ * See https://spotbugs.readthedocs.io
+ */
+spotbugs {
+    excludeFilter = file("${rootDir}/config/spotbugs/spotbugs-filter.xml")
+    effort = "max"
+}
