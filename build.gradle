@@ -27,6 +27,10 @@ ext {
     room_version = '2.5.1'
 }
 
+allprojects {
+    apply plugin: 'jacoco'
+}
+
 subprojects {
     //spot bugs reports generated only this way
     apply plugin: 'com.github.spotbugs'
@@ -80,4 +84,5 @@ static def addRepos(RepositoryHandler repositoryHandler) {
     repositoryHandler.mavenCentral()
     repositoryHandler.google()
     repositoryHandler.maven { url 'https://plugins.gradle.org/m2/'}
+    repositoryHandler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
