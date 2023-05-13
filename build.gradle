@@ -2,7 +2,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 
 buildscript {
     dependencies {
-        classpath 'org.jacoco:org.jacoco.core:0.8.7'
+        classpath 'org.jacoco:org.jacoco.core:0.8.8'
     }
     this.&addRepos
 }
