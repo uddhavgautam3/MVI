@@ -48,6 +48,7 @@ allprojects {
 subprojects {
     apply plugin: 'org.jetbrains.dokka'
 
+
     //spot bugs reports generated only this way
     apply plugin: 'com.github.spotbugs'
     spotbugs {

@@ -72,16 +72,8 @@ node {
 
         stage('Dokka Report') {
             dir('MVI') {
-                //only one command pass on jenkins, for another command to pass, we need to rebuild again
-                //sh "./gradlew dokkaHtml"
-                //sh "./gradlew dokkaJavadoc"
-                //sh "./gradlew dokkaGfm"
-                //sh "./gradlew dokkaJekyll"
-
-                //multimodule
-                sh "./gradlew dokkaHtmlMultiModule"
-                //sh "./gradlew dokkaGfmMultiModule"
-                //sh "./gradlew dokkaJekyllMultiModule"
+                sh "./gradlew clean"
+                sh "./gradlew dokkaHtml"
             }
         }
 
