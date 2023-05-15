@@ -19,7 +19,8 @@ plugins {
     id 'maven-publish'
     id 'com.github.spotbugs' version '5.0.14' apply false
     id 'jacoco'//Plugin 'jacoco' is a core Gradle plugin, which cannot be specified with a version number
-    id "org.sonarqube" version "4.0.0.2929"
+    id 'org.sonarqube' version '4.0.0.2929'
+    id 'org.jetbrains.dokka' version '1.8.10'
 }
 
 ext {
@@ -45,6 +46,8 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'org.jetbrains.dokka'
+
     //spot bugs reports generated only this way
     apply plugin: 'com.github.spotbugs'
     spotbugs {

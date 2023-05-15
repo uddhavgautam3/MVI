@@ -4,6 +4,10 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
     id 'maven-publish'
+
+    //dokka reporting
+    //id 'kotlin-android'
+    //id 'org.jetbrains.dokka' version '1.8.10'
 }
 
 apply from: "$project.rootDir/scripts/jacoco.gradle"

@@ -70,6 +70,21 @@ node {
             recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
         }
 
+        stage('Dokka Report') {
+            dir('MVI') {
+                //only one command pass on jenkins, for another command to pass, we need to rebuild again
+                //sh "./gradlew dokkaHtml"
+                //sh "./gradlew dokkaJavadoc"
+                //sh "./gradlew dokkaGfm"
+                //sh "./gradlew dokkaJekyll"
+
+                //multimodule
+                sh "./gradlew dokkaHtmlMultiModule"
+                //sh "./gradlew dokkaGfmMultiModule"
+                //sh "./gradlew dokkaJekyllMultiModule"
+            }
+        }
+
         stage('Test Android') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
