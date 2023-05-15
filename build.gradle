@@ -19,6 +19,7 @@ plugins {
     id 'maven-publish'
     id 'com.github.spotbugs' version '5.0.14' apply false
     id 'jacoco'//Plugin 'jacoco' is a core Gradle plugin, which cannot be specified with a version number
+    id "org.sonarqube" version "4.0.0.2929"
 }
 
 ext {
@@ -28,6 +29,13 @@ ext {
 
     deps = dependencies
     room_version = '2.5.1'
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "uddhavpgautam_MVI_AYgWGyVJqUIePPBKQ7gI"
+        property "sonar.projectName", "MVI"
+    }
 }
 
 //allprojects = rootproject (e.g., MVI) + subprojects (e.g., agemodule + app)

@@ -52,6 +52,13 @@ node {
             }
         }
 
+        //sonarqube step
+        stage('SonarQube Analysis') {
+            withSonarQubeEnv() {
+                sh "./gradlew sonar"
+            }
+        }
+
         stage('Lint Report') {
             sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
             dir('MVI') {
