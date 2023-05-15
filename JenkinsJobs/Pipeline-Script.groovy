@@ -53,20 +53,9 @@ node {
         }
 
         stage('SonarQube analysis') {
-//            steps {
-//                script {
-//                    // requires SonarQube Scanner 2.8+
-//                    scannerHome = tool 'SonarQube Scanner 2.8'
-//                }
-//                withSonarQubeEnv('SonarQube Scanner') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                    sh "./gradlew sonar \\\n" +
-                            "  -Dsonar.projectKey=uddhavpgautam_MVI_AYgWGyVJqUIePPBKQ7gI \\\n" +
-                            "  -Dsonar.projectName='MVI' \\\n" +
-                            "  -Dsonar.host.url=http://androidjenkins.hopto.org:9000 \\\n" +
-                            "  -Dsonar.token=sqp_dda73bbe4a7a14af881abcc6117f9a24a2f17b42"
-                //}
-            //}
+            dir('MVI') {
+                sh "./gradlew sonar -Dsonar.projectKey=uddhavpgautam_MVI_AYgWGyVJqUIePPBKQ7gI -Dsonar.projectName='MVI' -Dsonar.host.url=http://androidjenkins.hopto.org:9000 -Dsonar.token=sqp_dda73bbe4a7a14af881abcc6117f9a24a2f17b42"
+            }
         }
 
         stage('Lint Report') {
