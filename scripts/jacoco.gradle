@@ -1,4 +1,3 @@
-
 project.afterEvaluate { project ->
     setupAndroidReporting()
 }
@@ -87,12 +86,11 @@ def setupAndroidReporting() {
                 additionalSourceDirs.setFrom(files(coverageSourceDirs))
 
 
-
-                    reports {
-                        xml.required = false
-                        csv.required = false
-                        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
-                    }
+                reports {
+                    xml.required = false
+                    csv.required = false
+                    html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+                }
 
 
             }

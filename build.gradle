@@ -18,7 +18,8 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
     id 'maven-publish'
     id 'com.github.spotbugs' version '5.0.14' apply false
-    id 'jacoco'//Plugin 'jacoco' is a core Gradle plugin, which cannot be specified with a version number
+    id 'jacoco'
+//Plugin 'jacoco' is a core Gradle plugin, which cannot be specified with a version number
     id 'org.sonarqube' version '4.0.0.2929'
     id 'org.jetbrains.dokka' version '1.8.10'
 }
@@ -100,6 +101,6 @@ static String getPropertyOrEnv(name, defaultValue = '') {
 static def addRepos(RepositoryHandler repositoryHandler) {
     repositoryHandler.mavenCentral()
     repositoryHandler.google()
-    repositoryHandler.maven { url 'https://plugins.gradle.org/m2/'}
+    repositoryHandler.maven { url 'https://plugins.gradle.org/m2/' }
     repositoryHandler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
