@@ -52,12 +52,6 @@ node {
             }
         }
 
-        stage('SonarQube analysis') {
-            dir('MVI') {
-                sh "./gradlew sonar -Dsonar.projectKey=uddhavpgautam_MVI_AYgWGyVJqUIePPBKQ7gI -Dsonar.projectName='MVI' -Dsonar.host.url=http://androidjenkins.hopto.org:9000 -Dsonar.token=sqp_dda73bbe4a7a14af881abcc6117f9a24a2f17b42"
-            }
-        }
-
         stage('Lint Report') {
             sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
             dir('MVI') {
