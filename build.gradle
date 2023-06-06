@@ -33,13 +33,6 @@ ext {
     room_version = '2.5.1'
 }
 
-sonar {
-    properties {
-        property "sonar.projectKey", "uddhavpgautam_MVI_AYgWGyVJqUIePPBKQ7gI"
-        property "sonar.projectName", "MVI"
-    }
-}
-
 //allprojects = rootproject (e.g., MVI) + subprojects (e.g., agemodule + app)
 allprojects {
     //The apply approach is the older, yet more flexible method of adding a plugin to your build.

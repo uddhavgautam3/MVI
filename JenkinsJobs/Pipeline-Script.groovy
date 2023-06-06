@@ -52,6 +52,10 @@ node {
             }
         }
 
+        stage('SonarQube Analysis') {
+            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_374d39cb9d9ccc78a6c0eb27f6e717be0caca30c"
+        }
+
         stage('Lint Report') {
             sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
             dir('MVI') {
