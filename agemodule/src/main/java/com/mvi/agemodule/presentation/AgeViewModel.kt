@@ -46,6 +46,7 @@ class AgeViewModel @Inject constructor(
                     changeCount = 1
                 )
             }
+
             is AgeView.Action.DecreaseCount -> {
                 AgeService.Action.ChangeCount(
                     currentCount = action.currentCount.toInt(),
@@ -68,11 +69,12 @@ class AgeViewModel @Inject constructor(
 
     //BiFunction<Default, get Result, and mapped to State (i.e., respond with a State)
     private val reducer: BiFunction<State, AgeService.Result, State>
-        get() = BiFunction { previousState: State, result: AgeService.Result ->
+        get() = BiFunction { _: State, result: AgeService.Result ->
             val transition = when (result) {
                 is AgeService.Result.NewCount -> {
                     State.Loaded(result.newCount.toString())
                 }
+
                 is AgeService.Result.Error -> {
                     State.Error("Error: Age can't be negative!")
                 }
