@@ -39,6 +39,7 @@ allprojects {
     //apply plugin: 'jacoco' // and this plugin would be resolve from this.&addRepos
 }
 
+
 sonar {
     properties {
         property("sonar.projectKey", "sonar_jenkins_mvi")

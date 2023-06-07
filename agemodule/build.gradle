@@ -6,7 +6,7 @@ plugins {
     id 'maven-publish'
 }
 
-apply from: "$project.rootDir/scripts/jacoco.gradle"
+apply from: "$project.rootDir/config/jacoco/jacoco.gradle"
 
 android {
     namespace 'com.mvi.agemodule'
@@ -58,23 +58,25 @@ android {
 
     buildTypes {
 
+        debug {
+            initWith debug
+        }
+
         release {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
-        staging {
-            initWith debug
+        releaseDebug {
+            jniDebuggable true
+            renderscriptDebuggable true
+            signingConfig signingConfigs.debug
         }
+
         enterpriseQa {
             jniDebuggable true
             renderscriptDebuggable true
             signingConfig signingConfigs.debug
             renderscriptOptimLevel 3
-        }
-        releaseDebug {
-            jniDebuggable true
-            renderscriptDebuggable true
-            signingConfig signingConfigs.debug
         }
 
     }
@@ -110,7 +112,7 @@ afterEvaluate {
 
             //coming from multi variants software component
             staging(MavenPublication) {
-                from components.staging
+                from components.debug
                 groupId = 'android.MVI'
                 artifactId = 'staging.ageModule'
                 version = '1.0.0'
