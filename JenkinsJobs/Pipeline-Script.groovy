@@ -53,7 +53,7 @@ node {
         }
 
         stage('SonarQube Analysis') {
-            sh "./gradlew sonar"
+            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3"
         }
 
         stage('Lint Report') {
@@ -75,7 +75,7 @@ node {
             }
         }
 
-        stage('Test Android') {
+        stage('Test') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
@@ -89,7 +89,7 @@ node {
             }
         }
 
-        stage('Build Android') {
+        stage('Build') {
             dir('MVI') {
                 sh "./gradlew app:assemble${VARIANT}"
             }
