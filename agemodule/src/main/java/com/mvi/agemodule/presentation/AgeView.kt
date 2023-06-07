@@ -1,6 +1,10 @@
 package com.mvi.agemodule.presentation
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -32,17 +36,17 @@ interface AgeView {
 }
 
 @Composable
-fun AgeScreen(AgeViewModel: AgeViewModel) {
+fun AgeScreen(ageViewModel: AgeViewModel) {
 
     //observing state
-    val state by AgeViewModel.state().observeAsState(AgeViewModel.defaultViewState)
+    val state by ageViewModel.state().observeAsState(ageViewModel.defaultViewState)
 
     //create a publishSubject that can emit actions
     val publishSubject = PublishSubject.create<AgeView.Action>()
 
 
     //tell viewmodel to start listening whatever gets emitted from publishSubject
-    AgeViewModel.registerActions(
+    ageViewModel.registerActions(
         Observable.merge(
             listOf(publishSubject)
         )
@@ -66,12 +70,15 @@ fun AgeRender(state: AgeView.State, publishSubject: PublishSubject<AgeView.Actio
         is AgeView.State.Loading -> {
             LoadingState()
         }
+
         is AgeView.State.AfterLoading -> {
             AfterLoadingState()
         }
+
         is AgeView.State.Error -> {
             ErrorState(state.error)
         }
+
         is AgeView.State.Loaded -> {
             LoadedState(state.newCount, publishSubject)
         }

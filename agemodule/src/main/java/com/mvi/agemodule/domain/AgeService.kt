@@ -21,8 +21,6 @@ interface AgeService {
 class AgeServiceImpl @Inject constructor(
     private val changeCountAction: ChangeCountActionProcessor
 ) : AgeService {
-    //val changeCountAction: ChangeCountActionProcessor = ChangeCountActionProcessor()
-
     fun state() = ObservableTransformer<AgeService.Action, AgeService.Result> { actions ->
         actions.publish { shared ->
             Observable.mergeArray(
