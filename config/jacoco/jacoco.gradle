@@ -94,7 +94,7 @@ def setupAndroidReporting() {
                     xml {
                         required = true
                         enabled true
-                        destination file("${project.rootDir}/xml-coverage-report")
+                        destination file("${project.rootDir}/xml-coverage-report/jacoco.xml")
                     }
                     html {
                         required = true

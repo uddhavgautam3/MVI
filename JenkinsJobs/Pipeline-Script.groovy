@@ -75,7 +75,7 @@ node {
             }
         }
 
-        stage('Test Android') {
+        stage('Test') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
@@ -89,7 +89,7 @@ node {
             }
         }
 
-        stage('Build Android') {
+        stage('Build') {
             dir('MVI') {
                 sh "./gradlew app:assemble${VARIANT}"
             }

@@ -44,6 +44,8 @@ sonar {
         property("sonar.organization", "sonar_jenkins_mvi")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3")
+        property 'sonar.core.codeCoveragePlugin', 'jacoco'
+        property 'sonar.coverage.jacoco.xmlReportPaths', "${project.rootDir}/xml-coverage-report/jacoco.xml"
     }
 }
 
