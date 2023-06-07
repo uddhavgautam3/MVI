@@ -2,6 +2,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 
 buildscript {
     dependencies {
+        //classpath 'org.jacoco:org.jacoco.core:0.8.8'
     }
     this.&addRepos
 }
@@ -17,7 +18,8 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
     id 'maven-publish'
     id 'com.github.spotbugs' version '5.0.14' apply false
-
+    id 'jacoco'
+    //Plugin 'jacoco' is a core Gradle plugin, which cannot be specified with a version number
     id 'org.sonarqube' version '4.0.0.2929'
     id 'org.jetbrains.dokka' version '1.8.10'
 }
@@ -34,7 +36,7 @@ ext {
 //allprojects = rootproject (e.g., MVI) + subprojects (e.g., agemodule + app)
 allprojects {
     //The apply approach is the older, yet more flexible method of adding a plugin to your build.
-    apply plugin: 'jacoco'
+    //apply plugin: 'jacoco' // and this plugin would be resolve from this.&addRepos
 }
 
 
@@ -44,8 +46,8 @@ sonar {
         property("sonar.organization", "sonar_jenkins_mvi")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3")
-        property 'sonar.core.codeCoveragePlugin', 'jacoco'
-        property 'sonar.coverage.jacoco.xmlReportPaths', "${project.rootDir}/xml-coverage-report/jacoco.xml"
+        property("sonar.core.codeCoveragePlugin", "jacoco")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/xml-coverage-report/jacoco.xml")
     }
 }
 
