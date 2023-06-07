@@ -42,7 +42,7 @@ node {
 
         }
 
-        stage('Code Quality (Checkstyle, PMD, Spotbugs, Jacoco)') {
+        stage('Code Quality (Checkstyle, PMD, Spotbugs)') {
             dir('MVI') {
                 echo "Code quality check: ${env.CODE_QUALITY_ENABLED}"
                 //sh "./gradlew taskCheckStyle"clear

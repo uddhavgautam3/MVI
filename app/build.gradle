@@ -7,7 +7,6 @@ plugins {
 }
 
 apply from: "$project.rootDir/scripts/appcenter.gradle"
-apply from: "$project.rootDir/config/jacoco/jacoco.gradle"
 
 android {
     namespace 'com.mvi.app' //for unique R class, this is like a groupId for artifact
@@ -72,7 +71,6 @@ android {
             signingConfig signingConfigs.debug
             debuggable true
             jniDebuggable true
-            //testCoverageEnabled true //already enabled in jacoco.gradle
             applicationIdSuffix '.test'
             versionNameSuffix ".${getBuildNumber()}"
         }
