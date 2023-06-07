@@ -53,7 +53,7 @@ node {
         }
 
         stage('SonarQube Analysis') {
-            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_df5a41348a1bfc928c4565c316076b3b97e6b046"
+            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3"
         }
 
         stage('Lint Report') {
