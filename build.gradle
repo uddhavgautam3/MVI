@@ -39,6 +39,15 @@ allprojects {
     //apply plugin: 'jacoco' // and this plugin would be resolve from this.&addRepos
 }
 
+sonar {
+    properties {
+        property("sonar.projectKey", "sonar_jenkins_mvi")
+        property("sonar.organization", "sonar_jenkins_mvi")
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.token", "sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3")
+    }
+}
+
 subprojects {
     apply plugin: 'org.jetbrains.dokka'
 
