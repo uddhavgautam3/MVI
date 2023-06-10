@@ -11,14 +11,13 @@ apply from: "$project.rootDir/scripts/jacoco.gradle"
 
 android {
     namespace 'com.mvi.app' //for unique R class, this is like a groupId for artifact
-    compileSdk 33
-    buildToolsVersion '33.0.2'
+    compileSdk 34
     ndkVersion '25.2.9519653'
 
     defaultConfig {
         applicationId "com.mvi.app"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -50,71 +49,99 @@ android {
     }
 
     signingConfigs {
+
+        debug {
+            storeFile file("../keystore.keystore")
+            storePassword "Nepal@123!!"
+            keyAlias "app"
+            keyPassword "Nepal@123!!"
+        }
+
         release {
             storeFile file("../keystore.keystore")
             storePassword "Nepal@123!!"
             keyAlias "app"
             keyPassword "Nepal@123!!"
+        }
 
-        }
-        debug {
-            storeFile file("../keystore.keystore")
-            storePassword "Nepal@123!!"
-            keyAlias "app"
-            keyPassword "Nepal@123!!"
-        }
     }
 
     buildTypes {
+
         debug {
             debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            shrinkResources false
+
             matchingFallbacks = ['debug']
             signingConfig signingConfigs.debug
-            debuggable true
-            jniDebuggable true
             //testCoverageEnabled true //already enabled in jacoco.gradle
-            applicationIdSuffix '.test'
+            applicationIdSuffix '.debug'
             versionNameSuffix ".${getBuildNumber()}"
         }
 
         release {
             debuggable false
+            jniDebuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
             matchingFallbacks = ['release']
             signingConfig signingConfigs.release
-        }
-
-        releaseDebug {
-            initWith debug
-            applicationIdSuffix '.releasedebug'
-            signingConfig signingConfigs.release
+            versionNameSuffix ".${getBuildNumber()}"
         }
 
         enterpriseQa {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            initWith release
-            applicationIdSuffix '.retailApp'
-            versionNameSuffix ".${getBuildNumber()}"
-            debuggable true
-            jniDebuggable true
+            initWith debug //copies everything from debug buildTypes
             renderscriptDebuggable true
-            signingConfig signingConfigs.debug
+            renderscriptOptimLevel 3
+            applicationIdSuffix '.enterpriseQa'
         }
+
     }
 
     flavorDimensions "prod"
     productFlavors {
+
         retail {
-            applicationId "com.mvi.app"
+            applicationIdSuffix ".retail"
             dimension "prod"
             versionCode 151010000
             versionName "1.0.0"
             signingConfig signingConfigs.release
+
+            //we can define data for different product flavors
+            manifestPlaceholders = [ google_map_key:"retail_map_key",
+                                     app_label_name:"retail_map_label" ]
+
+            //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
+            buildConfigField "String", "SERVER_URL", "http://retail.myserver.com"
+
+            resValue "string", "base_url", "http://retail.myserver.com"
         }
+
+        free {
+            applicationIdSuffix ".free"
+            dimension "prod"
+            versionCode 151010000
+            versionName "1.0.0"
+            signingConfig signingConfigs.release
+
+            manifestPlaceholders = [ google_map_key:"free_map_key",
+                                     app_label_name:"free_map_label" ]
+
+            //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
+            buildConfigField "String", "SERVER_URL", "http://free.myserver.com"
+
+            resValue "string", "base_url", "http://free.myserver.com"
+        }
+
     }
 
     sourceSets {
+
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
             java.srcDirs = ['src/main/java']
@@ -122,13 +149,15 @@ android {
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
         }
-        retail {
-            manifest.srcFile 'src/retail/AndroidManifest.xml'
-            java.srcDirs = ['src/retail/java']
-            kotlin.srcDirs += 'src/retail/myKotlin'
-            res.srcDirs = ['src/retail/res']
-            assets.srcDirs = ['src/retail/assets']
+
+        retailRelease {
+            manifest.srcFile 'src/retailRelease/AndroidManifest.xml'
+            java.srcDirs = ['src/retailRelease/java']
+            kotlin.srcDirs += 'src/retailRelease/myKotlin'
+            res.srcDirs = ['src/retailRelease/res']
+            assets.srcDirs = ['src/retailRelease/assets']
         }
+
         retailDebug {
             manifest.srcFile 'src/retailDebug/AndroidManifest.xml'
             java.srcDirs = ['src/retailDebug/java']
@@ -136,13 +165,15 @@ android {
             res.srcDirs = ['src/retailDebug/res']
             assets.srcDirs = ['src/retailDebug/assets']
         }
-        retailReleaseDebug {
-            manifest.srcFile 'src/retailReleaseDebug/AndroidManifest.xml'
-            java.srcDirs = ['src/retailReleaseDebug/java']
-            kotlin.srcDirs += 'src/retailReleaseDebug/myKotlin'
-            res.srcDirs = ['src/retailReleaseDebug/res']
-            assets.srcDirs = ['src/retailReleaseDebug/assets']
+
+        retailEnterpriseQa {
+            manifest.srcFile 'src/retailEnterpriseQa/AndroidManifest.xml'
+            java.srcDirs = ['src/retailEnterpriseQa/java']
+            kotlin.srcDirs += 'src/retailEnterpriseQa/myKotlin'
+            res.srcDirs = ['src/retailEnterpriseQa/res']
+            assets.srcDirs = ['src/retailEnterpriseQa/assets']
         }
+
     }
 
 }

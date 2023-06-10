@@ -10,13 +10,12 @@ apply from: "$project.rootDir/scripts/jacoco.gradle"
 
 android {
     namespace 'com.mvi.agemodule'
-    compileSdk 33
-    buildToolsVersion '33.0.2'
+    compileSdk 34
     ndkVersion '25.2.9519653'
 
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -55,38 +54,39 @@ android {
         enable = true
     }
 
-
+    //no application id for libraries
     buildTypes {
 
-        release {
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        debug {
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            shrinkResources false
+
+            matchingFallbacks = ['debug']
+            versionNameSuffix ".${getBuildNumber()}"
         }
 
-        staging {
-            initWith debug
+        release {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled true
+            shrinkResources false //for libraries
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            matchingFallbacks = ['release']
+            versionNameSuffix ".${getBuildNumber()}"
         }
+
         enterpriseQa {
-            jniDebuggable true
+            initWith debug //copies everything from debug buildTypes
             renderscriptDebuggable true
-            signingConfig signingConfigs.debug
             renderscriptOptimLevel 3
-        }
-        releaseDebug {
-            jniDebuggable true
-            renderscriptDebuggable true
-            signingConfig signingConfigs.debug
         }
 
     }
 
     publishing {
-        // single variant of minApi21FullRelease
-        /*singleVariant("minApi21FullRelease") {
-            withSourcesJar()
-            withJavadocJar()
-        }*/
-
-        //multivariate
         multipleVariants() {
             allVariants()
             withSourcesJar()
@@ -110,7 +110,7 @@ afterEvaluate {
 
             //coming from multi variants software component
             staging(MavenPublication) {
-                from components.staging
+                from components.debug
                 groupId = 'android.MVI'
                 artifactId = 'staging.ageModule'
                 version = '1.0.0'
