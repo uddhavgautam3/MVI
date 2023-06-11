@@ -158,13 +158,13 @@ android {
 
             dimension 'env' //second priority
 
-            manifestPlaceholders = [google_map_key: "free_map_key",
-                                    app_label_name: "free_map_label"]
+            manifestPlaceholders = [google_map_key: "stage_map_key",
+                                    app_label_name: "stage_map_label"]
 
             //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
-            buildConfigField "String", "SERVER_URL", "\"http://free.myserver.com\""
+            buildConfigField "String", "SERVER_URL", "\"http://stage.myserver.com\""
 
-            resValue "string", "base_url", "\"http://free.myserver.com\""
+            resValue "string", "base_url", "\"http://stage.myserver.com\""
         }
 
     }
@@ -181,7 +181,7 @@ android {
         }
 
         retailStageDebug {
-            manifest.srcFile 'src/retailStageDebug/AndroidManifest.xml'
+            manifest.srcFile 'src/main/AndroidManifest.xml'
             java.srcDirs = ['src/retailStageDebug/java']
             kotlin.srcDirs += 'src/retailStageDebug/myKotlin'
             res.srcDirs = ['src/retailStageDebug/res']
@@ -189,7 +189,7 @@ android {
         }
 
         retailStageRelease {
-            manifest.srcFile 'src/retailStageRelease/AndroidManifest.xml'
+            manifest.srcFile 'src/main/AndroidManifest.xml'
             java.srcDirs = ['src/retailStageRelease/java']
             kotlin.srcDirs += 'src/retailStageRelease/myKotlin'
             res.srcDirs = ['src/retailStageRelease/res']
@@ -197,7 +197,7 @@ android {
         }
 
         retailStageEnterpriseQa {
-            manifest.srcFile 'src/retailStageEnterpriseQa/AndroidManifest.xml'
+            manifest.srcFile 'src/main/AndroidManifest.xml'
             java.srcDirs = ['src/retailStageEnterpriseQa/java']
             kotlin.srcDirs += 'src/retailStageEnterpriseQa/myKotlin'
             res.srcDirs = ['src/retailStageEnterpriseQa/res']
