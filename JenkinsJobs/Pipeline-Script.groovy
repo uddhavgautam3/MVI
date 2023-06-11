@@ -3,7 +3,8 @@ node {
     try {
         echo "Current Workspace is: ${WORKSPACE}"
 
-        def FLAVOR = env.FLAVOR ?: 'retail'
+        //def FLAVOR = env.FLAVOR ?: 'retail'
+        def FLAVOR = env.FLAVOR ?: 'retailStage'
         def BUILD_TYPE = env.BUILD_TYPE ?: 'release'
         def APP_NAME = env.APP_NAME ?: ''
         def SET_GROUPS = env.SET_GROUPS ?: ''
@@ -53,7 +54,7 @@ node {
         }
 
         stage('SonarQube Analysis') {
-            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3"
+            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
         }
 
         stage('Lint Report') {
