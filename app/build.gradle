@@ -117,9 +117,9 @@ android {
                                      app_label_name:"retail_map_label" ]
 
             //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
-            buildConfigField "String", "SERVER_URL", "http://retail.myserver.com"
+            buildConfigField "String", "SERVER_URL", "\"http://retail.myserver.com\""
 
-            resValue "string", "base_url", "http://retail.myserver.com"
+            resValue "string", "base_url", "\"http://retail.myserver.com\""
         }
 
         free {
@@ -133,9 +133,9 @@ android {
                                      app_label_name:"free_map_label" ]
 
             //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
-            buildConfigField "String", "SERVER_URL", "http://free.myserver.com"
+            buildConfigField "String", "SERVER_URL", "\"http://free.myserver.com\""
 
-            resValue "string", "base_url", "http://free.myserver.com"
+            resValue "string", "base_url", "\"http://free.myserver.com\""
         }
 
     }
