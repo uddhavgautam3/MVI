@@ -6,17 +6,16 @@ plugins {
     id 'maven-publish'
 }
 
-apply from: "$project.rootDir/config/jacoco/jacoco.gradle"
+apply from: "$project.rootDir/scripts/jacoco.gradle"
 
 android {
     namespace 'com.mvi.agemodule'
-    compileSdk 33
-    buildToolsVersion '33.0.2'
+    compileSdk 34
     ndkVersion '25.2.9519653'
 
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -55,40 +54,39 @@ android {
         enable = true
     }
 
-
+    //no application id for libraries
     buildTypes {
 
         debug {
-            initWith debug
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            shrinkResources false
+
+            matchingFallbacks = ['debug']
+            versionNameSuffix ".${getBuildNumber()}"
         }
 
         release {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled true
+            shrinkResources false //for libraries
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
 
-        releaseDebug {
-            jniDebuggable true
-            renderscriptDebuggable true
-            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+            versionNameSuffix ".${getBuildNumber()}"
         }
 
         enterpriseQa {
-            jniDebuggable true
+            initWith debug //copies everything from debug buildTypes
             renderscriptDebuggable true
-            signingConfig signingConfigs.debug
             renderscriptOptimLevel 3
         }
 
     }
 
     publishing {
-        // single variant of minApi21FullRelease
-        /*singleVariant("minApi21FullRelease") {
-            withSourcesJar()
-            withJavadocJar()
-        }*/
-
-        //multivariate
         multipleVariants() {
             allVariants()
             withSourcesJar()
@@ -140,8 +138,9 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
-    implementation 'androidx.test:monitor:1.5.0'
-
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
