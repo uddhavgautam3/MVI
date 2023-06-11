@@ -1,17 +1,35 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
     id 'maven-publish'
 }
 
-apply from: "$project.rootDir/scripts/jacoco.gradle"
+apply from: "$project.rootDir/config/jacoco/jacoco.gradle"
 
 android {
     namespace 'com.mvi.agemodule'
     compileSdk 34
     ndkVersion '25.2.9519653'
+
+    lintOptions {
+        // Turns off checks for the issue IDs you specify.
+        disable 'TypographyFractions', 'TypographyQuotes'
+        // Turns on checks for the issue IDs you specify. These checks are in
+        // addition to the default lint checks.
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        // To enable checks for only a subset of issue IDs and ignore all others,
+        // list the issue IDs with the 'check' property instead. This property overrides
+        // any issue IDs you enable or disable using the properties above.
+        checkOnly 'NewApi', 'InlinedApi'
+        // If set to true, turns off analysis progress reporting by lint.
+        quiet true
+        // if set to true (default), stops the build if errors are found.
+        abortOnError false
+        // if true, only report errors.
+        ignoreWarnings true
+    }
 
     defaultConfig {
         minSdk 21
@@ -23,7 +41,7 @@ android {
         }
 
         aarMetadata {
-            minCompileSdk = 33
+            minCompileSdk = 34
         }
     }
 
@@ -87,6 +105,7 @@ android {
     }
 
     publishing {
+        //multivariate
         multipleVariants() {
             allVariants()
             withSourcesJar()
@@ -99,15 +118,6 @@ android {
 afterEvaluate {
     publishing {
         publications {
-            //single variants
-            /*minApi21FullRelease(MavenPublication) {
-                from components.minApi21FullRelease
-                groupId = 'android.MVI'
-                artifactId = 'minApi21FullRelease.ageModule'
-                version = '1.0.0'
-
-            }*/
-
             //coming from multi variants software component
             staging(MavenPublication) {
                 from components.debug
@@ -138,9 +148,8 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'androidx.test:monitor:1.5.0'
+
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
@@ -152,9 +161,9 @@ dependencies {
     //reactivex
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
 
     //dagger hilt
     implementation "com.google.dagger:hilt-android:2.46"
@@ -164,9 +173,8 @@ dependencies {
     kapt 'com.google.dagger:hilt-android-compiler:2.37'
 
     //AppCenter
-    def appCenterSdkVersion = '4.4.5'
-    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
-    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-analytics:4.4.5"
+    implementation "com.microsoft.appcenter:appcenter-crashes:4.4.5"
 
     //testing
     testImplementation 'junit:junit:4.13.2'

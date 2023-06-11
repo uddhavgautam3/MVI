@@ -1,15 +1,12 @@
 package com.mvi.agemodule.presentation
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.toLiveData
 import com.mvi.agemodule.domain.AgeService
 import com.mvi.agemodule.domain.AgeServiceImpl
 import com.mvi.agemodule.presentation.AgeView.State
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -21,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AgeViewModel @Inject constructor(
-    @ApplicationContext application: Context,
-    private val savedStateHandle: SavedStateHandle,
+    /*@ApplicationContext application: Context,*/
+    /*private val savedStateHandle: SavedStateHandle,*/
     private val ageService: AgeService
 ) : ViewModel() {
 
@@ -87,11 +84,7 @@ class AgeViewModel @Inject constructor(
         return intentsSubject
             .flatMap { viewAction ->
                 val serviceAction = mapServiceAction(viewAction)
-                return@flatMap return@flatMap if (serviceAction == null) {
-                    Observable.empty()
-                } else {
-                    Observable.just(serviceAction)
-                }
+                return@flatMap Observable.just(serviceAction)
             }
             .compose(serviceState)
             .scan(defaultViewState, reducer)

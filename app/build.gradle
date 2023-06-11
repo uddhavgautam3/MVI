@@ -1,18 +1,36 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
     id 'maven-publish'
 }
 
 apply from: "$project.rootDir/scripts/appcenter.gradle"
-apply from: "$project.rootDir/scripts/jacoco.gradle"
+apply from: "$project.rootDir/config/jacoco/jacoco.gradle"
 
 android {
     namespace 'com.mvi.app' //for unique R class, this is like a groupId for artifact
     compileSdk 34
     ndkVersion '25.2.9519653'
+
+    lintOptions {
+        // Turns off checks for the issue IDs you specify.
+        disable 'TypographyFractions', 'TypographyQuotes'
+        // Turns on checks for the issue IDs you specify. These checks are in
+        // addition to the default lint checks.
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        // To enable checks for only a subset of issue IDs and ignore all others,
+        // list the issue IDs with the 'check' property instead. This property overrides
+        // any issue IDs you enable or disable using the properties above.
+        checkOnly 'NewApi', 'InlinedApi'
+        // If set to true, turns off analysis progress reporting by lint.
+        quiet true
+        // if set to true (default), stops the build if errors are found.
+        abortOnError true
+        // if true, only report errors.
+        ignoreWarnings true
+    }
 
     defaultConfig {
         applicationId "com.mvi.app"
@@ -94,6 +112,10 @@ android {
         }
 
         enterpriseQa {
+            //usually we have only two debug and release. Debug has debugging capabilities e.e.g, Timber debug tree, release not
+            //debug = release + debug code. We publish release, and we provide debug to QA and EQA
+            //enterpriseQa is a special type of debug which is built from the same branch as release. Debug branch is usually built from feature branch
+            //whereas enterpriseQa and release branches are cut from release branch
             initWith debug //copies everything from debug buildTypes
             renderscriptDebuggable true
             renderscriptOptimLevel 3
@@ -102,19 +124,21 @@ android {
 
     }
 
-    flavorDimensions "prod"
+    //define app running environments. E.g., STE06, STE07 etc. these are the servers which server apps of this dimension
+    flavorDimensions = ["default"]
     productFlavors {
 
         retail {
             applicationIdSuffix ".retail"
-            dimension "prod"
             versionCode 151010000
             versionName "1.0.0"
             signingConfig signingConfigs.release
 
+            dimension 'default'
+
             //we can define data for different product flavors
-            manifestPlaceholders = [ google_map_key:"retail_map_key",
-                                     app_label_name:"retail_map_label" ]
+            manifestPlaceholders = [google_map_key: "retail_map_key",
+                                    app_label_name: "retail_map_label"]
 
             //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
             buildConfigField "String", "SERVER_URL", "\"http://retail.myserver.com\""
@@ -123,14 +147,16 @@ android {
         }
 
         free {
+            //free is something like provide users limited functionalities or app with ads, or just chapter 1 and then all other chapters are locked
             applicationIdSuffix ".free"
-            dimension "prod"
             versionCode 151010000
             versionName "1.0.0"
             signingConfig signingConfigs.release
 
-            manifestPlaceholders = [ google_map_key:"free_map_key",
-                                     app_label_name:"free_map_label" ]
+            dimension 'default'
+
+            manifestPlaceholders = [google_map_key: "free_map_key",
+                                    app_label_name: "free_map_label"]
 
             //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
             buildConfigField "String", "SERVER_URL", "\"http://free.myserver.com\""
@@ -140,6 +166,7 @@ android {
 
     }
 
+    //source sets for build variants freeDebug, freeRelease, freeEnterpriseQa, paidDebug, paidRelease, and paidEnterpriseQa
     sourceSets {
 
         main {
@@ -150,14 +177,6 @@ android {
             assets.srcDirs = ['src/main/assets']
         }
 
-        retailRelease {
-            manifest.srcFile 'src/retailRelease/AndroidManifest.xml'
-            java.srcDirs = ['src/retailRelease/java']
-            kotlin.srcDirs += 'src/retailRelease/myKotlin'
-            res.srcDirs = ['src/retailRelease/res']
-            assets.srcDirs = ['src/retailRelease/assets']
-        }
-
         retailDebug {
             manifest.srcFile 'src/retailDebug/AndroidManifest.xml'
             java.srcDirs = ['src/retailDebug/java']
@@ -166,12 +185,44 @@ android {
             assets.srcDirs = ['src/retailDebug/assets']
         }
 
+        retailRelease {
+            manifest.srcFile 'src/retailRelease/AndroidManifest.xml'
+            java.srcDirs = ['src/retailRelease/java']
+            kotlin.srcDirs += 'src/retailRelease/myKotlin'
+            res.srcDirs = ['src/retailRelease/res']
+            assets.srcDirs = ['src/retailRelease/assets']
+        }
+
         retailEnterpriseQa {
             manifest.srcFile 'src/retailEnterpriseQa/AndroidManifest.xml'
             java.srcDirs = ['src/retailEnterpriseQa/java']
             kotlin.srcDirs += 'src/retailEnterpriseQa/myKotlin'
             res.srcDirs = ['src/retailEnterpriseQa/res']
             assets.srcDirs = ['src/retailEnterpriseQa/assets']
+        }
+
+        freeDebug {
+            manifest.srcFile 'src/freeDebug/AndroidManifest.xml'
+            java.srcDirs = ['src/freeDebug/java']
+            kotlin.srcDirs += 'src/freeDebug/myKotlin'
+            res.srcDirs = ['src/freeDebug/res']
+            assets.srcDirs = ['src/freeDebug/assets']
+        }
+
+        freeRelease {
+            manifest.srcFile 'src/freeRelease/AndroidManifest.xml'
+            java.srcDirs = ['src/freeRelease/java']
+            kotlin.srcDirs += 'src/freeRelease/myKotlin'
+            res.srcDirs = ['src/freeRelease/res']
+            assets.srcDirs = ['src/freeRelease/assets']
+        }
+
+        freeEnterpriseQa {
+            manifest.srcFile 'src/freeEnterpriseQa/AndroidManifest.xml'
+            java.srcDirs = ['src/freeEnterpriseQa/java']
+            kotlin.srcDirs += 'src/freeEnterpriseQa/myKotlin'
+            res.srcDirs = ['src/freeEnterpriseQa/res']
+            assets.srcDirs = ['src/freeEnterpriseQa/assets']
         }
 
     }
@@ -192,9 +243,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
@@ -206,9 +255,9 @@ dependencies {
     //reactivex
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
 
     //dagger hilt
     implementation "com.google.dagger:hilt-android:2.46"
@@ -218,9 +267,8 @@ dependencies {
     kapt 'com.google.dagger:hilt-android-compiler:2.37'
 
     //AppCenter
-    def appCenterSdkVersion = '4.4.5'
-    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
-    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-analytics:4.4.5"
+    implementation "com.microsoft.appcenter:appcenter-crashes:4.4.5"
 
     //testing
     testImplementation 'junit:junit:4.13.2'
