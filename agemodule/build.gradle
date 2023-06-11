@@ -112,6 +112,7 @@ android {
             withJavadocJar()
         }
     }
+    buildToolsVersion '34.0.0'
 
 }
 

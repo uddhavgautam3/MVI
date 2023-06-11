@@ -124,8 +124,11 @@ android {
 
     }
 
+    //Flavors are useful to make different versions of your app. They all can differ in assets, resources, configuration or code.
+    //We will use them to make a version of the app that is used for development, hitting the staging API endpoint,
+    //and another final version, that calls the production API.
     //define app running environments. E.g., STE06, STE07 etc. these are the servers which server apps of this dimension
-    flavorDimensions = ["default"]
+    flavorDimensions = ["prod", "env"] //order from left to right. e.g., prodFlavorEnvFlavorBuildType = retailStageDebug
     productFlavors {
 
         retail {
@@ -134,7 +137,7 @@ android {
             versionName "1.0.0"
             signingConfig signingConfigs.release
 
-            dimension 'default'
+            dimension 'prod' //first priority
 
             //we can define data for different product flavors
             manifestPlaceholders = [google_map_key: "retail_map_key",
@@ -146,14 +149,14 @@ android {
             resValue "string", "base_url", "\"http://retail.myserver.com\""
         }
 
-        free {
+        stage {
             //free is something like provide users limited functionalities or app with ads, or just chapter 1 and then all other chapters are locked
             applicationIdSuffix ".free"
             versionCode 151010000
             versionName "1.0.0"
             signingConfig signingConfigs.release
 
-            dimension 'default'
+            dimension 'env' //second priority
 
             manifestPlaceholders = [google_map_key: "free_map_key",
                                     app_label_name: "free_map_label"]
@@ -177,55 +180,36 @@ android {
             assets.srcDirs = ['src/main/assets']
         }
 
-        retailDebug {
-            manifest.srcFile 'src/retailDebug/AndroidManifest.xml'
-            java.srcDirs = ['src/retailDebug/java']
-            kotlin.srcDirs += 'src/retailDebug/myKotlin'
-            res.srcDirs = ['src/retailDebug/res']
-            assets.srcDirs = ['src/retailDebug/assets']
+        retailStageDebug {
+            manifest.srcFile 'src/retailStageDebug/AndroidManifest.xml'
+            java.srcDirs = ['src/retailStageDebug/java']
+            kotlin.srcDirs += 'src/retailStageDebug/myKotlin'
+            res.srcDirs = ['src/retailStageDebug/res']
+            assets.srcDirs = ['src/retailStageDebug/assets']
         }
 
-        retailRelease {
-            manifest.srcFile 'src/retailRelease/AndroidManifest.xml'
-            java.srcDirs = ['src/retailRelease/java']
-            kotlin.srcDirs += 'src/retailRelease/myKotlin'
-            res.srcDirs = ['src/retailRelease/res']
-            assets.srcDirs = ['src/retailRelease/assets']
+        retailStageRelease {
+            manifest.srcFile 'src/retailStageRelease/AndroidManifest.xml'
+            java.srcDirs = ['src/retailStageRelease/java']
+            kotlin.srcDirs += 'src/retailStageRelease/myKotlin'
+            res.srcDirs = ['src/retailStageRelease/res']
+            assets.srcDirs = ['src/retailStageRelease/assets']
         }
 
-        retailEnterpriseQa {
-            manifest.srcFile 'src/retailEnterpriseQa/AndroidManifest.xml'
-            java.srcDirs = ['src/retailEnterpriseQa/java']
-            kotlin.srcDirs += 'src/retailEnterpriseQa/myKotlin'
-            res.srcDirs = ['src/retailEnterpriseQa/res']
-            assets.srcDirs = ['src/retailEnterpriseQa/assets']
-        }
-
-        freeDebug {
-            manifest.srcFile 'src/freeDebug/AndroidManifest.xml'
-            java.srcDirs = ['src/freeDebug/java']
-            kotlin.srcDirs += 'src/freeDebug/myKotlin'
-            res.srcDirs = ['src/freeDebug/res']
-            assets.srcDirs = ['src/freeDebug/assets']
-        }
-
-        freeRelease {
-            manifest.srcFile 'src/freeRelease/AndroidManifest.xml'
-            java.srcDirs = ['src/freeRelease/java']
-            kotlin.srcDirs += 'src/freeRelease/myKotlin'
-            res.srcDirs = ['src/freeRelease/res']
-            assets.srcDirs = ['src/freeRelease/assets']
-        }
-
-        freeEnterpriseQa {
-            manifest.srcFile 'src/freeEnterpriseQa/AndroidManifest.xml'
-            java.srcDirs = ['src/freeEnterpriseQa/java']
-            kotlin.srcDirs += 'src/freeEnterpriseQa/myKotlin'
-            res.srcDirs = ['src/freeEnterpriseQa/res']
-            assets.srcDirs = ['src/freeEnterpriseQa/assets']
+        retailStageEnterpriseQa {
+            manifest.srcFile 'src/retailStageEnterpriseQa/AndroidManifest.xml'
+            java.srcDirs = ['src/retailStageEnterpriseQa/java']
+            kotlin.srcDirs += 'src/retailStageEnterpriseQa/myKotlin'
+            res.srcDirs = ['src/retailStageEnterpriseQa/res']
+            assets.srcDirs = ['src/retailStageEnterpriseQa/assets']
         }
 
     }
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+    buildToolsVersion '34.0.0'
 
 }
 
@@ -239,7 +223,7 @@ dependencies {
 
     implementation "androidx.core:core-ktx:$kotlin_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.activity:activity-compose:1.7.1'
+    implementation 'androidx.activity:activity-compose:1.7.2'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
@@ -260,15 +244,15 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.6.1"
 
     //dagger hilt
-    implementation "com.google.dagger:hilt-android:2.46"
-    kapt "com.google.dagger:hilt-compiler:2.46"
-    implementation 'com.google.dagger:hilt-android:2.46'
+    implementation 'com.google.dagger:hilt-android:2.46.1'
+    kapt 'com.google.dagger:hilt-compiler:2.46.1'
+    implementation 'com.google.dagger:hilt-android:2.46.1'
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
-    kapt 'com.google.dagger:hilt-android-compiler:2.37'
+    kapt 'com.google.dagger:hilt-android-compiler:2.46.1'
 
     //AppCenter
-    implementation "com.microsoft.appcenter:appcenter-analytics:4.4.5"
-    implementation "com.microsoft.appcenter:appcenter-crashes:4.4.5"
+    implementation 'com.microsoft.appcenter:appcenter-analytics:5.0.1'
+    implementation 'com.microsoft.appcenter:appcenter-crashes:5.0.1'
 
     //testing
     testImplementation 'junit:junit:4.13.2'

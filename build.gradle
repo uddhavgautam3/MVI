@@ -26,8 +26,8 @@ plugins {
 
 ext {
     addRepos = this.&addRepos
-    compose_ui_version = '1.4.2'
-    kotlin_version = '1.6.0'
+    compose_ui_version = '1.4.3'
+    kotlin_version = '1.10.1'
 
     deps = dependencies
     room_version = '2.5.1'
