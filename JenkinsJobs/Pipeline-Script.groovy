@@ -46,21 +46,22 @@ node {
         stage('Code Quality (Checkstyle, PMD, Spotbugs)') {
             dir('MVI') {
                 echo "Code quality check: ${env.CODE_QUALITY_ENABLED}"
-                //sh "gradle taskCheckStyle"clear
-                //sh "gradle taskPMD"
-                sh "gradle check" //includes spotbugs, checkstyle, and pmd
-                sh "gradle test${VARIANT}UnitTest"
+                //sh "./gradlew taskCheckStyle"clear
+                //sh "./gradlew taskPMD"
+                sh "./gradlew check" //includes spotbugs, checkstyle, and pmd
+                sh "./gradlew test${VARIANT}UnitTest"
+                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
             }
         }
 
         stage('SonarQube Analysis') {
-            sh "gradle sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
+            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
         }
 
         stage('Lint Report') {
             sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
             dir('MVI') {
-                sh "gradle app:lint${VARIANT}"
+                sh "./gradlew app:lint${VARIANT}"
                 sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
                              reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
@@ -71,8 +72,8 @@ node {
 
         stage('Dokka Report') {
             dir('MVI') {
-                sh "gradle clean"
-                sh "gradle dokkaHtml"
+                sh "./gradlew clean"
+                sh "./gradlew dokkaHtml"
             }
         }
 
@@ -81,10 +82,10 @@ node {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
                 if (env.CODE_COVERAGE_ENABLED == "true") {
-                    sh "gradle create${VARIANT}CoverageReport"
+                    sh "./gradlew create${VARIANT}CoverageReport"
                 } else {
-                    sh "gradle agemodule:testDebugUnitTest"
-                    sh "gradle app:test${FLAVOR}DebugUnitTest"
+                    sh "./gradlew agemodule:testDebugUnitTest"
+                    sh "./gradlew app:test${FLAVOR}DebugUnitTest"
                 }
 
             }
@@ -92,7 +93,7 @@ node {
 
         stage('Build') {
             dir('MVI') {
-                sh "gradle app:assemble${VARIANT}"
+                sh "./gradlew app:assemble${VARIANT}"
             }
         }
 
@@ -100,7 +101,7 @@ node {
             if (env.APPCENTER_UPLOAD == "true") {
                 dir('MVI') {
                     def PARAMS = getParams(APP_NAME, env.RELEASE_NOTES_DATE, SET_GROUPS, ADD_GROUPS)
-                    sh "gradle app:appCenterUpload${VARIANT} ${PARAMS}"
+                    sh "./gradlew app:appCenterUpload${VARIANT} ${PARAMS}"
                 }
             } else {
                 echo "Skipping upload to App Center"
