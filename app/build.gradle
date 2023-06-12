@@ -128,8 +128,7 @@ android {
     //We will use them to make a version of the app that is used for development, hitting the staging API endpoint,
     //and another final version, that calls the production API.
     //define app running environments. E.g., STE06, STE07 etc. these are the servers which server apps of this dimension
-    flavorDimensions = ["prod", "env"]
-    //order from left to right. e.g., prodFlavorEnvFlavorBuildType = retailStageDebug
+    flavorDimensions = ["prod", "env"] //order from left to right. e.g., prodFlavorEnvFlavorBuildType = retailStageDebug
     productFlavors {
 
         retail {

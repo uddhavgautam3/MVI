@@ -16,7 +16,6 @@ tasks.withType(Checkstyle) {
         xml.required = true
         html.required = true
         html.stylesheet resources.text.fromFile("${rootDir}/config/checkstyle/xsl/checkstyle-simple.xsl")
-        sarif.required = true
     }
 }
 

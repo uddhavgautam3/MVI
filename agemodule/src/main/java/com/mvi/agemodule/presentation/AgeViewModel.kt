@@ -17,7 +17,11 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class AgeViewModel @Inject constructor(private val ageService: AgeService) : ViewModel() {
+class AgeViewModel @Inject constructor(
+    /*@ApplicationContext application: Context,*/
+    /*private val savedStateHandle: SavedStateHandle,*/
+    private val ageService: AgeService
+) : ViewModel() {
 
     private val intentsSubject: PublishSubject<AgeView.Action> = PublishSubject.create()
 
@@ -76,6 +80,7 @@ class AgeViewModel @Inject constructor(private val ageService: AgeService) : Vie
         }
 
     private fun composeFlow(): Observable<State> {
+
         return intentsSubject
             .flatMap { viewAction ->
                 val serviceAction = mapServiceAction(viewAction)
