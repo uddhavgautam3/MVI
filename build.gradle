@@ -69,7 +69,7 @@ subprojects {
     }
 
 
-    //checkstyle, pmd, and spotbugs all run during ./gradlew check
+    //checkstyle, pmd, and spotbugs all run during gradle check
     //includes checkstyle, pmd
     apply from: "$project.rootDir/config/codequality.gradle"
     afterEvaluate {
