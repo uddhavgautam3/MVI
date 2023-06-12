@@ -50,12 +50,13 @@ node {
                 //sh "./gradlew taskPMD"
                 sh "./gradlew check" //includes spotbugs, checkstyle, and pmd
                 sh "./gradlew test${VARIANT}UnitTest"
-                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
             }
         }
 
         stage('SonarQube Analysis') {
-            sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
+            dir('MVI') {
+                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
+            }
         }
 
         stage('Lint Report') {
