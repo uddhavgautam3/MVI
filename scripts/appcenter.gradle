@@ -120,7 +120,9 @@ project.tasks.register("appCenterCreateApp") {
     group = "appcenter"
     description = "Creates an app in MS AppCenter. (Requires app name)"
     doLast {
+        println("appCenterGetAppName: ${appCenterGetArgAppName()}")
         def appName = appCenterGetArgAppName()
+        println("appCenterCreateApp: ${appCenterCreateApp()}")
         def res = appCenterCreateApp(appName)
         if (res == "created") {
             println("AppCenter: ${appName} created!")
@@ -137,6 +139,9 @@ android.applicationVariants.all { variant ->
 
 def createAppCenterUploadTask(variant, taskSuffix = "", apkFile = null, mapFile = null) {
     project.tasks.register("appCenterUpload${taskSuffix}${variant.name.capitalize()}") {
+        println("Variant: ${variant}") //com.android.build.gradle.internal.api.ApplicationVariantImpl_Decorated@37a2b0d8
+        println("Variant nane: ${variant.name}") //retailStageDebug
+
         logger.debug("AppCenter: create task for ${variant.name}")
         group = "appcenter"
         description = "Upload ${taskSuffix ? taskSuffix + ' ' : ''}${variant.name} APK to MS AppCenter. (Requires app name)"
@@ -145,6 +150,12 @@ def createAppCenterUploadTask(variant, taskSuffix = "", apkFile = null, mapFile 
         mapFile = mapFile ?: common.getMappingFile(variant)
 
         doLast {
+            println("Map file: ${mapFile}") //home/upgautam/.jenkins/workspace/MviRelease/MVI/app/build/outputs/mapping/retailStage/debug/mapping.txt
+            println("Apk file: ${apkFile}") //home/upgautam/.jenkins/workspace/MviRelease/MVI/app/build/outputs/apk/retailStage/debug/app-retailStage-debug.apk
+
+            //debug, appName: MVI Release, variantVersionCode: 151010000, variantVersionName: 1.0.0.241, releaseNote:## Version: 1.0.0.241
+            println("variantBuildName: ${variant.buildType.name}, appName: ${appCenterGetArgAppName()}, variantVersionCode: ${variant.versionCode}, variantVersionName: ${variant.versionName}, releaseNote:${common.getReleaseNotes(variant.versionName)}")
+
             if (!apkFile.exists()) throw new GradleException("APK file '${apkFile}' not found")
             def appName = appCenterGetArgAppName()
             def releaseNotes = common.getReleaseNotes(variant.versionName)
