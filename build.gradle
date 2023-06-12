@@ -44,7 +44,7 @@ sonar {
         property("sonar.projectKey", "sonar_jenkins_mvi")
         property("sonar.organization", "sonar_jenkins_mvi")
         property("sonar.host.url", "http://localhost:9000")
-        property("sonar.token", "sqp_9f571aafad0d7e00a36deefccdfc358d277fc9a3")
+        property("sonar.token", "squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc")
     }
 }
 
