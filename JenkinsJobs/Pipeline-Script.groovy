@@ -33,7 +33,7 @@ node {
                       doGenerateSubmoduleConfigurations: false,
                       extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'MVI']],
                       submoduleCfg                     : [],
-                      userRemoteConfigs                : [[url: 'ssh://git@github.com/uddhavpgautam/MVI.git']]
+                      userRemoteConfigs                : [[url: 'ssh://git@github.com/uddhavgautam3/MVI.git']]
             ])
 
             dir('MVI') {
