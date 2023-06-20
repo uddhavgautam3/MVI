@@ -24,7 +24,7 @@ class MVIApplication : Application() {
         enableStrictMode()
 
         AppCenter.start(
-            this, "5f92513b-fdbd-4359-9f1c-576d5451d9d8", //mviapp in AppCenter
+            this, "0bbfe0d8-bc54-4930-aedc-9d36dbc889a3", //MVI Dev Refactor
             Analytics::class.java, Crashes::class.java
         )
 

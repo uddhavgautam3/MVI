@@ -1,10 +1,10 @@
-name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
-on: [push]
-jobs:
-  check-bats-version:
-    runs-on: ubuntu-latest
-    steps:
+name: learn-github-actions # optional
+run-name: ${{ github.actor }} is learning GitHub Actions # optional
+on: [push] # on [Events]
+jobs: # groups
+  check-bats-version: # any name
+    runs-on: ubuntu-latest # runs-on: Runner
+    steps: # keyword name
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
