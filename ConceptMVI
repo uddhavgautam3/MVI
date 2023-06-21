@@ -10,3 +10,17 @@ Steps:
    Action and ActionProcessors should be 1-to-1 mapping, but can be different Result
    Result<Any> can be Loaded, AfterLoading, Error etc.
 5) Emit Actions from the UI Layer, and hook it up.
+
+
+
+The file private_key.pepk is your private key encrypted with a key that only Google can decrypt. It is used only for transferring the key to Google when you enroll in Play Signing.
+
+//if some evil get your private key and password then they can use their malwares to be signed by our private key. Wow! That's why we should never put private key in compromised place.
+
+To securely use mviKeyStore.jks
+upgautam@ubuntu2204:~/StudioProjects/MVI/app$ gpg -c --armor mviKeyStore.jks  //pass: Roshav-wala
+it will create PGP message, which I pasted on RELEASE_KEY_SECRET environmental variable in Github
+
+gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch mviKeyStore.jks.asc > app/mviKeyStore.jks //this will run dynamically during build
+
+gpg -d --passphrase "Roshav12ZY$$" --batch app/secrets/mviKeyStore.jks.asc > app/secrets/mviKeyStore1.jks //this will run dynamically during build
