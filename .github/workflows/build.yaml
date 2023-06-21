@@ -1,13 +1,38 @@
-name: learn-github-actions # optional
-run-name: ${{ github.actor }} is learning GitHub Actions # optional
-on: [push] # on [Events]
+name: Android Build and Deployment Pipeline # optional
+run-name: ${{ github.actor }} is using GitHub Actions # optional
+
+on: # on [Events]
+  push:
+    branches: [ 'feature/*',  'release/*', 'master' ]
+  pull_request:
+    branches: [ 'feature/*',  'release/*' ]
+
+  # Add support for manual trigger
+  workflow_dispatch: # event
+    inputs: # provide these below information variables as inputs
+      # similar to inputs, we can have outputs, runs -- runs defines what to run before main actions e.g., running
+      # scripts, running prerequisites etc.
+      app_id:
+        description: 'The application Id/package name'
+        required: true
+      branch:
+        description: 'The branch from which you want the build'
+        required: true
+        default: 'release/v1' # just one default branch, we checkout and build
+
 jobs: # groups
-  check-bats-version: # any name
+  Android-CI_CD: # job name, any name. Give proper name
     runs-on: ubuntu-latest # runs-on: Runner
     steps: # keyword name
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      # follows these steps on order
+
+      - name: Checkout the code to specific branch
+        uses: actions/checkout@v3 # uses: actions/actual_action
         with:
-          node-version: '14'
-      - run: npm install -g bats
-      - run: bats -v
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
