@@ -66,26 +66,4 @@ jobs: # groups
         uses: actions/upload-artifact@v3
         with:
           name: signed_apk
-          path: app/build/outputs/apk/retailStage/debug/app-retail-stage-release.apk
-
-
-
-# Step 3 : Release to playstore
-#  deploy:
-#    needs: [ build ]
-#    name: Create release on Playstore
-#    runs-on: self-hosted
-#    steps:
-#      - name: Create service_account.json
-#        run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
-#
-#      - name: Deploy to Play Store
-#        uses: r0adkll/upload-google-play@v1.0.15
-#        with:
-#          serviceAccountJson: service_account.json
-#          packageName: ${{ github.event.inputs.app_id }}
-#          releaseFiles: app/build/outputs/bundle/release/*.aab
-#          track: internal
-#          whatsNewDirectory: whatsnew/
-#          mappingFile: app/build/outputs/mapping/release/mapping.txt
-#          inAppUpdatePriority: 5
+          path: app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk

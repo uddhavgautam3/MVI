@@ -66,24 +66,6 @@ android {
         }
     }
 
-    signingConfigs {
-
-        debug {
-            storeFile file("mviKeyStore.jks")
-            storePassword "Roshav12ZY"
-            keyAlias "my_mvi_key"
-            keyPassword "Roshav12ZY"
-        }
-
-        release {
-            storeFile file("mviKeyStore.jks")
-            storePassword "Roshav12ZY"
-            keyAlias "my_mvi_key"
-            keyPassword "Roshav12ZY"
-        }
-
-    }
-
     buildTypes {
 
         debug {
@@ -92,8 +74,6 @@ android {
             minifyEnabled false
             shrinkResources false
 
-            matchingFallbacks = ['debug']
-            signingConfig signingConfigs.debug
             //testCoverageEnabled true //already enabled in jacoco.gradle
             applicationIdSuffix '.debug'
             versionNameSuffix ".${getBuildNumber()}"
@@ -106,8 +86,6 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            matchingFallbacks = ['release']
-            signingConfig signingConfigs.release
             versionNameSuffix ".${getBuildNumber()}"
         }
 
@@ -136,7 +114,6 @@ android {
             applicationIdSuffix ".retail"
             versionCode 151010000
             versionName "1.0.0"
-            signingConfig signingConfigs.release
 
             dimension 'prod' //first priority
 
@@ -155,7 +132,6 @@ android {
             applicationIdSuffix ".free"
             versionCode 151010000
             versionName "1.0.0"
-            signingConfig signingConfigs.release
 
             dimension 'env' //second priority
 
