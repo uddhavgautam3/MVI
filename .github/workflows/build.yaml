@@ -55,7 +55,7 @@ jobs: # groups
       - name: Checkstyle
         uses: dbelyaev/action-checkstyle@v0.7.4
         with:
-          checkstyle_config: config/checkstyle.xml
+          checkstyle_config: config/checkstyle/checkstyle.xml
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           reporter: github-pr-review
           level: warning
