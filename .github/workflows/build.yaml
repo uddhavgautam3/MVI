@@ -4,7 +4,7 @@ on: # on [Events]
   # always push on developer's dev branch after then we do PR into feature from dev,
   # and then PR into release from feature, and then PR into master from release
   push:
-    branches: [ 'dev/*', 'feature/*' ]
+    branches: [ 'dev/*' ]
   pull_request:
     branches: [ 'release/*', 'feature/*' ]
 
@@ -26,13 +26,15 @@ jobs: # groups
     runs-on: ubuntu-latest # runs-on: Runner
     steps: # keyword name
       # follows these steps on order
+      - name: Clean Workspace
+        uses: AutoModality/action-clean@v1
 
-      - name: Checkout the code to specific branch
+      - name: Setup Source (checkout etc.)
         uses: actions/checkout@v3 # uses: actions/actual_action
         with:
           ref: ${{ github.event.inputs.branch }}
 
-      - name: Set up JDK
+      - name: Set up Java JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
@@ -53,7 +55,7 @@ jobs: # groups
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Generate Apk
+      - name: Build and Generate Apk
         run: ./gradlew app:assembleRelease --stacktrace
 
   #   STEP 2 : Upload the Artifact
