@@ -10,11 +10,6 @@ node {
         def SET_GROUPS = env.SET_GROUPS ?: ''
         def ADD_GROUPS = env.ADD_GROUPS ?: ''
 
-
-        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
-        VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
-        echo "Variant name: $VARIANT"
-
         if (APP_NAME == "") {
             echo "Error: APP_NAME not defined!"
             currentBuild.result = 'FAILURE'
@@ -28,6 +23,7 @@ node {
         }
 
         stage('Setup Source') {
+            //ANDROID_BRANCH is from Jenkins config.
             echo "Using android branch: ${env.ANDROID_BRANCH}"
             checkout([$class                           : 'GitSCM',
                       branches                         : [[name: env.ANDROID_BRANCH]],
@@ -36,6 +32,21 @@ node {
                       submoduleCfg                     : [],
                       userRemoteConfigs                : [[url: 'ssh://git@github.com/uddhavgautam3/MVI.git']]
             ])
+
+            //any branch starting with release/any_name when gets pushed both AndroidEQA and AndroidRelease get triggered
+            //if branch name contains feature then AndroidFeature_featureX gets triggered which make build_type = debug
+            String androidBranch = "${env.ANDROID_BRANCH}"
+            if(androidBranch.contains("release")) {
+                BUILD_TYPE = "release"
+            } else if(androidBranch.contains("feature")) {
+                BUILD_TYPE = "debug"
+            } else {
+                BUILD_TYPE = ""
+            }
+
+            CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
+            VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
+            echo "Variant name: $VARIANT"
 
             dir('MVI') {
                 echo 'Loading build information'
