@@ -69,17 +69,17 @@ android {
     signingConfigs {
 
         debug {
-            storeFile file("../keystore.keystore")
-            storePassword "Nepal@123!!"
-            keyAlias "app"
-            keyPassword "Nepal@123!!"
+            storeFile file("mviKeyStore.jks")
+            storePassword "Roshav12ZY"
+            keyAlias "my_mvi_key"
+            keyPassword "Roshav12ZY"
         }
 
         release {
-            storeFile file("../keystore.keystore")
-            storePassword "Nepal@123!!"
-            keyAlias "app"
-            keyPassword "Nepal@123!!"
+            storeFile file("mviKeyStore.jks")
+            storePassword "Roshav12ZY"
+            keyAlias "my_mvi_key"
+            keyPassword "Roshav12ZY"
         }
 
     }

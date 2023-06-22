@@ -32,9 +32,6 @@ jobs: # groups
         with:
           ref: ${{ github.event.inputs.branch }}
 
-      - name: Print Current Working Directory
-        run: echo "${GITHUB_WORKSPACE}"
-
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -58,10 +55,6 @@ jobs: # groups
 
       - name: Generate Apk
         run: ./gradlew app:assembleRelease --stacktrace
-
-      - name: Sign apk
-        run: |
-          jarsigner -keystore ${GITHUB_WORKSPACE}/app/secrets/mviKeyStore.jks -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} app/build/outputs/apk/retailStage/debug/app-retail-stage-release.apk "myMVIApk"
 
   #   STEP 2 : Upload the Artifact
   upload:

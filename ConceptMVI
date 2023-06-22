@@ -24,3 +24,10 @@ it will create PGP message, which I pasted on RELEASE_KEY_SECRET environmental v
 gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch mviKeyStore.jks.asc > app/mviKeyStore.jks //this will run dynamically during build
 
 gpg -d --passphrase "Roshav12ZY$$" --batch app/secrets/mviKeyStore.jks.asc > app/secrets/mviKeyStore1.jks //this will run dynamically during build
+
+// both below work
+/usr/lib/jvm/jdk-11/bin/jarsigner -keystore mviKeyStore.jks -storepass "Roshav12ZY" -keypass "Roshav12ZY" app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk "my_mvi_key"
+/usr/lib/jvm/jdk-11/bin/jarsigner -keystore mviKeyStore.jks -storepass Roshav12ZY -keypass Roshav12ZY app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk my_mvi_key
+
+
+to check if the apk is already signed: /usr/lib/jvm/jdk-11/bin/jarsigner --verify -verbose -certs app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk
