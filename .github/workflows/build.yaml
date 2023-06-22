@@ -55,7 +55,27 @@ jobs: # groups
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build and Generate Apk
+      # I could also simply run ./gradlew check here instead of using already published github actions
+      # but Cloud based CI/CD like github actions don't prefer our implementation
+      - name: Checkstyle
+        uses: dbelyaev/action-checkstyle@v0.7.4
+        with:
+          workdir: config/checkstyle
+          config_file: checkstyle.xml
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          level: error
+          locale: "US"
+          reviewdog_flags: -filter-mode=file -fail-on-error
+
+#      - name: Checkstyle Using Gradlew check
+#        run: ./gradlew check
+
+      # Run Tests Build
+      - name: Run gradle tests
+        run: ./gradlew agemodule:testDebugUnitTest &&./gradlew test
+
+      - name: Build and Generate Release Apk
         run: ./gradlew app:assembleRelease --stacktrace
 
   #   STEP 2 : Upload the Artifact
@@ -68,4 +88,5 @@ jobs: # groups
         uses: actions/upload-artifact@v3
         with:
           name: signed_apk
+          # app-retail-stage-debug should not be hard-coded
           path: app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk
