@@ -13,6 +13,7 @@ node {
 
         CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
         VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
+        echo "Variant name: $VARIANT"
 
         if (APP_NAME == "") {
             echo "Error: APP_NAME not defined!"
@@ -85,8 +86,10 @@ node {
                 if (env.CODE_COVERAGE_ENABLED == "true") {
                     sh "./gradlew create${VARIANT}CoverageReport"
                 } else {
-                    sh "./gradlew agemodule:testDebugUnitTest"
-                    sh "./gradlew app:test${FLAVOR}DebugUnitTest"
+                    //for agemodule only include unit tests as there are no flavors
+                    sh "./gradlew agemodule:testDebugUnitTest" //not included on ./gradlew test
+                    sh "./gradlew test"
+                    //sh "./gradlew app:test${FLAVOR}DebugUnitTest" //included on ./gradlew test
                 }
 
             }
