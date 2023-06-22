@@ -75,7 +75,7 @@ jobs: # groups
       - name: Run gradle tests
         run: ./gradlew agemodule:testDebugUnitTest &&./gradlew test
 
-      - name: Build and Generate Apk
+      - name: Build and Generate Release Apk
         run: ./gradlew app:assembleRelease --stacktrace
 
   #   STEP 2 : Upload the Artifact
