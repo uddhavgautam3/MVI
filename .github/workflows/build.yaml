@@ -58,7 +58,7 @@ jobs: # groups
       - name: Checkstyle
         uses: dbelyaev/action-checkstyle@v0.7.4
         with:
-          github_token: ${{ secrets.REVIEWDOG_GITHUB_API_TOKEN }}
+          github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
           level: error
           locale: "US"
