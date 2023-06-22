@@ -55,6 +55,7 @@ jobs: # groups
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      # I could also simply run ./gradlew check here instead of using already published github actions
       - name: Checkstyle
         uses: dbelyaev/action-checkstyle@v0.7.4
         with:
@@ -65,6 +66,9 @@ jobs: # groups
           level: error
           locale: "US"
           reviewdog_flags: -filter-mode=file -fail-on-error
+
+      - name: Checkstyle Using Gradlew check
+        run: ./gradlew check
 
       - name: Build and Generate Apk
         run: ./gradlew app:assembleRelease --stacktrace
