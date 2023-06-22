@@ -121,7 +121,7 @@ android {
             manifestPlaceholders = [google_map_key: "retail_map_key",
                                     app_label_name: "retail_map_label"]
 
-            //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
+            //TODO: Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
             buildConfigField "String", "SERVER_URL", "\"http://retail.myserver.com\""
 
             resValue "string", "base_url", "\"http://retail.myserver.com\""
@@ -138,7 +138,7 @@ android {
             manifestPlaceholders = [google_map_key: "stage_map_key",
                                     app_label_name: "stage_map_label"]
 
-            //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
+            //TODO: Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
             buildConfigField "String", "SERVER_URL", "\"http://stage.myserver.com\""
 
             resValue "string", "base_url", "\"http://stage.myserver.com\""
