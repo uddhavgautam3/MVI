@@ -77,8 +77,8 @@ jobs: # groups
 #      - name: Checkstyle Using Gradlew check
 #        run: ./gradlew check
 
-      - name: is Release?
-        run: echo ${{ steps.extract_branch.outputs.branch == 'release/*' }}
+      - name: is Feature?
+        run: echo ${{ steps.extract_branch.outputs.branch == 'feature/*' }}
 
       # Run Tests Build
       - name: Run gradle tests
