@@ -10,3 +10,29 @@ Steps:
    Action and ActionProcessors should be 1-to-1 mapping, but can be different Result
    Result<Any> can be Loaded, AfterLoading, Error etc.
 5) Emit Actions from the UI Layer, and hook it up.
+
+
+
+The file private_key.pepk is your private key encrypted with a key that only Google can decrypt. It is used only for transferring the key to Google when you enroll in Play Signing.
+
+//if some evil get your private key and password then they can use their malware to be signed by our private key. Wow! That's why we should never put private key in compromised place.
+
+To securely use mviKeyStore.jks
+upgautam@ubuntu2204:~/StudioProjects/MVI/app$ gpg -c --armor mviKeyStore.jks  //pass: Roshav-wala
+it will create PGP message, which I pasted on RELEASE_KEY_SECRET environmental variable in Github
+
+gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch mviKeyStore.jks.asc > app/mviKeyStore.jks //this will run dynamically during build
+
+gpg -d --passphrase "Roshav-wala" --batch app/secrets/mviKeyStore.jks.asc > app/secrets/mviKeyStore1.jks //this will run dynamically during build
+
+// both below work
+/usr/lib/jvm/jdk-11/bin/jarsigner -keystore mviKeyStore.jks -storepass "Roshav-wala" -keypass "Roshav-wala" app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk "my_mvi_key"
+/usr/lib/jvm/jdk-11/bin/jarsigner -keystore mviKeyStore.jks -storepass Roshav-wala -keypass Roshav-wala app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk my_mvi_key
+
+
+to check if the apk is already signed: /usr/lib/jvm/jdk-11/bin/jarsigner --verify -verbose -certs app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk
+
+How we publish to Google Play?
+To build different flavors, we should pass new parameters in Pipeline-Variables.groovy, then those apks/aabs are well tested by EQA team.
+Note: We don't generated signed apk. We after carefully test and then we can sign using JAR Signer before we create CRQ and publish to Google Play.
+Security Team will also thoroughly scan the generated apks (eqa and release) and then CRQ and other documents are created before we agree to push to Google Play.

@@ -66,24 +66,6 @@ android {
         }
     }
 
-    signingConfigs {
-
-        debug {
-            storeFile file("../keystore.keystore")
-            storePassword "Nepal@123!!"
-            keyAlias "app"
-            keyPassword "Nepal@123!!"
-        }
-
-        release {
-            storeFile file("../keystore.keystore")
-            storePassword "Nepal@123!!"
-            keyAlias "app"
-            keyPassword "Nepal@123!!"
-        }
-
-    }
-
     buildTypes {
 
         debug {
@@ -92,8 +74,6 @@ android {
             minifyEnabled false
             shrinkResources false
 
-            matchingFallbacks = ['debug']
-            signingConfig signingConfigs.debug
             //testCoverageEnabled true //already enabled in jacoco.gradle
             applicationIdSuffix '.debug'
             versionNameSuffix ".${getBuildNumber()}"
@@ -106,9 +86,8 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            matchingFallbacks = ['release']
-            signingConfig signingConfigs.release
             versionNameSuffix ".${getBuildNumber()}"
+            signingConfig signingConfigs.debug
         }
 
         enterpriseQa {
@@ -136,7 +115,6 @@ android {
             applicationIdSuffix ".retail"
             versionCode 151010000
             versionName "1.0.0"
-            signingConfig signingConfigs.release
 
             dimension 'prod' //first priority
 
@@ -144,7 +122,7 @@ android {
             manifestPlaceholders = [google_map_key: "retail_map_key",
                                     app_label_name: "retail_map_label"]
 
-            //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
+            //TODO: Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
             buildConfigField "String", "SERVER_URL", "\"http://retail.myserver.com\""
 
             resValue "string", "base_url", "\"http://retail.myserver.com\""
@@ -152,17 +130,16 @@ android {
 
         stage {
             //free is something like provide users limited functionalities or app with ads, or just chapter 1 and then all other chapters are locked
-            applicationIdSuffix ".free"
+            applicationIdSuffix ".stage"
             versionCode 151010000
             versionName "1.0.0"
-            signingConfig signingConfigs.release
 
             dimension 'env' //second priority
 
             manifestPlaceholders = [google_map_key: "stage_map_key",
                                     app_label_name: "stage_map_label"]
 
-            //Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
+            //TODO: Gradle generates a BuildConfig class that contains static configuration constants that are specific to the build at build time.
             buildConfigField "String", "SERVER_URL", "\"http://stage.myserver.com\""
 
             resValue "string", "base_url", "\"http://stage.myserver.com\""

@@ -5,14 +5,10 @@ node {
 
         //def FLAVOR = env.FLAVOR ?: 'retail'
         def FLAVOR = env.FLAVOR ?: 'retailStage'
-        def BUILD_TYPE = env.BUILD_TYPE ?: 'release'
+        def BUILD_TYPE = env.BUILD_TYPE ?: 'debug' //default is debug
         def APP_NAME = env.APP_NAME ?: ''
         def SET_GROUPS = env.SET_GROUPS ?: ''
         def ADD_GROUPS = env.ADD_GROUPS ?: ''
-
-
-        CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
-        VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
 
         if (APP_NAME == "") {
             echo "Error: APP_NAME not defined!"
@@ -27,6 +23,7 @@ node {
         }
 
         stage('Setup Source') {
+            //ANDROID_BRANCH is from Jenkins config.
             echo "Using android branch: ${env.ANDROID_BRANCH}"
             checkout([$class                           : 'GitSCM',
                       branches                         : [[name: env.ANDROID_BRANCH]],
@@ -35,6 +32,20 @@ node {
                       submoduleCfg                     : [],
                       userRemoteConfigs                : [[url: 'ssh://git@github.com/uddhavgautam3/MVI.git']]
             ])
+
+            String androidBranch = "${env.ANDROID_BRANCH}"
+            String androidAppName = "${env.APP_NAME}"
+            if(androidBranch.contains("release")) {
+                if(androidAppName.contains("EQA")) {
+                    BUILD_TYPE = "debug"
+                } else {
+                    BUILD_TYPE = "release"
+                }
+            }
+
+            CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
+            VARIANT = "${FLAVOR}${CAMELCASE_BUILT_TYPE}"
+            echo "Variant name: $VARIANT"
 
             dir('MVI') {
                 echo 'Loading build information'
@@ -85,8 +96,10 @@ node {
                 if (env.CODE_COVERAGE_ENABLED == "true") {
                     sh "./gradlew create${VARIANT}CoverageReport"
                 } else {
-                    sh "./gradlew agemodule:testDebugUnitTest"
-                    sh "./gradlew app:test${FLAVOR}DebugUnitTest"
+                    //for agemodule only include unit tests as there are no flavors
+                    sh "./gradlew agemodule:testDebugUnitTest" //not included on ./gradlew test
+                    sh "./gradlew test"
+                    //sh "./gradlew app:test${FLAVOR}DebugUnitTest" //included on ./gradlew test
                 }
 
             }
