@@ -33,7 +33,6 @@ node {
                       userRemoteConfigs                : [[url: 'ssh://git@github.com/uddhavgautam3/MVI.git']]
             ])
 
-
             String androidBranch = "${env.ANDROID_BRANCH}"
             String androidAppName = "${env.APP_NAME}"
             if(androidBranch.contains("release")) {
