@@ -87,6 +87,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             versionNameSuffix ".${getBuildNumber()}"
+            signingConfig signingConfigs.debug
         }
 
         enterpriseQa {
@@ -129,7 +130,7 @@ android {
 
         stage {
             //free is something like provide users limited functionalities or app with ads, or just chapter 1 and then all other chapters are locked
-            applicationIdSuffix ".free"
+            applicationIdSuffix ".stage"
             versionCode 151010000
             versionName "1.0.0"
 
