@@ -4,22 +4,9 @@ on: # on [Events]
   # always push on developer's dev branch after then we do PR into feature from dev,
   # and then PR into release from feature, and then PR into master from release
   push:
-    branches: [ 'dev/*' ]
+    branches: [ 'dev/*/*' ]
   pull_request:
     branches: [ 'release/*', 'feature/*' ]
-
-  # Add support for manual trigger
-  workflow_dispatch: # event
-    inputs: # provide these below information variables as inputs
-      # similar to inputs, we can have outputs, runs -- runs defines what to run before main actions e.g., running
-      # scripts, running prerequisites etc.
-      app_id:
-        description: 'The application Id/package name'
-        required: true
-      branch:
-        description: 'The branch from which you want the build'
-        required: true
-        default: 'release/v1' # just one default branch, we checkout and build
 
 jobs: # groups
   Android-CI_CD: # job name, any name. Give proper name
@@ -29,10 +16,18 @@ jobs: # groups
       - name: Clean Workspace
         uses: AutoModality/action-clean@v1
 
+      - name: Extract current branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Echo current branch
+        run: echo ${{ steps.extract_branch.outputs.branch }}
+
       - name: Setup Source (checkout etc.)
         uses: actions/checkout@v3 # uses: actions/actual_action
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ steps.extract_branch.outputs.branch }}
 
       - name: Set up Java JDK
         uses: actions/setup-java@v3
@@ -76,17 +71,14 @@ jobs: # groups
         run: ./gradlew agemodule:testDebugUnitTest &&./gradlew test
 
       - name: Build and Generate Release Apk
+        if: ${{ steps.extract_branch.outputs.branch == 'release/*' }}
         run: ./gradlew app:assembleRelease --stacktrace
 
-  #   STEP 2 : Upload the Artifact
-  upload:
-    needs: [ Android-CI_CD ]
-    name: Upload the signed artifact
-    runs-on: self-hosted
-    steps:
-      - name: Upload Apk
-        uses: actions/upload-artifact@v3
-        with:
-          name: signed_apk
-          # app-retail-stage-debug should not be hard-coded
-          path: app/build/outputs/apk/retailStage/debug/app-retail-stage-debug.apk
+      - name: Build and Generate EnterpriseQa Apk
+        if: ${{ steps.extract_branch.outputs.branch == 'release/*' }}
+        run: ./gradlew app:assembleEnterpriseQa --stacktrace
+
+      - name: Build and Generate Debug Apk
+        if: ${{ steps.extract_branch.outputs.branch == 'feature/*' }}
+        run: ./gradlew app:assembleDebug --stacktrace
+

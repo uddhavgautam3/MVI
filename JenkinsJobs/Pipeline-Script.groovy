@@ -34,6 +34,7 @@ node {
             ])
 
             String androidBranch = "${env.ANDROID_BRANCH}"
+            //APP_NAME is from Jenkins pipeline config.
             String androidAppName = "${env.APP_NAME}"
             if(androidBranch.contains("release")) {
                 if(androidAppName.contains("EQA")) {
