@@ -63,13 +63,28 @@ jobs: # groups
           locale: "US"
           reviewdog_flags: -filter-mode=file -fail-on-error
 
+      - name: PMD
+        uses: pmd/pmd-github-action@v1
+        id: pmd
+        with:
+          version: '6.40.0'
+          sourcePath: 'src/main/java'
+          rulesets: 'rulesets/java/quickstart.xml,ruleset.xml'
+      - name: Fail build if there are violations
+        if: steps.pmd.outputs.violations != 0
+        run: exit 1
+
 #      - name: Checkstyle Using Gradlew check
 #        run: ./gradlew check
+
+      - name: is Release?
+        run: echo ${{ steps.extract_branch.outputs.branch == 'release/*' }}
 
       # Run Tests Build
       - name: Run gradle tests
         run: ./gradlew agemodule:testDebugUnitTest &&./gradlew test
 
+      # Build Apks
       - name: Build and Generate Release Apk
         if: ${{ steps.extract_branch.outputs.branch == 'release/*' }}
         run: ./gradlew app:assembleRelease --stacktrace
