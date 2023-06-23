@@ -35,4 +35,4 @@ to check if the apk is already signed: /usr/lib/jvm/jdk-11/bin/jarsigner --verif
 How we publish to Google Play?
 To build different flavors, we should pass new parameters in Pipeline-Variables.groovy, then those apks/aabs are well tested by EQA team.
 Note: We don't generated signed apk. We after carefully test and then we can sign using JAR Signer before we create CRQ and publish to Google Play.
-Security Team will also thoroughly scan the generated apks (eqa and release) and then CRQ and other documents are cretaed before we agree to push to Google Play.
+Security Team will also thoroughly scan the generated apks (eqa and release) and then CRQ and other documents are created before we agree to push to Google Play.
