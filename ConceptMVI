@@ -15,7 +15,7 @@ Steps:
 
 The file private_key.pepk is your private key encrypted with a key that only Google can decrypt. It is used only for transferring the key to Google when you enroll in Play Signing.
 
-//if some evil get your private key and password then they can use their malwares to be signed by our private key. Wow! That's why we should never put private key in compromised place.
+//if some evil get your private key and password then they can use their malware to be signed by our private key. Wow! That's why we should never put private key in compromised place.
 
 To securely use mviKeyStore.jks
 upgautam@ubuntu2204:~/StudioProjects/MVI/app$ gpg -c --armor mviKeyStore.jks  //pass: Roshav-wala
