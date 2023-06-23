@@ -5,7 +5,7 @@ node {
 
         //def FLAVOR = env.FLAVOR ?: 'retail'
         def FLAVOR = env.FLAVOR ?: 'retailStage'
-        def BUILD_TYPE = env.BUILD_TYPE ?: 'release'
+        def BUILD_TYPE = env.BUILD_TYPE ?: 'debug' //default is debug
         def APP_NAME = env.APP_NAME ?: ''
         def SET_GROUPS = env.SET_GROUPS ?: ''
         def ADD_GROUPS = env.ADD_GROUPS ?: ''
@@ -33,15 +33,14 @@ node {
                       userRemoteConfigs                : [[url: 'ssh://git@github.com/uddhavgautam3/MVI.git']]
             ])
 
-            //any branch starting with release/any_name when gets pushed both AndroidEQA and AndroidRelease get triggered
-            //if branch name contains feature then AndroidFeature_featureX gets triggered which make build_type = debug
             String androidBranch = "${env.ANDROID_BRANCH}"
+            String androidAppName = "${env.APP_NAME}"
             if(androidBranch.contains("release")) {
-                BUILD_TYPE = "release"
-            } else if(androidBranch.contains("feature")) {
-                BUILD_TYPE = "debug"
-            } else {
-                BUILD_TYPE = ""
+                if(androidAppName.contains("EQA")) {
+                    BUILD_TYPE = "debug"
+                } else {
+                    BUILD_TYPE = "release"
+                }
             }
 
             CAMELCASE_BUILT_TYPE = BUILD_TYPE.capitalize()
