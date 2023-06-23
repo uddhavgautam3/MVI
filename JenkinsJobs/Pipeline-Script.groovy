@@ -94,7 +94,10 @@ node {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
                 if (env.CODE_COVERAGE_ENABLED == "true") {
-                    sh "./gradlew create${VARIANT}CoverageReport"
+                    if(BUILD_TYPE == "debug") {
+                        //testCoverageEnabled is true only for debug build type
+                        sh "./gradlew create${newVariant}CoverageReport"
+                    }
                 } else {
                     //for agemodule only include unit tests as there are no flavors
                     sh "./gradlew agemodule:testDebugUnitTest" //not included on ./gradlew test
