@@ -83,6 +83,7 @@ android {
 
             matchingFallbacks = ['debug']
             versionNameSuffix ".${getBuildNumber()}"
+            signingConfig signingConfigs.debug
         }
 
         release {
@@ -94,12 +95,14 @@ android {
 
             matchingFallbacks = ['release']
             versionNameSuffix ".${getBuildNumber()}"
+            signingConfig signingConfigs.debug
         }
 
         enterpriseQa {
             initWith debug //copies everything from debug buildTypes
             renderscriptDebuggable true
             renderscriptOptimLevel 3
+            signingConfig signingConfigs.debug
         }
 
     }
