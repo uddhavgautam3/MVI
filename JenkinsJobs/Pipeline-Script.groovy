@@ -130,7 +130,7 @@ node {
         currentBuild.result = "FAILED"
         throw e
     } finally {
-        //success or failure, always send notification
+        //success or failure, always send notification to (Slack etc.)
     }
 
 }
