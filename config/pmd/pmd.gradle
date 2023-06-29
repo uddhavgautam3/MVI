@@ -1,7 +1,7 @@
-apply plugin: 'pmd'
+apply plugin: "pmd"
 
 pmd {
-    toolVersion = '6.55.0'
+    toolVersion = "6.55.0"
     ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
     ruleSets = []
     ignoreFailures = false
@@ -19,12 +19,12 @@ tasks.withType(Pmd) {
 }
 
 //taskPmd will call above task.withType
-task taskPmd(type: Pmd, group: 'Verification') {
+task taskPmd(type: Pmd, group: "Verification") {
     ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
     ruleSets = []
     ignoreFailures = false
-    source 'src'
-    include '**/*.java', '**/*.kt'
-    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
+    source "src"
+    include "**/*.java", "**/*.kt"
+    exclude "**/R.java", "**BuildConfig.java", "**/gen/**"
     classpath = files()
 }

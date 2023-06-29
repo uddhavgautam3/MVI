@@ -1,7 +1,7 @@
-apply plugin: 'checkstyle'
+apply plugin: "checkstyle"
 
 checkstyle {
-    toolVersion = '10.11.0'
+    toolVersion = "10.11.0"
 }
 
 //Configuration Container
@@ -22,12 +22,12 @@ tasks.withType(Checkstyle) {
 //you can run task from here just to check
 //we will see taskCheckStyle in Gradle's Verification group
 //testCheckStyle will call above task.withType
-task taskCheckStyle(type: Checkstyle, group: 'Verification') {
+task taskCheckStyle(type: Checkstyle, group: "Verification") {
     ignoreFailures = false
     showViolations = true
-    source 'src'
-    include '**/*.java', '**/*.kt'
-    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
+    source "src"
+    include "**/*.java", "**/*.kt"
+    exclude "**/R.java", "**/BuildConfig.java", "**/gen/**"
     classpath = files()
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     configProperties.lineWidth = 120
@@ -39,14 +39,14 @@ task taskCheckStyle(type: Checkstyle, group: 'Verification') {
 executing tasks: [taskCheckStyle] in project /home/upgautam/StudioProjects/MVI
 
 
-        > Configure project :agemodule
+> Configure project :agemodule
 Task -> DebugUnitTest
 Task -> EnterpriseQaUnitTest
 Task -> ReleaseUnitTest
 Task -> ReleaseDebugUnitTest
 Task -> StagingUnitTest
 
-        > Configure project :app
+> Configure project :app
 Task -> RetailDebugUnitTest
 Task -> RetailEnterpriseQaUnitTest
 Task -> RetailReleaseUnitTest
