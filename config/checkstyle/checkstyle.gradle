@@ -1,4 +1,4 @@
-apply plugin: "checkstyle"
+apply(plugin: "checkstyle")
 
 checkstyle {
     toolVersion = "10.11.0"
@@ -15,7 +15,7 @@ tasks.withType(Checkstyle) {
     reports {
         xml.required = true
         html.required = true
-        html.stylesheet resources.text.fromFile("${rootDir}/config/checkstyle/xsl/checkstyle-simple.xsl")
+        html.stylesheet = resources.text.fromFile("${rootDir}/config/checkstyle/xsl/checkstyle-simple.xsl")
     }
 }
 
@@ -25,9 +25,9 @@ tasks.withType(Checkstyle) {
 task taskCheckStyle(type: Checkstyle, group: "Verification") {
     ignoreFailures = false
     showViolations = true
-    source "src"
-    include "**/*.java", "**/*.kt"
-    exclude "**/R.java", "**/BuildConfig.java", "**/gen/**"
+    source = "src"
+    include("**/*.java", "**/*.kt")
+    exclude("**/R.java", "**/BuildConfig.java", "**/gen/**")
     classpath = files()
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     configProperties.lineWidth = 120

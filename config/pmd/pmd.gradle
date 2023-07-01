@@ -1,4 +1,4 @@
-apply plugin: "pmd"
+apply(plugin: "pmd")
 
 pmd {
     toolVersion = "6.55.0"
