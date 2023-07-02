@@ -2,9 +2,6 @@ apply(plugin: "pmd")
 
 pmd {
     toolVersion = "6.55.0"
-    ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
-    ruleSets = []
-    ignoreFailures = false
 }
 
 configurations {
