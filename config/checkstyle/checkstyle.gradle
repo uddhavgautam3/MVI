@@ -1,14 +1,45 @@
-apply(plugin: "checkstyle")
+//Every plugin has several information like configuration, their tasks, report generation, integration with other tasks, configuring options etc.
+//So applying plugin is like extending features
 
+apply(from: "$project.rootDir/scripts/common.gradle") //for sourceSets
+apply(plugin: "checkstyle") //applying plugin is like importing classes
+
+// apply plugin: "checkstyle" or apply(plugin: "checkstyle") same thing.
+// First is more common in Groovy, where checkstyle string is a value of plugin id
+// second is using a named parameter syntax aka method call with a map argument
+
+
+//only Project Settings, Plugins or build scripts file scripts contain plugins {} blocks
+/*plugins {
+    id "checkstyle"
+}*/
+
+/*plugins {
+    checkstyle //this is shorthand provided by the Plugins DSL.  Simply enter the value of Plugins id
+}*/
+
+
+//checkstyle plugin configuration block. The keyword checkstyle is provided by checkstyle plugin
 checkstyle {
     toolVersion = "10.11.0"
+
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+
+    configProperties['ignoreFailures'] = false
+    configProperties['showViolations'] = true
+    configProperties['lineWidth'] = 120
+    configProperties['checkstyleSuppressions'] = project.file("${rootDir}/config/checkstyle/suppressions.xml")
+    configProperties['checkstyleSuppressionConfigDir'] = project.file("${rootDir}/config/checkstyle")
 }
 
-//Configuration Container
+//create a new configuration named checkstyle within the Gradle build script.
 configurations {
+    //basically we now get checkstyle plugin configuration block into our gradle configuration block
     checkstyle //creates a configuration name with checkstyle that has its own lifecycle
 }
 
+//tasks = Project.getTask(). tasks is a TaskContainer. TaskContainer holds Task Type
+//tasks are then run so, we can define how much heap memory we should allocate, and after tasks complete where to generate reports etc.
 tasks.withType(Checkstyle) {
     minHeapSize = "1000m"
     maxHeapSize = "4g"
@@ -20,53 +51,40 @@ tasks.withType(Checkstyle) {
 }
 
 //you can run task from here just to check
-//we will see taskCheckStyle in Gradle's Verification group
-//testCheckStyle will call above task.withType
-task taskCheckStyle(type: Checkstyle, group: "Verification") {
-    ignoreFailures = false
-    showViolations = true
-    source = "src"
-    include("**/*.java", "**/*.kt")
-    exclude("**/R.java", "**/BuildConfig.java", "**/gen/**")
-    classpath = files()
-    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-    configProperties.lineWidth = 120
-    configProperties.checkstyleSuppressionConfigDir = file("${rootDir}/config/checkstyle")
+
+appModuleSourceSets.each { sourceSetName ->
+    tasks.create("checkstyle${sourceSetName.capitalize()}", Checkstyle) {
+        group = 'verification'
+        description = "Runs check task for ${sourceSetName.capitalize()} source set"
+
+        source = fileTree(dir: "src/${sourceSetName}", includes: ["**/*.java", "**/*.kt"], excludes: ["**/R.java", "**/BuildConfig.java", "**/gen/**"])
+        // include("**/*.java", "**/*.kt")
+        // exclude("**/R.java", "**/BuildConfig.java", "**/gen/**")
+        classpath = files()
+    }
 }
 
-//when running above you will see something like this in console
-/*
-executing tasks: [taskCheckStyle] in project /home/upgautam/StudioProjects/MVI
+//how gradle runs tasks?
+/*In Gradle, tasks are executed as part of the build process according to their dependencies and the order defined in the build script. Gradle determines the task execution order based on a directed acyclic graph (DAG) that represents the task relationships.
 
+When you invoke a Gradle command, such as gradle build, Gradle performs the following steps to run tasks:
 
-> Configure project :agemodule
-Task -> DebugUnitTest
-Task -> EnterpriseQaUnitTest
-Task -> ReleaseUnitTest
-Task -> ReleaseDebugUnitTest
-Task -> StagingUnitTest
+        Initialization: Gradle initializes the project by evaluating the build script files (e.g., build.gradle, settings.gradle). It configures the project structure, applies plugins, sets up repositories, and defines tasks.
 
-> Configure project :app
-Task -> RetailDebugUnitTest
-Task -> RetailEnterpriseQaUnitTest
-Task -> RetailReleaseUnitTest
-Task -> RetailReleaseDebugUnitTest
-Download https://repo.maven.apache.org/maven2/com/puppycrawl/tools/checkstyle/10.3.3/checkstyle-10.3.3.pom, took 248 ms (201.05 kB)
-Download https://repo.maven.apache.org/maven2/info/picocli/picocli/4.6.3/picocli-4.6.3.pom, took 39 ms (1.38 kB)
-Download https://repo.maven.apache.org/maven2/net/sf/saxon/Saxon-HE/11.4/Saxon-HE-11.4.pom, took 41 ms (4.21 kB)
-Download https://repo.maven.apache.org/maven2/org/antlr/antlr4-runtime/4.10.1/antlr4-runtime-4.10.1.pom, took 38 ms (3.47 kB)
-Download https://repo.maven.apache.org/maven2/org/antlr/antlr4-master/4.10.1/antlr4-master-4.10.1.pom, took 41 ms (4.38 kB)
-Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3.pom, took 41 ms (2.26 kB)
-Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3.module, took 40 ms (4.58 kB)
-Download https://repo.maven.apache.org/maven2/com/puppycrawl/tools/checkstyle/10.3.3/checkstyle-10.3.3.jar, took 241 ms (2.04 MB)
-Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3.jar, took 275 ms (152.67 kB)
-Download https://repo.maven.apache.org/maven2/org/antlr/antlr4-runtime/4.10.1/antlr4-runtime-4.10.1.jar, took 302 ms (322.14 kB)
-Download https://repo.maven.apache.org/maven2/info/picocli/picocli/4.6.3/picocli-4.6.3.jar, took 344 ms (405.95 kB)
-Download https://repo.maven.apache.org/maven2/org/xmlresolver/xmlresolver/4.4.3/xmlresolver-4.4.3-data.jar, took 433 ms (1.03 MB)
-Download https://repo.maven.apache.org/maven2/net/sf/saxon/Saxon-HE/11.4/Saxon-HE-11.4.jar, took 701 ms (5.11 MB)
+Task Configuration: Gradle determines the task execution order by evaluating the task dependencies and relationships defined in the build script. It constructs a DAG that represents the tasks and their dependencies. Each task has a set of inputs, outputs, and actions defined.
 
-> Task :agemodule:taskCheckStyle
-        > Task :app:taskCheckStyle
+        Task Execution: Gradle starts executing the tasks based on the DAG. It checks if a task's inputs are up-to-date by comparing them with the outputs of its dependencies. If the inputs are up-to-date, Gradle skips the task. Otherwise, Gradle executes the task's actions.
 
-BUILD SUCCESSFUL in 9s
-2 actionable tasks: 2 executed*/
+Incremental Build: Gradle performs incremental builds to optimize the build process. It only executes tasks that are affected by changes since the last build. This helps speed up the build by skipping unnecessary tasks.
+
+        Task Skipped and Up-to-date Checking: Gradle skips tasks that have already been executed and are up-to-date. If a task's inputs and outputs have not changed since the previous execution, Gradle considers the task up-to-date and skips its execution. This reduces redundant work in subsequent builds.
+
+Dependency Resolution: Gradle resolves and downloads dependencies required by the build, such as external libraries or plugins, based on the declared dependencies in the build script.
+
+        Reporting: Gradle generates reports and logs to provide information about the build process, including task execution results, test reports, code coverage reports, and more.
+
+        Gradle's build process is highly configurable and can be extended with custom tasks, plugins, and build logic. You can define dependencies between tasks, specify task inputs and outputs, control task execution order, and incorporate complex build workflows using Gradle's powerful features and APIs.
+
+Overall, Gradle provides a flexible and efficient way to run tasks by analyzing task dependencies, checking inputs and outputs for up-to-date status, and executing only the necessary tasks to build your project.
+        */
+
