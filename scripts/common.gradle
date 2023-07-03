@@ -2,6 +2,11 @@ import groovy.json.JsonSlurper
 
 import java.text.SimpleDateFormat
 
+ext {
+    appModuleSourceSets = ['main', 'retailStageDebug', 'retailStageRelease', 'retailStageEnterpriseQa']
+}
+
+
 ext.common = [
 
         padField             : { str, length, with = ' ' ->

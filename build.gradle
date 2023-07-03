@@ -1,5 +1,6 @@
 import com.github.spotbugs.snom.SpotBugsTask
 
+
 buildscript {
     dependencies {
         //classpath "org.jacoco:org.jacoco.core:0.8.8"
@@ -23,6 +24,9 @@ plugins {
     id("org.sonarqube") version "4.0.0.2929"
     id("org.jetbrains.dokka") version "1.8.10"
 }
+
+apply(from: "$project.rootDir/scripts/common.gradle") //for sourceSets
+
 
 ext {
     addRepos = this.&addRepos
@@ -51,7 +55,7 @@ sonar {
     }
 }
 
-subprojects {
+subprojects { subproject ->
     apply(plugin:"org.jetbrains.dokka")
 
     //spot bugs reports generated only this way
@@ -74,11 +78,14 @@ subprojects {
     //includes checkstyle, pmd
     apply(from: "$project.rootDir/config/codequality.gradle.kts")
     afterEvaluate {
-        //syntax: gradleTask.dependsOn(otherGradleTask)
-        //before build of any subproject taskCheckStyle should run
-        preBuild.dependsOn("taskCheckStyle")
-        //we test and check the same testCheckStyle task to see its integrity
-        check.dependsOn("taskCheckStyle")
+        //checkstyle
+        appModuleSourceSets.each { sourceSetName ->
+            //syntax: gradleTask.dependsOn(otherGradleTask)
+            preBuild.dependsOn("checkstyle${sourceSetName.capitalize()}")
+            //we test and check the same testCheckStyle task to see its integrity
+            check.dependsOn("checkstyle${sourceSetName.capitalize()}")
+        }
+
         preBuild.dependsOn("taskPmd")
         check.dependsOn("taskPmd")
     }
