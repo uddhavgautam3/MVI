@@ -61,8 +61,6 @@ Thumbs.db
 obj/
 .externalNativeBuild
 
-*.gradle*
-*.gradle/*
 ### Gradle ###
 .gradle
 /build/
