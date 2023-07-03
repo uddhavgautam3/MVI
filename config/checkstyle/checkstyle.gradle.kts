@@ -4,6 +4,7 @@ apply(plugin = "checkstyle")
 //$project.rootDir belongs to ageModule's rootdir for ageModule and app's rootdir for app module
 apply(from = "${rootDir}/scripts/common.gradle") //for sourceSets
 
+
 /*
 CheckstyleExtension is a class provided by the Checkstyle plugin in Gradle.
 It represents the extension configuration for the Checkstyle plugin.
