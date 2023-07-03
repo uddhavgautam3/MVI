@@ -76,7 +76,7 @@ subprojects { subproject ->
 
     //checkstyle, pmd run during gradle check
     //includes checkstyle, pmd
-    apply(from: "$project.rootDir/config/codequality.gradle.kts")
+    apply(from: "${rootDir}/config/codequality.gradle.kts")
     afterEvaluate {
         //checkstyle
         appModuleSourceSets.each { sourceSetName ->
