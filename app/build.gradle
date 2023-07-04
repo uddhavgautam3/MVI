@@ -16,6 +16,19 @@ android {
     compileSdk = 34
     ndkVersion = "25.2.9519653"
 
+    kapt {
+        javacOptions {
+            option("-Xmaxerrs", 500)
+            option("-Xlint:deprecation", true)
+            option("-Xlint:unchecked", true)
+        }
+        arguments {
+            arg("plugin", "org.jetbrains.kotlin.kapt3:kotlin-allopen")
+            arg("plugin", "org.jetbrains.kotlin.kapt3:kotlin-noarg")
+        }
+        useBuildCache = true
+    }
+
     lintOptions {
         // Turns off checks for the issue IDs you specify.
         disable("TypographyFractions", "TypographyQuotes")
@@ -241,5 +254,4 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
 }

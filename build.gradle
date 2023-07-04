@@ -78,16 +78,16 @@ subprojects { subproject ->
     //includes checkstyle, pmd
     apply(from: "${rootDir}/config/codequality.gradle.kts")
     afterEvaluate {
-        //checkstyle
         appModuleSourceSets.each { sourceSetName ->
             //syntax: gradleTask.dependsOn(otherGradleTask)
             preBuild.dependsOn("checkstyle${sourceSetName.capitalize()}")
             //we test and check the same testCheckStyle task to see its integrity
             check.dependsOn("checkstyle${sourceSetName.capitalize()}")
+            preBuild.dependsOn("pmd${sourceSetName.capitalize()}")
+            check.dependsOn("pmd${sourceSetName.capitalize()}")
         }
 
-        preBuild.dependsOn("taskPmd")
-        check.dependsOn("taskPmd")
+
     }
 }
 

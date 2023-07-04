@@ -2,7 +2,7 @@
 
 apply(plugin = "checkstyle")
 //$project.rootDir belongs to ageModule's rootdir for ageModule and app's rootdir for app module
-apply(from = "${rootDir}/scripts/common.gradle") //for sourceSets
+apply(from = "${rootDir}/scripts/common.gradle") //for appModuleSourceSets
 
 
 /*

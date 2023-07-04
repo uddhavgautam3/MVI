@@ -1,7 +1,17 @@
+apply(from: "$project.rootDir/scripts/common.gradle") //for appModuleSourceSets
 apply(plugin: "pmd")
+
 
 pmd {
     toolVersion = "6.55.0"
+
+    ignoreFailures = true // Set to true to continue the build even if PMD violations are found
+
+    //ruleSetFiles = files("path/to/ruleset1.xml", "path/to/ruleset2.xml")
+    //has priority over ruleSets because ruleSetFiles is our configuration based on our need
+    //where ruleSets is from pmd plugin
+    ruleSetFiles = files("${rootDir}/config/pmd/pmdmain.xml")
+    ruleSets = ruleSets + "android.xml"
 }
 
 configurations {
@@ -11,17 +21,22 @@ configurations {
 tasks.withType(Pmd) {
     reports {
         xml.required = true
+        xml.destination = file("${buildDir.absolutePath}/reports/pmd/pmd.xml")
         html.required = true
+        html.destination = file("$buildDir/reports/pmd/report.html")
     }
 }
 
-//taskPmd will call above task.withType
-task taskPmd(type: Pmd, group: "Verification") {
-    ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
-    ruleSets = []
-    ignoreFailures = false
-    source "src"
-    include "**/*.java", "**/*.kt"
-    exclude "**/R.java", "**BuildConfig.java", "**/gen/**"
-    classpath = files()
+appModuleSourceSets.each { sourceSetName ->
+    tasks.create("pmd${sourceSetName.capitalize()}", Pmd) {
+        group = 'verification'
+        description = "Runs pmd task for ${sourceSetName.capitalize()} source set"
+
+
+        source = fileTree(dir: "src/${sourceSetName}",
+                includes: ["**/*.java", "**/*.kt"],
+                excludes: ["**/R.java", "**BuildConfig.java", "**/gen/**", "**/generated/**", "**/BuildConfig.java", "**/R.java"])
+
+        classpath = files()
+    }
 }
