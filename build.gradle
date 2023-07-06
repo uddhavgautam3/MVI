@@ -43,7 +43,7 @@ sonar {
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc")
         property("sonar.core.codeCoveragePlugin", "jacoco")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/xml-coverage-report/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${rootDir}/xml-coverage-report/jacoco.xml")
     }
 }
 

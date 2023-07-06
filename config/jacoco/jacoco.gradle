@@ -89,17 +89,17 @@ def setupAndroidReporting() {
                     csv {
                         required = true
                         enabled true
-                        destination file("${project.rootDir}/csv-coverage-report")
+                        destination file("${rootDir}/csv-coverage-report")
                     }
                     xml {
                         required = true
                         enabled true
-                        destination file("${project.rootDir}/xml-coverage-report/jacoco.xml")
+                        destination file("${rootDir}/xml-coverage-report/jacoco.xml")
                     }
                     html {
                         required = true
                         enabled true
-                        destination file("${project.rootDir}/html-coverage-report")
+                        destination file("${rootDir}/html-coverage-report")
                     }
                 }
             }

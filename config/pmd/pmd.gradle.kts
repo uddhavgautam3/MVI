@@ -41,7 +41,7 @@ tasks.withType<Pmd> {
 
 tasks.register<Pmd>("taskPmd") {
     group = "Verification"
-    ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
+    ruleSetFiles = files("${rootDir}/config/pmd/pmdmain.xml")
     ignoreFailures = false
     source(fileTree("src") {
         include("**/*.java", "**/*.kt")

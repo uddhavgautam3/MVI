@@ -1,7 +1,7 @@
 //Every plugin has several information like configuration, their tasks, report generation, integration with other tasks, configuring options etc.
 //So applying plugin is like extending features
 
-apply(from: "$project.rootDir/scripts/common.gradle") //for appModuleSourceSets
+apply(from: "$rootDir/scripts/common.gradle") //for appModuleSourceSets
 apply(plugin: "checkstyle") //applying plugin is like importing classes
 
 // apply plugin: "checkstyle" or apply(plugin: "checkstyle") same thing.
