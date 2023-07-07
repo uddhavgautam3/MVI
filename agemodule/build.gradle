@@ -1,12 +1,16 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("maven-publish")
+    id 'com.github.spotbugs' version '4.8.0'
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
+apply(from: "$rootDir/scripts/common.gradle") //for appModuleSourceSets
 
 android {
     namespace = "com.mvi.agemodule"
@@ -131,6 +135,28 @@ android {
     }
     buildToolsVersion "34.0.0"
 
+
+    //spotbugs configuration
+    spotbugs {
+        toolVersion = "5.0.14"
+        ignoreFailures = false
+        effort = 'max'
+        reportLevel = 'high'
+        showProgress = true
+        excludeFilter = file("${rootDir}/config/spotbugs/exclude.xml")
+        reportsDir = file("$buildDir/reports/spotbugs") // Directory to store SpotBugs reports
+    }
+    // Define SpotBugs task
+    tasks.withType(SpotBugsTask) {
+        group = 'verification'
+        description = 'Runs SpotBugs analysis on the project'
+
+        reports {
+            xml.enabled = true
+            html.enabled = false
+            xml.destination = file("${project.buildDir}/reports/spotbugs/spotbugs.xml")
+        }
+    }
 }
 
 afterEvaluate {
@@ -198,4 +224,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
 }
