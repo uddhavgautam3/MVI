@@ -1,17 +1,3 @@
-buildscript {
-    dependencies {
-        //classpath "org.jacoco:org.jacoco.core:0.8.8"
-    }
-    repositories {
-        mavenCentral()
-        google()
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    }
-}
-
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-//IDE plugins
 plugins {
     //The plugins block is the newer method of applying plugins,
     // and they must be available in the Gradle plugin repository.
@@ -23,30 +9,6 @@ plugins {
     id("jacoco")
 }
 
-ext {
-    compose_ui_version = "1.4.3"
-    kotlin_version = "1.8.22"
-    deps = dependencies
-    room_version = "2.5.1" //not being used anywhere for now
-    buildNumber = getBuildNumber()
-}
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-static String getBuildNumber() {
-    return getPropertyOrEnv("BUILD_NUMBER", "LocalDebug")
-}
-
-static String getPropertyOrEnv(name, defaultValue = "") {
-    def prop = System.properties[name]
-    if (prop == null) {
-        prop = System.getenv(name)
-    }
-    if (prop == null) {
-        return defaultValue
-    }
-    return prop
-}
-
