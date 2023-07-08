@@ -85,13 +85,6 @@ node {
             recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
         }
 
-        stage('Dokka Report') {
-            dir('MVI') {
-                sh "./gradlew clean"
-                sh "./gradlew dokkaHtml"
-            }
-        }
-
         stage('Test') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
