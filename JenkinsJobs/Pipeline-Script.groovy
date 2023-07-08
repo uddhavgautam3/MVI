@@ -58,10 +58,12 @@ node {
         stage('Code Quality (Checkstyle, PMD, Spotbugs)') {
             dir('MVI') {
                 echo "Code quality check: ${env.CODE_QUALITY_ENABLED}"
-                //sh "./gradlew taskCheckStyle"clear
                 //sh "./gradlew taskPMD"
-                sh "./gradlew check" //includes spotbugs, checkstyle, and pmd
+                sh "./gradlew check" //includes spotbugs
                 sh "./gradlew test${VARIANT}UnitTest"
+
+                sh "./gradlew runAllPmdTask"
+                sh "./gradlew runAllCheckstyleTask"
             }
         }
 
@@ -97,7 +99,7 @@ node {
                 if (env.CODE_COVERAGE_ENABLED == "true") {
                     if(BUILD_TYPE == "debug") {
                         //testCoverageEnabled is true only for debug build type
-                        sh "./gradlew create${newVariant}CoverageReport"
+                        sh "./gradlew create${VARIANT}CoverageReport"
                     }
                 } else {
                     //for agemodule only include unit tests as there are no flavors

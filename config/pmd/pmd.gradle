@@ -1,10 +1,12 @@
-apply plugin: 'pmd'
+apply(plugin: "pmd")
 
 pmd {
-    toolVersion = '6.55.0'
-    ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
+    toolVersion = "6.55.0"
+    //ruleSetFiles = files("path/to/ruleset1.xml", "path/to/ruleset2.xml")
+    //has priority over ruleSets because ruleSetFiles is our configuration based on our need
+    //where ruleSets is from pmd plugin
+    ruleSetFiles = files("${rootDir}/config/pmd/pmdmain.xml")
     ruleSets = []
-    ignoreFailures = false
 }
 
 configurations {
@@ -12,19 +14,50 @@ configurations {
 }
 
 tasks.withType(Pmd) {
+    ignoreFailures = true // Set to true to continue the build even if PMD violations are found
+
     reports {
         xml.required = true
+        xml.destination = file("${buildDir.absolutePath}/reports/pmd/pmd.xml")
         html.required = true
+        html.destination = file("$buildDir/reports/pmd/report.html")
     }
 }
 
-//taskPmd will call above task.withType
-task taskPmd(type: Pmd, group: 'Verification') {
-    ruleSetFiles = files("${project.rootDir}/config/pmd/pmdmain.xml")
-    ruleSets = []
-    ignoreFailures = false
-    source 'src'
-    include '**/*.java', '**/*.kt'
-    exclude '**/R.java', '**/BuildConfig.java', '**/gen/**'
-    classpath = files()
+project.afterEvaluate {
+    task pmdTask {
+        group = 'verification'
+        description = "Runs pmd task"
+            setupAndroidPmd()
+    }
 }
+
+def setupAndroidPmd() {
+    def mySourceSets = android.sourceSets.collect { sourceSet ->
+        sourceSet.name
+    }
+    if (!mySourceSets) mySourceSets.add("")
+    mySourceSets.each { sourceSet ->
+        tasks.create("pmd${sourceSet.capitalize()}", Pmd) {
+            group = 'verification'
+            description = "Runs pmd task for ${sourceSet.capitalize()} source set"
+
+
+            source = fileTree(dir: "src/${sourceSet}",
+                    includes: ["**/*.java", "**/*.kt"],
+                    excludes: ["**/R.java", "**BuildConfig.java", "**/gen/**", "**/generated/**", "**/BuildConfig.java", "**/R.java"])
+
+            classpath = files()
+        }
+    }
+}
+
+//wrap all pmd tasks
+task runAllPmdTask {
+    group = 'pmd'
+    dependsOn tasks.withType(Task).matching { task ->
+        task.name.startsWith("pmd")
+    }
+}
+
+

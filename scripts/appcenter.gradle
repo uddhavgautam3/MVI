@@ -5,7 +5,7 @@ import java.util.stream.Collectors
  * Configure AppCenter upload tasks for build.gradle
  */
 
-apply from: "$project.rootDir/scripts/common.gradle"
+apply(from: "$rootDir/scripts/common.gradle")
 
 ext.AppCenter = [
         apiKey : "cdf824da88961c57eb2f2bee857b2ecf96e6a542", //userApiToken full access

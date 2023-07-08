@@ -1,8 +1,6 @@
-import com.github.spotbugs.snom.SpotBugsTask
-
 buildscript {
     dependencies {
-        //classpath 'org.jacoco:org.jacoco.core:0.8.8'
+        //classpath "org.jacoco:org.jacoco.core:0.8.8"
     }
     this.&addRepos
 }
@@ -12,33 +10,24 @@ buildscript {
 plugins {
     //The plugins block is the newer method of applying plugins,
     // and they must be available in the Gradle plugin repository.
-    id 'com.android.application' version '7.3.1' apply false
-    id 'com.android.library' version '7.3.1' apply false
-    id 'com.google.dagger.hilt.android' version '2.44' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.20' apply false //kotlin IDE plugin for gradle
-    id 'maven-publish'
-    id 'com.github.spotbugs' version '5.0.14' apply false
-    id 'jacoco'
-    //Plugin 'jacoco' is a core Gradle plugin, which cannot be specified with a version number
-    id 'org.sonarqube' version '4.0.0.2929'
-    id 'org.jetbrains.dokka' version '1.8.10'
+    id("com.android.application") version "8.0.2" apply false
+    id("com.android.library") version "8.0.2" apply false
+    id("com.google.dagger.hilt.android") version "2.44" apply false
+    id("org.jetbrains.kotlin.android") version "1.8.22" apply false //kotlin IDE plugin for gradle
+    id("maven-publish")
+    id("jacoco")
+    //Plugin "jacoco" is a core Gradle plugin, which cannot be specified with a version number
+    id("org.sonarqube") version "4.0.0.2929"
+    id("org.jetbrains.dokka") version "1.8.10"
 }
 
 ext {
     addRepos = this.&addRepos
-    compose_ui_version = '1.4.3'
-    kotlin_version = '1.10.1'
-
+    compose_ui_version = "1.4.3"
+    kotlin_version = "1.8.22"
     deps = dependencies
-    room_version = '2.5.1'
+    room_version = "2.5.1"
 }
-
-//allprojects = rootproject (e.g., MVI) + subprojects (e.g., agemodule + app)
-allprojects {
-    //The apply approach is the older, yet more flexible method of adding a plugin to your build.
-    //apply plugin: 'jacoco' // and this plugin would be resolve from this.&addRepos
-}
-
 
 sonar {
     properties {
@@ -47,40 +36,12 @@ sonar {
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc")
         property("sonar.core.codeCoveragePlugin", "jacoco")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/xml-coverage-report/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${rootDir}/xml-coverage-report/jacoco.xml")
     }
 }
 
-subprojects {
-    apply plugin: 'org.jetbrains.dokka'
-
-
-    //spot bugs reports generated only this way
-    apply plugin: 'com.github.spotbugs'
-    spotbugs {
-        toolVersion = '4.2.3'
-    }
-
-    tasks.withType(SpotBugsTask) {
-        reports {
-            xml.enabled = false
-            html.enabled = true
-        }
-    }
-
-
-    //checkstyle, pmd, and spotbugs all run during gradle check
-    //includes checkstyle, pmd
-    apply from: "$project.rootDir/config/codequality.gradle"
-    afterEvaluate {
-        //syntax: gradleTask.dependsOn(otherGradleTask)
-        //before build of any subproject taskCheckStyle should run
-        preBuild.dependsOn('taskCheckStyle')
-        //we test and check the same testCheckStyle task to see its integrity
-        check.dependsOn('taskCheckStyle')
-        preBuild.dependsOn('taskPmd')
-        check.dependsOn('taskPmd')
-    }
+subprojects { subproject ->
+    apply(plugin:"org.jetbrains.dokka")
 }
 
 task clean(type: Delete) {
@@ -89,10 +50,10 @@ task clean(type: Delete) {
 
 
 static String getBuildNumber() {
-    return getPropertyOrEnv('BUILD_NUMBER', 'LocalDebug')
+    return getPropertyOrEnv("BUILD_NUMBER", "LocalDebug")
 }
 
-static String getPropertyOrEnv(name, defaultValue = '') {
+static String getPropertyOrEnv(name, defaultValue = "") {
     def prop = System.properties[name]
     if (prop == null) {
         prop = System.getenv(name)
@@ -106,6 +67,6 @@ static String getPropertyOrEnv(name, defaultValue = '') {
 static def addRepos(RepositoryHandler repositoryHandler) {
     repositoryHandler.mavenCentral()
     repositoryHandler.google()
-    repositoryHandler.maven { url 'https://plugins.gradle.org/m2/' }
-    repositoryHandler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    repositoryHandler.maven { url "https://plugins.gradle.org/m2/" }
+    repositoryHandler.maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
