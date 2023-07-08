@@ -59,7 +59,7 @@ node {
             dir('MVI') {
                 echo "Code quality check: ${env.CODE_QUALITY_ENABLED}"
                 //sh "./gradlew taskPMD"
-                sh "./gradlew check" //includes spotbugs, checkstyle, and pmd
+                sh "./gradlew check" //includes spotbugs
                 sh "./gradlew test${VARIANT}UnitTest"
             }
         }

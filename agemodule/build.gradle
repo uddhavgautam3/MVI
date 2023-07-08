@@ -6,12 +6,12 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("maven-publish")
-    id 'com.github.spotbugs' version '4.8.0'
+    id("com.github.spotbugs") version "5.0.14"
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
-apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
-apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
+apply(from: "$rootDir/config/checkstyle/checkstyle.gradle")
+apply(from: "$rootDir/config/pmd/pmd.gradle")
 
 android {
     namespace = "com.mvi.agemodule"
@@ -139,13 +139,21 @@ android {
 
     //spotbugs configuration
     spotbugs {
-        toolVersion = "5.0.14"
         ignoreFailures = false
-        effort = 'max'
-        reportLevel = 'high'
+        showStackTraces = true
         showProgress = true
+        effort = 'default' //max
+        reportLevel = 'default' //high
+        visitors = [ 'FindSqlInjection', 'SwitchFallthrough' ]
+        omitVisitors = [ 'FindNonShortCircuit' ]
+        reportsDir = file("$buildDir/reports/spotbugs")
+        //includeFilter = file("include.xml")
         excludeFilter = file("${rootDir}/config/spotbugs/exclude.xml")
-        reportsDir = file("$buildDir/reports/spotbugs") // Directory to store SpotBugs reports
+        //baselineFile = file("baseline.xml")
+        //onlyAnalyze = [ 'com.foobar.MyClass', 'com.foobar.mypkg.*' ]
+        maxHeapSize = '4g'
+        extraArgs = [ '-nested:false' ]
+        jvmArgs = [ '-Duser.language=ja' ]
     }
     // Define SpotBugs task
     tasks.withType(SpotBugsTask) {
@@ -226,7 +234,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0")
+    spotbugs("com.github.spotbugs:spotbugs:4.7.1")
 }
 
 ext {

@@ -25,7 +25,11 @@ tasks.withType(Pmd) {
 }
 
 project.afterEvaluate {
-    setupAndroidPmd()
+    task pmdTask {
+        group = 'verification'
+        description = "Runs pmd task"
+            setupAndroidPmd()
+    }
 }
 
 def setupAndroidPmd() {
@@ -48,13 +52,4 @@ def setupAndroidPmd() {
     }
 }
 
-task printSetupAndroidPmd() {
-    def mySourceSets = android.sourceSets.collect { sourceSet ->
-        sourceSet.name
-    }
-    if (!mySourceSets) mySourceSets.add("")
-    mySourceSets.each { sourceSet ->
-        println("sourceSet name: $sourceSet")
-    }
 
-}

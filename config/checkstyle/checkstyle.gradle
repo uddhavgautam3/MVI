@@ -50,7 +50,7 @@ tasks.withType(Checkstyle) {
 }
 
 
-project.afterEvaluate { project ->
+project.afterEvaluate {
     setupAndroidCheckStyle()
 }
 
@@ -70,15 +70,4 @@ def setupAndroidCheckStyle() {
             classpath = files()
         }
     }
-}
-
-task setupAndroidCheckStyle() {
-    def mySourceSets = android.sourceSets.collect { sourceSet ->
-        sourceSet.name
-    }
-    if (!mySourceSets) mySourceSets.add("")
-    mySourceSets.each { sourceSet ->
-        println("sourceSet name: $sourceSet")
-    }
-
 }
