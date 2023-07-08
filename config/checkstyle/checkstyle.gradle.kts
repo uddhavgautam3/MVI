@@ -42,18 +42,13 @@ tasks.withType<Checkstyle> {
     }
 }
 
-val sourceSets = project.property("sourceSets") as SourceSetContainer
+project.afterEvaluate {
+    setupAndroidCheckStyle()
+}
 
 fun setupAndroidCheckStyle() {
-    val finalSourceSets = sourceSets.map { sourceSet ->
-        sourceSet.name
-    }.toMutableList()
-
-    if (finalSourceSets.isEmpty()) {
-        finalSourceSets.add("")
-    }
-
-    finalSourceSets.forEach { sourceSet ->
+    val mySourceSets = project.property("mySourceSets") as ArrayList<String>
+    mySourceSets.forEach { sourceSet ->
         tasks.create("checkstyle${sourceSet.capitalize()}", Pmd::class) {
             group = "verification"
             description = "Runs check task for ${sourceSet.capitalize()} source set"

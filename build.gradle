@@ -21,9 +21,6 @@ plugins {
     id("org.jetbrains.dokka") version "1.8.10"
 }
 
-apply(from: "${rootDir}/scripts/common.gradle") //for sourceSets
-
-
 ext {
     addRepos = this.&addRepos
     compose_ui_version = "1.4.3"

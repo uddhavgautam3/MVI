@@ -22,21 +22,12 @@ tasks.withType<Pmd> {
 }
 
 project.afterEvaluate {
-    setupAndroidCheckStyle()
+    setupAndroidPmd()
 }
 
-val sourceSets = project.property("sourceSets") as SourceSetContainer
-
-fun setupAndroidCheckStyle() {
-    val finalSourceSets = sourceSets.map { sourceSet ->
-        sourceSet.name
-    }.toMutableList()
-
-    if (finalSourceSets.isEmpty()) {
-        finalSourceSets.add("")
-    }
-
-    finalSourceSets.forEach { sourceSet ->
+fun setupAndroidPmd() {
+    val mySourceSets = project.property("mySourceSets") as ArrayList<String>
+    mySourceSets.forEach { sourceSet ->
         tasks.create("pmd${sourceSet.capitalize()}", Pmd::class) {
             group = "verification"
             description = "Runs pmd task for ${sourceSet.capitalize()} source set"

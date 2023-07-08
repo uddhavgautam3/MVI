@@ -10,9 +10,8 @@ plugins {
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
-apply(from: "$rootDir/config/checkstyle/checkstyle.gradle")
-apply(from: "$rootDir/config/pmd/pmd.gradle")
-apply(from: "$rootDir/scripts/common.gradle") //for appModuleSourceSets
+apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
+apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
 
 android {
     namespace = "com.mvi.agemodule"
@@ -231,7 +230,7 @@ dependencies {
 }
 
 ext {
-    def mySourceSets = sourceSets.collect { sourceSet ->
+    mySourceSets = android.sourceSets.collect { sourceSet ->
         sourceSet.name
     }
     if (!mySourceSets) mySourceSets.add("")
