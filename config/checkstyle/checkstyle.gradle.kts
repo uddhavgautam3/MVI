@@ -2,8 +2,6 @@
 
 apply(plugin = "checkstyle")
 //$project.rootDir belongs to ageModule's rootdir for ageModule and app's rootdir for app module
-apply(from = "${rootDir}/scripts/common.gradle") //for appModuleSourceSets
-
 
 /*
 CheckstyleExtension is a class provided by the Checkstyle plugin in Gradle.
@@ -44,17 +42,33 @@ tasks.withType<Checkstyle> {
     }
 }
 
-(project.extra["appModuleSourceSets"] as? List<String>)?.forEach { sourceSetName: String ->
-    tasks.register("checkstyle${sourceSetName.replaceFirstChar { it.uppercase() }}", Checkstyle::class) {
-        group = "Verification"
-        description = "Runs check task for ${sourceSetName.replaceFirstChar { it.uppercase() }} source set"
+val sourceSets = project.property("sourceSets") as SourceSetContainer
 
+fun setupAndroidCheckStyle() {
+    val finalSourceSets = sourceSets.map { sourceSet ->
+        sourceSet.name
+    }.toMutableList()
 
-        source(fileTree("src") {
-            include("**/*.java", "**/*.kt")
-            exclude("**/R.java", "**/BuildConfig.java", "**/gen/**")
-        })
+    if (finalSourceSets.isEmpty()) {
+        finalSourceSets.add("")
+    }
 
-        classpath = files()
+    finalSourceSets.forEach { sourceSet ->
+        tasks.create("checkstyle${sourceSet.capitalize()}", Pmd::class) {
+            group = "verification"
+            description = "Runs check task for ${sourceSet.capitalize()} source set"
+
+            source = fileTree("src/${sourceSet}") {
+                include("**/*.java", "**/*.kt")
+                exclude(
+                    "**/R.java",
+                    "**BuildConfig.java",
+                    "**/gen/**"
+                )
+            }
+
+            classpath = files()
+
+        }
     }
 }

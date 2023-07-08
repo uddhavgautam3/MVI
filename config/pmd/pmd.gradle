@@ -1,6 +1,4 @@
-apply(from: "$project.rootDir/scripts/common.gradle") //for appModuleSourceSets
 apply(plugin: "pmd")
-
 
 pmd {
     toolVersion = "6.55.0"
@@ -26,16 +24,37 @@ tasks.withType(Pmd) {
     }
 }
 
-appModuleSourceSets.each { sourceSetName ->
-    tasks.create("pmd${sourceSetName.capitalize()}", Pmd) {
-        group = 'verification'
-        description = "Runs pmd task for ${sourceSetName.capitalize()} source set"
+project.afterEvaluate {
+    setupAndroidPmd()
+}
 
-
-        source = fileTree(dir: "src/${sourceSetName}",
-                includes: ["**/*.java", "**/*.kt"],
-                excludes: ["**/R.java", "**BuildConfig.java", "**/gen/**", "**/generated/**", "**/BuildConfig.java", "**/R.java"])
-
-        classpath = files()
+def setupAndroidPmd() {
+    def mySourceSets = android.sourceSets.collect { sourceSet ->
+        sourceSet.name
     }
+    if (!mySourceSets) mySourceSets.add("")
+    mySourceSets.each { sourceSet ->
+        tasks.create("pmd${sourceSet.capitalize()}", Pmd) {
+            group = 'verification'
+            description = "Runs pmd task for ${sourceSet.capitalize()} source set"
+
+
+            source = fileTree(dir: "src/${sourceSet}",
+                    includes: ["**/*.java", "**/*.kt"],
+                    excludes: ["**/R.java", "**BuildConfig.java", "**/gen/**", "**/generated/**", "**/BuildConfig.java", "**/R.java"])
+
+            classpath = files()
+        }
+    }
+}
+
+task printSetupAndroidPmd() {
+    def mySourceSets = android.sourceSets.collect { sourceSet ->
+        sourceSet.name
+    }
+    if (!mySourceSets) mySourceSets.add("")
+    mySourceSets.each { sourceSet ->
+        println("sourceSet name: $sourceSet")
+    }
+
 }

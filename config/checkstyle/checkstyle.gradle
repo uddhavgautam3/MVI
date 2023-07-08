@@ -1,7 +1,6 @@
 //Every plugin has several information like configuration, their tasks, report generation, integration with other tasks, configuring options etc.
 //So applying plugin is like extending features
 
-apply(from: "$rootDir/scripts/common.gradle") //for appModuleSourceSets
 apply(plugin: "checkstyle") //applying plugin is like importing classes
 
 // apply plugin: "checkstyle" or apply(plugin: "checkstyle") same thing.
@@ -50,18 +49,36 @@ tasks.withType(Checkstyle) {
     }
 }
 
-//you can run task from here just to check
 
-appModuleSourceSets.each { sourceSetName ->
-    tasks.create("checkstyle${sourceSetName.capitalize()}", Checkstyle) {
-        group = 'verification'
-        description = "Runs check task for ${sourceSetName.capitalize()} source set"
+project.afterEvaluate { project ->
+    setupAndroidCheckStyle()
+}
 
-        source = fileTree(dir: "src/${sourceSetName}", includes: ["**/*.java", "**/*.kt"], excludes: ["**/R.java", "**/BuildConfig.java", "**/gen/**"])
-        // include("**/*.java", "**/*.kt")
-        // exclude("**/R.java", "**/BuildConfig.java", "**/gen/**")
-        classpath = files()
+def setupAndroidCheckStyle() {
+    def mySourceSets = android.sourceSets.collect { sourceSet ->
+        sourceSet.name
+    }
+    if (!mySourceSets) mySourceSets.add("")
+    mySourceSets.each { sourceSet ->
+        tasks.create("checkstyle${sourceSet.capitalize()}", Checkstyle) {
+            group = 'verification'
+            description = "Runs check task for ${sourceSet.capitalize()} source set"
+
+            source = fileTree(dir: "src/${sourceSet}", includes: ["**/*.java", "**/*.kt"], excludes: ["**/R.java", "**/BuildConfig.java", "**/gen/**"])
+            // include("**/*.java", "**/*.kt")
+            // exclude("**/R.java", "**/BuildConfig.java", "**/gen/**")
+            classpath = files()
+        }
     }
 }
 
+task setupAndroidCheckStyle() {
+    def mySourceSets = android.sourceSets.collect { sourceSet ->
+        sourceSet.name
+    }
+    if (!mySourceSets) mySourceSets.add("")
+    mySourceSets.each { sourceSet ->
+        println("sourceSet name: $sourceSet")
+    }
 
+}

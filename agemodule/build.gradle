@@ -10,6 +10,8 @@ plugins {
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
+apply(from: "$rootDir/config/checkstyle/checkstyle.gradle")
+apply(from: "$rootDir/config/pmd/pmd.gradle")
 apply(from: "$rootDir/scripts/common.gradle") //for appModuleSourceSets
 
 android {
@@ -226,4 +228,11 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+}
+
+ext {
+    def mySourceSets = sourceSets.collect { sourceSet ->
+        sourceSet.name
+    }
+    if (!mySourceSets) mySourceSets.add("")
 }

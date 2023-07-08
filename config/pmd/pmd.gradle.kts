@@ -1,5 +1,4 @@
 apply(plugin = "pmd")
-apply(from = "${rootDir}/scripts/common.gradle") //for appModuleSourceSets
 
 configure<PmdExtension> {
     toolVersion = "6.55.0"
@@ -20,20 +19,42 @@ tasks.withType<Pmd> {
         html.required.set(true)
         html.setDestination(file("$buildDir/reports/pmd/pmd.html"))
     }
-
 }
 
-(project.extra["appModuleSourceSets"] as? List<String>)?.forEach { sourceSetName: String ->
-    tasks.register("pmd${sourceSetName.replaceFirstChar { it.uppercase() }}", Pmd::class) {
-        group = "verification"
-        description = "Runs pmd task for ${sourceSetName.capitalize()} source set"
+project.afterEvaluate {
+    setupAndroidCheckStyle()
+}
 
+val sourceSets = project.property("sourceSets") as SourceSetContainer
 
-        source(fileTree("src") {
-            include("**/*.java", "**/*.kt")
-            exclude("**/R.java", "**BuildConfig.java", "**/gen/**", "**/generated/**", "**/BuildConfig.java", "**/R.java")
-        })
+fun setupAndroidCheckStyle() {
+    val finalSourceSets = sourceSets.map { sourceSet ->
+        sourceSet.name
+    }.toMutableList()
 
-        classpath = files()
+    if (finalSourceSets.isEmpty()) {
+        finalSourceSets.add("")
+    }
+
+    finalSourceSets.forEach { sourceSet ->
+        tasks.create("pmd${sourceSet.capitalize()}", Pmd::class) {
+            group = "verification"
+            description = "Runs pmd task for ${sourceSet.capitalize()} source set"
+
+            source = fileTree("src/${sourceSet}") {
+                include("**/*.java", "**/*.kt")
+                exclude(
+                    "**/R.java",
+                    "**BuildConfig.java",
+                    "**/gen/**",
+                    "**/generated/**",
+                    "**/BuildConfig.java",
+                    "**/R.java"
+                )
+            }
+
+            classpath = files()
+        }
     }
 }
+

@@ -1,4 +1,4 @@
-project.afterEvaluate { project ->
+project.afterEvaluate {
     setupAndroidReporting()
 }
 
@@ -15,6 +15,9 @@ def setupAndroidReporting() {
     }
     def productFlavors = android.productFlavors.collect { flavor ->
         flavor.name
+    }
+    def mySourceSets = android.sourceSets.collect { sourceSet ->
+        sourceSet.name
     }
     // When no product flavors defined, use empty
     if (!productFlavors) productFlavors.add("")
