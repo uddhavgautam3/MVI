@@ -101,7 +101,7 @@ android {
             shrinkResources = false
 
             matchingFallbacks = ["debug"]
-            versionNameSuffix = ".${getBuildNumber()}"
+            versionNameSuffix = "$buildNumber"
             signingConfig = signingConfigs.debug
         }
 
@@ -113,7 +113,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             matchingFallbacks = ["release"]
-            versionNameSuffix = ".${getBuildNumber()}"
+            versionNameSuffix = "$buildNumber"
             signingConfig = signingConfigs.debug
         }
 

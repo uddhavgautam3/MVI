@@ -96,7 +96,7 @@ android {
 
             //testCoverageEnabled true //already enabled in jacoco.gradle
             applicationIdSuffix = ".debug"
-            versionNameSuffix = ".${getBuildNumber()}"
+            versionNameSuffix = "$buildNumber"
         }
 
         release {
@@ -106,7 +106,7 @@ android {
             shrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
-            versionNameSuffix = ".${getBuildNumber()}"
+            versionNameSuffix = "$buildNumber"
             signingConfig = signingConfigs.debug
         }
 

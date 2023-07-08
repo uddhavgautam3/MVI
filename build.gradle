@@ -2,7 +2,12 @@ buildscript {
     dependencies {
         //classpath "org.jacoco:org.jacoco.core:0.8.8"
     }
-    this.&addRepos
+    repositories {
+        mavenCentral()
+        google()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
 }
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -22,11 +27,11 @@ plugins {
 }
 
 ext {
-    addRepos = this.&addRepos
     compose_ui_version = "1.4.3"
     kotlin_version = "1.8.22"
     deps = dependencies
-    room_version = "2.5.1"
+    room_version = "2.5.1" //not being used anywhere for now
+    buildNumber = getBuildNumber()
 }
 
 sonar {
@@ -48,12 +53,11 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-
-static String getBuildNumber() {
+String getBuildNumber() {
     return getPropertyOrEnv("BUILD_NUMBER", "LocalDebug")
 }
 
-static String getPropertyOrEnv(name, defaultValue = "") {
+String getPropertyOrEnv(name, defaultValue = "") {
     def prop = System.properties[name]
     if (prop == null) {
         prop = System.getenv(name)
@@ -64,9 +68,3 @@ static String getPropertyOrEnv(name, defaultValue = "") {
     return prop
 }
 
-static def addRepos(RepositoryHandler repositoryHandler) {
-    repositoryHandler.mavenCentral()
-    repositoryHandler.google()
-    repositoryHandler.maven { url "https://plugins.gradle.org/m2/" }
-    repositoryHandler.maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-}
