@@ -6,7 +6,7 @@ configure<PmdExtension> {
     //has priority over ruleSets because ruleSetFiles is our configuration based on our need
     //where ruleSets is from pmd plugin
     ruleSetFiles = files("${rootDir}/config/pmd/pmdmain.xml")
-    ruleSets = ruleSets + "android.xml"
+    ruleSets = emptyList()
 }
 
 val pmdConfiguration by configurations.creating
@@ -49,3 +49,10 @@ fun setupAndroidPmd() {
     }
 }
 
+//wrap all pmd tasks
+tasks.register("runAllPmdTask") {
+    group = "pmd"
+    dependsOn(tasks.withType<Task>().matching { task ->
+        task.name.startsWith("pmd")
+    })
+}

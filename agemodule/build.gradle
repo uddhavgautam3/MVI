@@ -10,8 +10,8 @@ plugins {
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
-apply(from: "$rootDir/config/checkstyle/checkstyle.gradle")
-apply(from: "$rootDir/config/pmd/pmd.gradle")
+apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
+apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
 
 android {
     namespace = "com.mvi.agemodule"

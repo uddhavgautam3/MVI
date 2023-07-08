@@ -67,3 +67,12 @@ fun setupAndroidCheckStyle() {
         }
     }
 }
+
+
+//wrap all checkstyle tasks
+tasks.register("runAllCheckstyleTask") {
+    group = "checkstyle"
+    dependsOn(tasks.withType<Task>().matching { task ->
+        task.name.startsWith("checkstyle")
+    })
+}

@@ -61,6 +61,9 @@ node {
                 //sh "./gradlew taskPMD"
                 sh "./gradlew check" //includes spotbugs
                 sh "./gradlew test${VARIANT}UnitTest"
+
+                sh "./gradlew runAllPmdTask"
+                sh "./gradlew runAllCheckstyleTask"
             }
         }
 

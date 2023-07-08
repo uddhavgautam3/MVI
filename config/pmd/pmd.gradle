@@ -6,7 +6,7 @@ pmd {
     //has priority over ruleSets because ruleSetFiles is our configuration based on our need
     //where ruleSets is from pmd plugin
     ruleSetFiles = files("${rootDir}/config/pmd/pmdmain.xml")
-    ruleSets = ruleSets + "android.xml"
+    ruleSets = []
 }
 
 configurations {
@@ -49,6 +49,14 @@ def setupAndroidPmd() {
 
             classpath = files()
         }
+    }
+}
+
+//wrap all pmd tasks
+task runAllPmdTask {
+    group = 'pmd'
+    dependsOn tasks.withType(Task).matching { task ->
+        task.name.startsWith("pmd")
     }
 }
 
