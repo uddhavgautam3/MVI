@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven(url = "https://plugins.gradle.org/m2/")
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
         flatDir {
             dirs("libs")
         }

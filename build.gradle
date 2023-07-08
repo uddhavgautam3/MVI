@@ -1,12 +1,3 @@
-buildscript {
-    dependencies {
-        //classpath "org.jacoco:org.jacoco.core:0.8.8"
-    }
-    this.&addRepos
-}
-
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-//IDE plugins
 plugins {
     //The plugins block is the newer method of applying plugins,
     // and they must be available in the Gradle plugin repository.
@@ -16,57 +7,8 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.22" apply false //kotlin IDE plugin for gradle
     id("maven-publish")
     id("jacoco")
-    //Plugin "jacoco" is a core Gradle plugin, which cannot be specified with a version number
-    id("org.sonarqube") version "4.0.0.2929"
-    id("org.jetbrains.dokka") version "1.8.10"
-}
-
-ext {
-    addRepos = this.&addRepos
-    compose_ui_version = "1.4.3"
-    kotlin_version = "1.8.22"
-    deps = dependencies
-    room_version = "2.5.1"
-}
-
-sonar {
-    properties {
-        property("sonar.projectKey", "sonar_jenkins_mvi")
-        property("sonar.organization", "sonar_jenkins_mvi")
-        property("sonar.host.url", "http://localhost:9000")
-        property("sonar.token", "squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc")
-        property("sonar.core.codeCoveragePlugin", "jacoco")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${rootDir}/xml-coverage-report/jacoco.xml")
-    }
-}
-
-subprojects { subproject ->
-    apply(plugin:"org.jetbrains.dokka")
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-
-static String getBuildNumber() {
-    return getPropertyOrEnv("BUILD_NUMBER", "LocalDebug")
-}
-
-static String getPropertyOrEnv(name, defaultValue = "") {
-    def prop = System.properties[name]
-    if (prop == null) {
-        prop = System.getenv(name)
-    }
-    if (prop == null) {
-        return defaultValue
-    }
-    return prop
-}
-
-static def addRepos(RepositoryHandler repositoryHandler) {
-    repositoryHandler.mavenCentral()
-    repositoryHandler.google()
-    repositoryHandler.maven { url "https://plugins.gradle.org/m2/" }
-    repositoryHandler.maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }

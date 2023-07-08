@@ -1,0 +1,21 @@
+String getBuildNumber() {
+    return getPropertyOrEnv("BUILD_NUMBER", "LocalDebug")
+}
+
+String getPropertyOrEnv(name, defaultValue = "") {
+    def prop = System.properties[name]
+    if (prop == null) {
+        prop = System.getenv(name)
+    }
+    if (prop == null) {
+        return defaultValue
+    }
+    return prop
+}
+
+ext {
+    buildNumber = getBuildNumber()
+    compose_ui_version = "1.4.3"
+    kotlin_version = "1.8.22"
+    room_version = "2.5.1" // not being used anywhere for now
+}
