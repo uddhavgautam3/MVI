@@ -45,19 +45,15 @@ sonar {
     }
 }
 
-subprojects { subproject ->
-    apply(plugin:"org.jetbrains.dokka")
-}
-
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-String getBuildNumber() {
+static String getBuildNumber() {
     return getPropertyOrEnv("BUILD_NUMBER", "LocalDebug")
 }
 
-String getPropertyOrEnv(name, defaultValue = "") {
+static String getPropertyOrEnv(name, defaultValue = "") {
     def prop = System.properties[name]
     if (prop == null) {
         prop = System.getenv(name)

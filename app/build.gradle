@@ -239,6 +239,7 @@ android {
             xml.destination = file("${project.buildDir}/reports/spotbugs/spotbugs.xml")
         }
     }
+
 }
 
 
