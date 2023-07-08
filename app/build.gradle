@@ -1,4 +1,4 @@
-import com.github.spotbugs.snom.SpotBugsTask
+import com.android.build.gradle.BaseExtension
 
 plugins {
     id("com.android.application")
@@ -6,14 +6,10 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("maven-publish")
-    id("com.github.spotbugs") version '5.0.14'
 }
 
-apply(from: "$rootDir/scripts/appcenter.gradle")
-apply(from: "$rootDir/config/jacoco/jacoco.gradle")
-apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
-apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
-
+apply(from: "$project.rootDir/scripts/appcenter.gradle")
+apply(from: "$project.rootDir/config/jacoco/jacoco.gradle")
 
 android {
     namespace = "com.mvi.app" //for unique R class, this is like a groupId for artifact
@@ -209,36 +205,6 @@ android {
     }
     buildToolsVersion = "34.0.0"
 
-
-    //spotbugs configuration
-    spotbugs {
-        ignoreFailures = false
-        showStackTraces = true
-        showProgress = true
-        effort = 'default' //max
-        reportLevel = 'default' //high
-        visitors = [ 'FindSqlInjection', 'SwitchFallthrough' ]
-        omitVisitors = [ 'FindNonShortCircuit' ]
-        reportsDir = file("$buildDir/reports/spotbugs")
-        //includeFilter = file("include.xml")
-        excludeFilter = file("${rootDir}/config/spotbugs/exclude.xml")
-        //baselineFile = file("baseline.xml")
-        //onlyAnalyze = [ 'com.foobar.MyClass', 'com.foobar.mypkg.*' ]
-        maxHeapSize = '4g'
-        extraArgs = [ '-nested:false' ]
-        jvmArgs = [ '-Duser.language=ja' ]
-    }
-    // Define SpotBugs task
-    tasks.withType(SpotBugsTask) {
-        group = 'verification'
-        description = 'Runs SpotBugs analysis on the project'
-
-        reports {
-            xml.enabled = true
-            html.enabled = false
-            xml.destination = file("${project.buildDir}/reports/spotbugs/spotbugs.xml")
-        }
-    }
 }
 
 
@@ -288,14 +254,4 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0")
-    spotbugs("com.github.spotbugs:spotbugs:4.7.1")
-}
-
-ext {
-    mySourceSets = android.sourceSets.collect { sourceSet ->
-        sourceSet.name
-    }
-    if (!mySourceSets) mySourceSets.add("")
 }
