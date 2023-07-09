@@ -67,6 +67,18 @@ node {
             }
         }
 
+        stage('Jacoco') {
+            dir('MVI') {
+                //for app module, should execute in below order
+                sh "./gradlew :app:createRetailStageDebugCoverageReport"
+                sh "./gradlew :app:testRetailStageDebugUnitTest"
+
+                //for agemodule module, should execute in below order
+                sh ":agemodule:createDebugCoverageReport"
+                sh "./gradlew :agemodule:testDebugUnitTest"
+            }
+        }
+
         stage('SonarQube Analysis') {
             dir('MVI') {
                 sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_9e08213394c71294274213703caa1cd3cf160ead"
