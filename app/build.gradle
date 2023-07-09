@@ -7,12 +7,15 @@ plugins {
     id("kotlin-kapt")
     id("maven-publish")
     id("com.github.spotbugs") version '5.0.14'
+    id("org.sonarqube") version "4.0.0.2929"
 }
 
 apply(from: "$rootDir/scripts/appcenter.gradle")
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
 apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
 apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
+apply(from: "$rootDir/config/sonarqube/sonarqube.gradle.kts")
+apply(from: "$rootDir/scripts/utils.gradle")
 
 
 android {
@@ -96,7 +99,7 @@ android {
 
             //testCoverageEnabled true //already enabled in jacoco.gradle
             applicationIdSuffix = ".debug"
-            versionNameSuffix = ".${getBuildNumber()}"
+            versionNameSuffix = "$buildNumber"
         }
 
         release {
@@ -105,8 +108,7 @@ android {
             minifyEnabled = true
             shrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-
-            versionNameSuffix = ".${getBuildNumber()}"
+            versionNameSuffix = "$buildNumber"
             signingConfig = signingConfigs.debug
         }
 
@@ -130,7 +132,7 @@ android {
     flavorDimensions = ["prod", "env"]
     //order from left to right. e.g., prodFlavorEnvFlavorBuildType = retailStageDebug
     productFlavors {
-
+    //now, product flavor name should go as retailStage
         retail {
             applicationIdSuffix = ".retail"
             versionCode = 151010000
@@ -239,6 +241,7 @@ android {
             xml.destination = file("${project.buildDir}/reports/spotbugs/spotbugs.xml")
         }
     }
+
 }
 
 

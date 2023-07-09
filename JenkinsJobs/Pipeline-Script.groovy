@@ -67,39 +67,20 @@ node {
             }
         }
 
-        stage('SonarQube Analysis') {
-            dir('MVI') {
-                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_8bcff17df2e0c4d3fb61c6e01279aeb7ff87b0dc"
-            }
-        }
-
-        stage('Lint Report') {
-            sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
-            dir('MVI') {
-                sh "./gradlew app:lint${VARIANT}"
-                sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                             reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
-                             reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
-            }
-            recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
-        }
-
-        stage('Dokka Report') {
-            dir('MVI') {
-                sh "./gradlew clean"
-                sh "./gradlew dokkaHtml"
-            }
-        }
-
-        stage('Test') {
+        stage('Test (Jacoco if CODE_COVERAGE is enabled)') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
                 if (env.CODE_COVERAGE_ENABLED == "true") {
                     if(BUILD_TYPE == "debug") {
                         //testCoverageEnabled is true only for debug build type
-                        sh "./gradlew create${VARIANT}CoverageReport"
+                        //for app module, should execute in below order
+                        sh "./gradlew :app:create${VARIANT.capitalize()}CoverageReport"
+                        sh "./gradlew :app:test${VARIANT.capitalize()}UnitTest"
+
+                        //for agemodule module, should execute in below order
+                        sh "./gradlew :agemodule:createDebugCoverageReport"
+                        sh "./gradlew :agemodule:testDebugUnitTest"
                     }
                 } else {
                     //for agemodule only include unit tests as there are no flavors
@@ -115,6 +96,24 @@ node {
             dir('MVI') {
                 sh "./gradlew app:assemble${VARIANT}"
             }
+        }
+
+        stage('SonarQube Analysis') {
+            dir('MVI') {
+                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_9e08213394c71294274213703caa1cd3cf160ead"
+            }
+        }
+
+        stage('Lint Report') {
+            sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
+            dir('MVI') {
+                sh "./gradlew app:lint${VARIANT}"
+                sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
+                             reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
+                             reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
+            }
+            recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
         }
 
         stage('AppCenter Upload') {
