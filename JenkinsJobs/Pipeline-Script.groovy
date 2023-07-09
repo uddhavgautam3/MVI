@@ -67,15 +67,34 @@ node {
             }
         }
 
-        stage('Jacoco') {
+        stage('Test, included Jacoco if CODE_COVERAGE is enabled') {
             dir('MVI') {
-                //for app module, should execute in below order
-                sh "./gradlew :app:createRetailStageDebugCoverageReport"
-                sh "./gradlew :app:testRetailStageDebugUnitTest"
+                echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
-                //for agemodule module, should execute in below order
-                sh ":agemodule:createDebugCoverageReport"
-                sh "./gradlew :agemodule:testDebugUnitTest"
+                if (env.CODE_COVERAGE_ENABLED == "true") {
+                    if(BUILD_TYPE == "debug") {
+                        //testCoverageEnabled is true only for debug build type
+                        //for app module, should execute in below order
+                        sh "./gradlew :app:create${VARIANT.capitalize()}CoverageReport"
+                        sh "./gradlew :app:test${VARIANT.capitalize()}UnitTest"
+
+                        //for agemodule module, should execute in below order
+                        sh ":agemodule:createDebugCoverageReport"
+                        sh "./gradlew :agemodule:testDebugUnitTest"
+                    }
+                } else {
+                    //for agemodule only include unit tests as there are no flavors
+                    sh "./gradlew agemodule:testDebugUnitTest" //not included on ./gradlew test
+                    sh "./gradlew test"
+                    //sh "./gradlew app:test${FLAVOR}DebugUnitTest" //included on ./gradlew test
+                }
+
+            }
+        }
+
+        stage('Build') {
+            dir('MVI') {
+                sh "./gradlew app:assemble${VARIANT}"
             }
         }
 
@@ -95,31 +114,6 @@ node {
                              reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
             }
             recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
-        }
-
-        stage('Test') {
-            dir('MVI') {
-                echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
-
-                if (env.CODE_COVERAGE_ENABLED == "true") {
-                    if(BUILD_TYPE == "debug") {
-                        //testCoverageEnabled is true only for debug build type
-                        sh "./gradlew create${VARIANT}CoverageReport"
-                    }
-                } else {
-                    //for agemodule only include unit tests as there are no flavors
-                    sh "./gradlew agemodule:testDebugUnitTest" //not included on ./gradlew test
-                    sh "./gradlew test"
-                    //sh "./gradlew app:test${FLAVOR}DebugUnitTest" //included on ./gradlew test
-                }
-
-            }
-        }
-
-        stage('Build') {
-            dir('MVI') {
-                sh "./gradlew app:assemble${VARIANT}"
-            }
         }
 
         stage('AppCenter Upload') {
