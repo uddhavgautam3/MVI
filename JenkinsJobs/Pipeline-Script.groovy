@@ -79,7 +79,7 @@ node {
                         sh "./gradlew :app:test${VARIANT.capitalize()}UnitTest"
 
                         //for agemodule module, should execute in below order
-                        sh ":agemodule:createDebugCoverageReport"
+                        sh "./gradlew :agemodule:createDebugCoverageReport"
                         sh "./gradlew :agemodule:testDebugUnitTest"
                     }
                 } else {
