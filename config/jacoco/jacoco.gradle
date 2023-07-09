@@ -119,7 +119,7 @@ android {
     }
 }
 
-
+//should run below commands in order
 // ./gradlew :app:createRetailStageDebugCoverageReport
 //  ./gradlew :app:testRetailStageDebugUnitTest
 

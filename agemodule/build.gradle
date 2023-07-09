@@ -106,6 +106,7 @@ android {
             shrinkResources = false
 
             matchingFallbacks = ["debug"]
+            //testCoverageEnabled true //already enabled in jacoco.gradle
             versionNameSuffix = "$buildNumber"
             signingConfig = signingConfigs.debug
         }

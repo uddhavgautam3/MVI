@@ -67,7 +67,7 @@ node {
             }
         }
 
-        stage('Test, included Jacoco if CODE_COVERAGE is enabled') {
+        stage('Test (Jacoco if CODE_COVERAGE is enabled)') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
 
@@ -79,7 +79,7 @@ node {
                         sh "./gradlew :app:test${VARIANT.capitalize()}UnitTest"
 
                         //for agemodule module, should execute in below order
-                        sh ":agemodule:createDebugCoverageReport"
+                        sh "./gradlew :agemodule:createDebugCoverageReport"
                         sh "./gradlew :agemodule:testDebugUnitTest"
                     }
                 } else {
