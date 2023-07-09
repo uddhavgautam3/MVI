@@ -132,7 +132,7 @@ android {
     flavorDimensions = ["prod", "env"]
     //order from left to right. e.g., prodFlavorEnvFlavorBuildType = retailStageDebug
     productFlavors {
-
+    //now, product flavor name should go as retailStage
         retail {
             applicationIdSuffix = ".retail"
             versionCode = 151010000
