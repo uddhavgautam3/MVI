@@ -11,6 +11,7 @@ plugins {
     id("org.sonarqube") version "4.0.0.2929"
 }
 
+apply(from: "$rootDir/scripts/appcenter.gradle")
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
 apply(from: "$rootDir/config/sonarqube/sonarqube.gradle")
 apply(from: "$rootDir/scripts/utils.gradle") //for buildNumber
