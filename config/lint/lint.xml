@@ -1,19 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <!-- Disable the IconMissingDensityFolder check in this project -->
-    <issue id="IconMissingDensityFolder" severity="ignore" />
+    General Configuration
+    <issue id="all" severity="ignore" />
 
-    <!-- Ignore the ObsoleteLayoutParam issue in the specified files -->
-    <issue id="ObsoleteLayoutParam">
-        <ignore path="res/layout/activation.xml" />
-        <ignore path="res/layout-xlarge/activation.xml" />
-    </issue>
-
-    <!-- Ignore the UselessLeaf issue in the specified file -->
-    <issue id="UselessLeaf">
-        <ignore path="res/layout/main.xml" />
-    </issue>
-
-    <!-- Change the severity of hardcoded strings to "error" -->
-    <issue id="HardcodedText" severity="error" />
+    <issue id="UnusedIds" severity="warning" />
+    <issue id="UnusedResources" severity="warning" />
+    <issue id="UnusedNamespace" severity="warning" />
+    <issue id="MissingTranslation" severity="warning" />
+    <issue id="UnusedAttribute" severity="warning" />
+    <issue id="HardcodedText" severity="warning" />
+    <issue id="IconMissingDensityFolder" severity="warning" />
+    <issue id="ObsoleteLayoutParam" severity="warning" />
+    <issue id="TypographyDashes" severity="warning" />
+    <issue id="TypographyQuotes" severity="warning" />
+    <issue id="ScrollViewCount" severity="warning" />
+    <issue id="NestedScrolling" severity="warning" />
+    <issue id="NestedScrollWebView" severity="warning" />
+    <issue id="InefficientWeight" severity="warning" />
+    <issue id="GridLayout" severity="warning" />
+    <issue id="MergeRootFrame" severity="warning" />
+    <issue id="InvalidFragment" severity="warning" />
+    <issue id="InefficientLayout" severity="warning" />
+    <issue id="Orientation" severity="warning" />
+    <issue id="RtlEnabled" severity="warning" />
+    <issue id="TooManyViews" severity="warning" />
+    <issue id="TooManyMethods" severity="warning" />
+    <issue id="TooManyIntermediates" severity="warning" />
+    <issue id="TooManyInclude" severity="warning" />
+    <issue id="TooManyGlobalVars" severity="warning" />
+    <issue id="TooManyViewsInLayout" severity="warning" />
+    <issue id="TooManyLiterals" severity="warning" />
+    <issue id="TooManyParameters" severity="warning" />
+    <issue id="TooManyPermissions" severity="warning" />
+    <issue id="TooManyResourceIds" severity="warning" />
+    <issue id="TooManyNestedScrollingViews" severity="warning" />
+    <issue id="TextViewSize" severity="warning" />
+    <issue id="UnsafeBroadcastReceiver" severity="warning" />
+    <issue id="NestedScrollingSiblings" severity="warning" />
+    <issue id="UselessLeaf" severity="warning" />
+    <issue id="UselessParent" severity="warning" />
+    <issue id="UselessView" severity="warning" />
+    <issue id="ObsoleteLintCustomCheck" severity="warning" />
+    <issue id="ScrollToSelf" severity="warning" />
+    <issue id="LintError" severity="error" />
+    <issue id="MissingClass" severity="error" />
+    <issue id="UnknownClass" severity="error" />
+    <issue id="MissingId" severity="error" />
+    <issue id="DuplicateIds" severity="error" />
+    <issue id="InvalidId" severity="error" />
+    <issue id="ContentDescription" severity="error" />
+    <issue id="ButtonStyle" severity="error" />
+    <issue id="SelectableText" severity="error" />
+    <issue id="WrongViewCast" severity="error" />
+    <issue id="WrongManifestParent" severity="error" />
+    <issue id="MissingLeanbackSupport" severity="error" />
+    <issue id="GradleDependency" severity="error" />
+    <issue id="IncludeWithinLayout" severity="error" />
+    <issue id="DebugMode" severity="error" />
+    <issue id="DuplicateResource" severity="error" />
+    <issue id="Deprecated" severity="error" />
+    <issue id="BackButton" severity="error" />
+    <issue id="UseCompoundDrawable" severity="error" />
+    <issue id="AppLinkUrlError" severity="error" />
+    <issue id="ContentDescriptionWarning" severity="warning" />
+    <issue id="LabelFor" severity="warning" />
+    <issue id="ScrollViewSize" severity="warning" />
+    <issue id="SiblingSize" severity="warning" />
+    <issue id="TitleInLayout" severity="warning" />
+    <issue id="FragmentNotInstantiable" severity="warning" />
+    <issue id="MenuTitle" severity="warning" />
+    <issue id="MenuId" severity="warning" />
+    <issue id="MenuWeight" severity="warning" />
+    <issue id="MenuCategoryOrder" severity="warning" />
+    <issue id="SupportAnnotationUsage" severity="warning" />
+    <issue id="ButtonOrder" severity="warning" />
+    <issue id="BroadcastReceiverRegistered" severity="warning" />
+    <issue id="ExportedContentProvider" severity="warning" />
+    <issue id="ObsoleteLintCheck" severity="warning" />
+    <issue id="InvalidImeActionId" severity="error" />
+    <issue id="InvalidImeActionLabel" severity="error" />
+    <issue id="UnusedNamespace" severity="error" />
+    <issue id="IgnoreWithoutReason" severity="error" />
 </lint>
