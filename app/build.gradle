@@ -6,6 +6,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("maven-publish")
+    //spotbugs configure in this file, while sonarqube, we can't use plugins block
     id("com.github.spotbugs") version '5.0.14'
     id("org.sonarqube") version "4.0.0.2929"
 }
@@ -13,7 +14,6 @@ plugins {
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
 apply(from: "$rootDir/config/sonarqube/sonarqube.gradle")
 apply(from: "$rootDir/scripts/utils.gradle") //for buildNumber
-apply(from: "$rootDir/config/lint/lint.gradle")
 
 apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
 apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
@@ -47,7 +47,7 @@ android {
         checkDependencies true
         xmlReport true
         htmlReport true
-        htmlOutput file("${projectDir}/build/reports/lint/android_lint.xml")
+        xmlOutput file("${projectDir}/build/reports/lint/android_lint.xml")
 
         lintConfig file("$rootDir/config/lint/lint.xml")
     }

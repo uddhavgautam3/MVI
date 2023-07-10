@@ -6,7 +6,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("maven-publish")
-    id("com.github.spotbugs") version "5.0.14"
+    //spotbugs configure in this file, while sonarqube, we can't use plugins block
+    id("com.github.spotbugs") version '5.0.14'
     id("org.sonarqube") version "4.0.0.2929"
 }
 
@@ -37,21 +38,19 @@ android {
     }
 
     lintOptions {
-        // Turns off checks for the issue IDs you specify.
         disable("TypographyFractions", "TypographyQuotes")
-        // Turns on checks for the issue IDs you specify. These checks are in
-        // addition to the default lint checks.
         enable("RtlHardcoded", "RtlCompat", "RtlEnabled")
-        // To enable checks for only a subset of issue IDs and ignore all others,
-        // list the issue IDs with the 'check' property instead. This property overrides
-        // any issue IDs you enable or disable using the properties above.
         checkOnly("NewApi", "InlinedApi")
-        // If set to true, turns off analysis progress reporting by lint.
         quiet = true
-        // if set to true (default), stops the build if errors are found.
         abortOnError = true
-        // if true, only report errors.
         ignoreWarnings = true
+
+        checkDependencies true
+        xmlReport true
+        htmlReport true
+        xmlOutput file("${projectDir}/build/reports/lint/android_lint.xml")
+
+        lintConfig file("$rootDir/config/lint/lint.xml")
     }
 
     defaultConfig {
