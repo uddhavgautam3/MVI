@@ -92,18 +92,6 @@ node {
             }
         }
 
-        stage('Build') {
-            dir('MVI') {
-                sh "./gradlew app:assemble${VARIANT}"
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            dir('MVI') {
-                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_9e08213394c71294274213703caa1cd3cf160ead"
-            }
-        }
-
         stage('Lint Report') {
             sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
             dir('MVI') {
@@ -115,6 +103,19 @@ node {
             }
             recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
         }
+
+        stage('SonarQube Analysis') {
+            dir('MVI') {
+                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_9e08213394c71294274213703caa1cd3cf160ead"
+            }
+        }
+
+        stage('Build') {
+            dir('MVI') {
+                sh "./gradlew app:assemble${VARIANT}"
+            }
+        }
+
 
         stage('AppCenter Upload') {
             if (env.APPCENTER_UPLOAD == "true") {

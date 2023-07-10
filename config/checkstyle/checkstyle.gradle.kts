@@ -1,7 +1,13 @@
 //apply<CheckstylePlugin>() //or apply(plugin = "checkstyle")
 
 apply(plugin = "checkstyle")
-//$project.rootDir belongs to ageModule's rootdir for ageModule and app's rootdir for app module
+//$project.rootDir This property refers to the root directory of the project. It represents the top-level directory that contains the
+// entire Android project, including the project's build files, source code, and other related files.
+// It is typically the directory where the settings.gradle file resides.
+
+//$rootDir: This property refers to the root directory of the build script. It represents the directory where the build script itself is located. I
+// n the case of Android Gradle scripts,
+// it typically refers to the directory where the build.gradle file resides.
 
 /*
 CheckstyleExtension is a class provided by the Checkstyle plugin in Gradle.

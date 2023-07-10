@@ -8,13 +8,12 @@ plugins {
     id("maven-publish")
     id("com.github.spotbugs") version "5.0.14"
     id("org.sonarqube") version "4.0.0.2929"
-
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
 apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
 apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
-apply(from: "$rootDir/config/sonarqube/sonarqube.gradle.kts")
+apply(from: "$rootDir/config/sonarqube/sonarqube.gradle")
 apply(from: "$rootDir/scripts/utils.gradle")
 
 
