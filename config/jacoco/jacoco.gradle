@@ -93,16 +93,16 @@ def setupAndroidReporting() {
 
                     reports {
                         csv {
-                            required = true
-                            enabled true
+                            required = false
+                            enabled false
                         }
                         xml {
-                            required = true
-                            enabled true
+                            required = false
+                            enabled false
                         }
                         html {
-                            required = true
-                            enabled true
+                            required = false
+                            enabled false
                         }
                     }
                 }
