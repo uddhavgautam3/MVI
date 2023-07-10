@@ -111,7 +111,7 @@ node {
         //sonarqube collects jacoco and lint reports, hence should follow them
         stage('SonarQube Analysis') {
             dir('MVI') {
-                sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_9e08213394c71294274213703caa1cd3cf160ead"
+                sh "./gradlew sonar"
             }
         }
 

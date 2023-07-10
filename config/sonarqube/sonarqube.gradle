@@ -1,4 +1,12 @@
-sonarqube {
+//should run below commands in order
+// ./gradlew :app:createRetailStageDebugCoverageReport
+//  ./gradlew :app:testRetailStageDebugUnitTest
+
+// ./gradlew :agemodule:createDebugCoverageReport
+//  ./gradlew :agemodule:testDebugUnitTest
+
+//after running above commands, we should run ./gradlew sonar. This is how it works in pipeline-script.groovy
+sonar {
     properties {
         property("sonar.projectKey", "sonar_jenkins_mvi")
         property("sonar.projectName", "sonar_jenkins_mvi")
@@ -11,8 +19,8 @@ sonarqube {
     }
 }
 
-tasks.named("sonarqube").configure {
-    group = "sonarqube"
+tasks.named("sonar").configure {
+    group = "sonar"
     doFirst {
         def modulePaths = []
         subprojects {
