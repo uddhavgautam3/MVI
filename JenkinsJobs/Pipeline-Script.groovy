@@ -93,17 +93,22 @@ node {
         }
 
         stage('Lint Report') {
-            sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
             dir('MVI') {
-                sh "./gradlew app:lint${VARIANT}"
-                sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                             reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
-                             reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
+                sh "./gradlew :app:lint"
+                sh "./gradlew :agemodule:lint"
             }
-            recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
+//            sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
+//            dir('MVI') {
+//                sh "./gradlew app:lint${VARIANT}"
+//                sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
+//                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
+//                             reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
+//                             reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
+//            }
+//            recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
         }
 
+        //sonarqube collects jacoco and lint reports, hence should follow them
         stage('SonarQube Analysis') {
             dir('MVI') {
                 sh "./gradlew sonar -Dsonar.projectKey=sonar_jenkins_mvi -Dsonar.projectName='sonar_jenkins_mvi' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_9e08213394c71294274213703caa1cd3cf160ead"
