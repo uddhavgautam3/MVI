@@ -1,0 +1,21 @@
+/*
+ The ext.configureLintOptions statement was an example of a custom method definition in the lint.gradle file.
+ It was intended to demonstrate how you can define a custom method to encapsulate the lintOptions configuration.
+ */
+ext.configureLintOptions = { lintOptions ->
+    lintOptions {
+        disable("TypographyFractions", "TypographyQuotes")
+        enable("RtlHardcoded", "RtlCompat", "RtlEnabled")
+        checkOnly("NewApi", "InlinedApi")
+        quiet = true
+        abortOnError = true
+        ignoreWarnings = true
+
+        checkDependencies true
+        xmlReport true
+        htmlReport true
+        htmlOutput file("${projectDir}/build/reports/lint/android_lint.xml")
+
+        lintConfig file("$rootDir/config/lint/lint.xml")
+    }
+}
