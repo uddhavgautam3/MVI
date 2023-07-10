@@ -1,5 +1,4 @@
 sonarqube {
-
     properties {
         property("sonar.projectKey", "sonar_jenkins_mvi")
         property("sonar.projectName", "sonar_jenkins_mvi")
@@ -17,7 +16,8 @@ tasks.named("sonarqube").configure {
             modulePaths.add(projectDir)
         }
         modulePaths.each { path ->
-            sonarqube.properties.property("sonar.coverage.jacoco.xmlReportPaths", "${path}/build/reports/coverage/androidTest/retailStage/debug/connected/report.xml")
+            sonarqube.properties.property("sonar.coverage.jacoco.xmlReportPaths",
+                    "${path}/build/reports/coverage/androidTest/retailStage/debug/connected/report.xml")
         }
     }
 }

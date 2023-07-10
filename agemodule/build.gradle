@@ -11,10 +11,11 @@ plugins {
 }
 
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
+apply(from: "$rootDir/config/sonarqube/sonarqube.gradle")
+apply(from: "$rootDir/scripts/utils.gradle") //for buildNumber
+
 apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
 apply(from: "$rootDir/config/pmd/pmd.gradle.kts")
-apply(from: "$rootDir/config/sonarqube/sonarqube.gradle")
-apply(from: "$rootDir/scripts/utils.gradle")
 
 
 android {

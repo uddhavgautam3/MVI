@@ -1,5 +1,14 @@
 import org.gradle.api.tasks.Delete
 
+buildscript {
+    dependencies {
+        classpath("org.jacoco:org.jacoco.core:0.8.9")
+    }
+    repositories {
+        //I am using settings.gradle
+    }
+}
+
 plugins {
     id("com.android.application") version "8.0.2" apply false
     id("com.android.library") version "8.0.2" apply false
