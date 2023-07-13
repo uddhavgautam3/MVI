@@ -1,7 +1,7 @@
 sonar {
     properties {
-        property("sonar.projectKey", "sonar_jenkins_mvi")
-        property("sonar.projectName", "sonar_jenkins_mvi")
+        property("sonar.projectKey", "sonar_jenkins_mvi_app")
+        property("sonar.projectName", "sonar_jenkins_mvi_app")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "squ_9e08213394c71294274213703caa1cd3cf160ead")
         property("sonar.core.codeCoveragePlugin", "jacoco")
