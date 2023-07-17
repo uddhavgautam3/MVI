@@ -140,7 +140,7 @@ android.applicationVariants.all { variant ->
 def createAppCenterUploadTask(variant, taskSuffix = "", apkFile = null, mapFile = null) {
     project.tasks.register("appCenterUpload${taskSuffix}${variant.name.capitalize()}") {
         println("Variant: ${variant}") //com.android.build.gradle.internal.api.ApplicationVariantImpl_Decorated@37a2b0d8
-        println("Variant nane: ${variant.name}") //retailStageDebug
+        println("Variant name: ${variant.name}") //retailStageDebug
 
         logger.debug("AppCenter: create task for ${variant.name}")
         group = "appcenter"

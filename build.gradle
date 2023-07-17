@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath "org.jacoco:org.jacoco.core:0.8.9"
+        classpath("org.jacoco:org.jacoco.core:0.8.9")
     }
     repositories {
         //I am using settings.gradle
@@ -12,8 +12,8 @@ buildscript {
 plugins {
     //The plugins block is the newer method of applying plugins,
     // and they must be available in the Gradle plugin repository.
-    id("com.android.application") version "8.0.2" apply false
-    id("com.android.library") version "8.0.2" apply false
+    id("com.android.application") version '8.0.2' apply false
+    id("com.android.library") version '8.0.2' apply false
     id("com.google.dagger.hilt.android") version "2.44" apply false
     id("org.jetbrains.kotlin.android") version "1.8.22" apply false //kotlin IDE plugin for gradle
     id("maven-publish")
