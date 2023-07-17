@@ -1,0 +1,56 @@
+sonar {
+    properties {
+        property("sonar.projectKey", "sonar_jenkins_mvi_app")
+        property("sonar.projectName", "sonar_jenkins_mvi_app")
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.token", "squ_9e08213394c71294274213703caa1cd3cf160ead")
+        property("sonar.core.codeCoveragePlugin", "jacoco")
+        property("sonar.sources", "src/main/java")
+        property("sonar.tests", "src/test/java")
+        property("sonar.android.lint.report", "${project.buildDir}/reports-lint/android_lint.xml}")
+    }
+}
+
+// Execute custom task before SonarQube analysis
+tasks.named('sonar') {
+    dependsOn("finalSonarConfigure")
+}
+
+
+//don"t run task that has ./gradlew using green arrow, run from commandline
+task finalSonarConfigure {
+    group = "sonarqube"
+
+    dependsOn("runSonarQubePrerequisites")
+
+    doLast {
+        //config. for unit test reports
+        def targetGroup = "jacoco-unittest-reporting"
+        def unitTestPaths = []
+        project.tasks.each { task ->
+            if (task.group.toString() == targetGroup) {
+
+                def taskWithNoModification = "${task.name}"
+                def removeCoverage = taskWithNoModification.replace("Coverage", "")
+                //${project.buildDir}/test-results/${removeCoverage}/*.xml
+                unitTestPaths.add("${project.buildDir}/test-results/${removeCoverage}/*.xml")
+
+            }
+        }
+        sonar.properties["sonar.junit.reportPaths"] = unitTestPaths.join(',')
+
+        //config. for coverage reports
+        def allBuildTypes = project.property("allBuildTypes") as ArrayList<String>
+        def flavorFullPath = project.property("flavorFullPath") as String
+
+        def coverageReportPaths = []
+        allBuildTypes.each { buildType ->
+            coverageReportPaths.add("${project.buildDir}/coverage/test/${flavorFullPath}/${buildType}/*.xml")
+        }
+
+        sonar.properties["sonar.coverage.jacoco.xmlReportPaths"] = coverageReportPaths.join(',')
+    }
+}
+
+
+
