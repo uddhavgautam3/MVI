@@ -16,16 +16,19 @@ def setupAndroidReporting() {
     def productFlavors = android.productFlavors.collect { flavor ->
         flavor.name
     }
+
     // When no product flavors defined, use empty
     if (!productFlavors) productFlavors.add('')
     productFlavors.each { productFlavorName ->
         buildTypes.each { buildTypeName ->
-            def sourceName
+            def sourceName, sourcePath
             if (!productFlavorName) {
                 sourceName = "${buildTypeName}"
+                sourcePath = "${buildTypeName}"
             } else {
                 def newProductFlavorName = "${productFlavorName}Stage"
                 sourceName = "${newProductFlavorName}${buildTypeName.capitalize()}"
+                sourcePath = "${newProductFlavorName}/${buildTypeName}"
             }
             def testTaskName = "test${sourceName.capitalize()}UnitTest"
             System.out.println("Task -> $testTaskName")
@@ -38,7 +41,7 @@ def setupAndroidReporting() {
             } else {
                 // Create coverage task of form 'testFlavorTypeCoverage' depending on 'testFlavorTypeUnitTest'
                 task "${testTaskName}Coverage"(type: JacocoReport, dependsOn: "$testTaskName") {
-                    group = "jacoco reporting"
+                    group = "jacoco-unittest-reporting"
                     description = "Generate Jacoco coverage reports on the ${sourceName.capitalize()} build."
 
                     def fileFilter = [
@@ -83,7 +86,7 @@ def setupAndroidReporting() {
                     def javaTree = fileTree(dir: "${project.buildDir}/intermediates/javac/$sourceName/classes", excludes: fileFilter)
                     def kotlinTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/$sourceName", excludes: fileFilter)
                     classDirectories.from = files([javaTree], [kotlinTree])
-                    executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+                    executionData.from = files("${project.buildDir}/outputs/unit_test_code_coverage/${testTaskName}.exec")
                     def coverageSourceDirs = ["src/main/java",
                                               "src/$productFlavorName/java",
                                               "src/$buildTypeName/java"]
@@ -93,16 +96,19 @@ def setupAndroidReporting() {
 
                     reports {
                         csv {
-                            required = false
-                            enabled false
+                            required = true
+                            enabled true
+                            csv.destination file("${project.rootDir}/xml-coverage-report/jacoco.csv")
                         }
                         xml {
-                            required = false
-                            enabled false
+                            required = true
+                            enabled true
+                            xml.destination file("${project.rootDir}/xml-coverage-report/jacoco.xml")
                         }
                         html {
-                            required = false
-                            enabled false
+                            required = true
+                            enabled true
+                            html.destination file("${project.rootDir}/xml-coverage-report/jacoco.html")
                         }
                     }
                 }
@@ -110,18 +116,3 @@ def setupAndroidReporting() {
         }
     }
 }
-
-android {
-    buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
-    }
-}
-
-//should run below commands in order
-// ./gradlew :app:createRetailStageDebugCoverageReport
-//  ./gradlew :app:testRetailStageDebugUnitTest
-
-// ./gradlew :agemodule:createDebugCoverageReport
-//  ./gradlew :agemodule:testDebugUnitTest

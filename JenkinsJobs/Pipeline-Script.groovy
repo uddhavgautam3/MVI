@@ -67,51 +67,17 @@ node {
             }
         }
 
-        stage('Test (Jacoco if CODE_COVERAGE is enabled)') {
+        stage('Test') {
             dir('MVI') {
                 echo "Building testing with coverage: ${env.CODE_COVERAGE_ENABLED}"
-
                 if (env.CODE_COVERAGE_ENABLED == "true") {
-                    if(BUILD_TYPE == "debug") {
-                        //testCoverageEnabled is true only for debug build type
-                        //for app module, should execute in below order
-                        sh "./gradlew :app:create${VARIANT.capitalize()}CoverageReport"
-                        sh "./gradlew :app:test${VARIANT.capitalize()}UnitTest"
-
-                        //for agemodule module, should execute in below order
-                        sh "./gradlew :agemodule:createDebugCoverageReport"
-                        sh "./gradlew :agemodule:testDebugUnitTest"
-                    }
+                    sh "./gradlew :app:sonar" //should run lint and jacoco with this task
+                    sh "./gradlew :agemodule:sonar" //should run lint and jacoco with this task
                 } else {
-                    //for agemodule only include unit tests as there are no flavors
                     sh "./gradlew agemodule:testDebugUnitTest" //not included on ./gradlew test
                     sh "./gradlew test"
-                    //sh "./gradlew app:test${FLAVOR}DebugUnitTest" //included on ./gradlew test
                 }
 
-            }
-        }
-
-        stage('Lint Report') {
-            dir('MVI') {
-                sh "./gradlew :app:lint"
-                sh "./gradlew :agemodule:lint"
-            }
-//            sh 'if [ ! -d "AndroidLintReports" ]; then mkdir -p "AndroidLintReports"; fi'
-//            dir('MVI') {
-//                sh "./gradlew app:lint${VARIANT}"
-//                sh "cp app/build/reports/lint-results-${VARIANT}.xml ../AndroidLintReports/lint-results.xml"
-//                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-//                             reportDir   : 'app/build/reports', reportFiles: "lint-results-${VARIANT}.html",
-//                             reportName  : 'Android Lint Report', reportTitles: 'Android Lint Report'])
-//            }
-//            recordIssues(tools: [androidLintParser(pattern: '**/AndroidLintReports/lint-results.xml')])
-        }
-
-        //sonarqube collects jacoco and lint reports, hence should follow them
-        stage('SonarQube Analysis') {
-            dir('MVI') {
-                sh "./gradlew sonar"
             }
         }
 

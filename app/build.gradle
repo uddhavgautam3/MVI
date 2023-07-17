@@ -13,7 +13,7 @@ plugins {
 
 apply(from: "$rootDir/scripts/appcenter.gradle") //we must import it; otherwise app center upload won't happen
 apply(from: "$rootDir/config/jacoco/jacoco.gradle")
-apply(from: "$rootDir/config/sonarqube/sonarqube.gradle")
+apply(from: "$rootDir/config/sonarqube/sonarqube_app.gradle")
 apply(from: "$rootDir/scripts/utils.gradle") //for buildNumber
 
 apply(from: "$rootDir/config/checkstyle/checkstyle.gradle.kts")
@@ -48,7 +48,7 @@ android {
         checkDependencies true
         xmlReport true
         htmlReport true
-        xmlOutput file("${projectDir}/build/reports/lint/android_lint.xml")
+        xmlOutput file("${projectDir}/build/reports-lint/android_lint.xml")
 
         lintConfig file("$rootDir/config/lint/lint.xml")
     }
@@ -96,7 +96,6 @@ android {
             minifyEnabled = false
             shrinkResources = false
 
-            //testCoverageEnabled true //already enabled in jacoco.gradle
             applicationIdSuffix = ".debug"
             versionNameSuffix = "$buildNumber"
         }
@@ -131,7 +130,7 @@ android {
     flavorDimensions = ["prod", "env"]
     //order from left to right. e.g., prodFlavorEnvFlavorBuildType = retailStageDebug
     productFlavors {
-    //now, product flavor name should go as retailStage
+        //now, product flavor name should go as retailStage
         retail {
             applicationIdSuffix = ".retail"
             versionCode = 151010000
@@ -218,16 +217,16 @@ android {
         showProgress = true
         effort = 'default' //max
         reportLevel = 'default' //high
-        visitors = [ 'FindSqlInjection', 'SwitchFallthrough' ]
-        omitVisitors = [ 'FindNonShortCircuit' ]
+        visitors = ['FindSqlInjection', 'SwitchFallthrough']
+        omitVisitors = ['FindNonShortCircuit']
         reportsDir = file("$buildDir/reports/spotbugs")
         //includeFilter = file("include.xml")
         excludeFilter = file("${rootDir}/config/spotbugs/exclude.xml")
         //baselineFile = file("baseline.xml")
         //onlyAnalyze = [ 'com.foobar.MyClass', 'com.foobar.mypkg.*' ]
         maxHeapSize = '4g'
-        extraArgs = [ '-nested:false' ]
-        jvmArgs = [ '-Duser.language=ja' ]
+        extraArgs = ['-nested:false']
+        jvmArgs = ['-Duser.language=ja']
     }
     // Define SpotBugs task
     tasks.withType(SpotBugsTask) {
@@ -253,7 +252,7 @@ dependencies {
     implementation("androidx.core:core-ktx:$kotlin_version")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.compose.ui:ui:$compose_ui_version")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
     implementation("androidx.compose.material:material:$compose_ui_version")
@@ -282,8 +281,8 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.37")
 
     //AppCenter
-    implementation("com.microsoft.appcenter:appcenter-analytics:4.4.5")
-    implementation("com.microsoft.appcenter:appcenter-crashes:4.4.5")
+    implementation("com.microsoft.appcenter:appcenter-analytics:5.0.1")
+    implementation("com.microsoft.appcenter:appcenter-crashes:5.0.1")
 
     //testing
     testImplementation("junit:junit:4.13.2")
@@ -299,4 +298,101 @@ ext {
         sourceSet.name
     }
     if (!mySourceSets) mySourceSets.add("")
+
+    flavorFullPath = generatePathFromProductFlavors()
+    allProductFlavors = getAllProductFlavors()
+    allBuildTypes = getAllBuildTypes()
+
+    projectRootDir = project.rootDir
+
+}
+
+//requires emulator device
+//don't run task that has ./gradlew using green arrow, run from commandline
+task runSonarQubePrerequisites {
+    group = "sonarqube"
+    def currentProject = project.name
+    def targetGroup = "jacoco-unittest-reporting"
+
+    dependsOn("runLintTask")
+
+    doLast {
+        project.tasks.each { task ->
+            if (task.group.toString() == targetGroup) {
+                println(":${currentProject}:${task.name}")
+                //execute task that generates UnitTest reports
+                //buildDir/test-results ko all xml search and send to sonar
+                project.exec {
+                    workingDir = project.rootDir
+
+                    def taskWithNoModification = ":${currentProject}:${task.name}"
+                    println("taskWithNoModification: ${taskWithNoModification}")
+                    //:app:testRetailStageDebugUnitTestCoverage, :app:testRetailStageEnterpriseQaUnitTestCoverage, :app:testRetailStageReleaseUnitTestCoverage
+                    commandLine "./gradlew", taskWithNoModification //generate unit tests report
+
+
+                    def removeCoverage = ":${currentProject}:${task.name}".replace("Coverage", "")
+                    //:app:testRetailStageDebugUnitTest, :app:testRetailStageEnterpriseQaUnitTest, :app:testRetailStageReleaseUnitTest
+                    println("removeCoverage: $removeCoverage")
+                    commandLine "./gradlew", removeCoverage //generate test coverage report
+
+
+                    def replaceTestByCreate = removeCoverage.replace("test", "create")
+                    //createRetailStageDebugUnitTest, createRetailStageEnterpriseQaUnitTest, createRetailStageReleaseUnitTest
+                    println("replaceTestByCreate: $replaceTestByCreate")
+
+                    def againReplaceUnitTestByCoverageReport = replaceTestByCreate.replace("UnitTest", "CoverageReport")
+                    //createRetailStageDebugCoverageReport, createRetailStageEnterpriseQaCoverageReport, createRetailStageReleaseCoverageReport
+                    println("againReplaceUnitTestByCoverageReport: $againReplaceUnitTestByCoverageReport")
+                    commandLine "./gradlew", againReplaceUnitTestByCoverageReport //for coverage report checking
+                }
+            }
+        }
+    }
+}
+
+ArrayList<String> getAllBuildTypes() {
+    ArrayList<String> buildTypes = []
+    android.buildTypes.each { buildType ->
+        buildTypes.add(buildType)
+    }
+    return buildTypes
+}
+
+ArrayList<String> getAllProductFlavors() {
+    def productFlavorNames = []
+    project.android.productFlavors.all { flavor ->
+        productFlavorNames.add(flavor.name)
+    }
+    return productFlavorNames
+}
+
+task printAllBuildTypes {
+    project.allBuildTypes.each { type ->
+        println("mybuildType: $type.name")
+    }
+}
+
+//don't run task that has ./gradlew using green arrow, run from commandline
+task runLintTask(type: Exec) {
+    workingDir project.rootDir
+    commandLine './gradlew', 'lint'
+}
+
+//for flavors: retail and stage, we have to return retailStage based on our flavors dimenstion defiend in above
+String generatePathFromProductFlavors() {
+    def productFlavorNames = []
+    project.android.productFlavors.all { flavor ->
+        productFlavorNames.add(flavor.name)
+    }
+    def finalPath = ""
+    for (int i = 0; i < productFlavorNames.size(); i++) {
+        def value = productFlavorNames[i]
+        if (i != 0) {
+            value = productFlavorNames[i].toString().capitalize()
+        }
+        finalPath += value
+    }
+    //System.out.println("FinalPath: ${finalPath}")
+    return finalPath
 }
